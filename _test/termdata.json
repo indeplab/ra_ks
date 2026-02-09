@@ -1,0 +1,354 @@
+{
+    "values": [
+        {
+            "value": {
+                "data": "АС Механизм (Mechanism) СУБД Механизм (Mechanism)",
+                "type": "string"
+            },
+            "title": "АС Механизм (Mechanism) СУБД Механизм (Mechanism)"
+        },
+        {
+            "value": {
+                "data": "АС DataStream СУБД DataStream",
+                "type": "string"
+            },
+            "title": "АС DataStream СУБД DataStream"
+        },
+        {
+            "value": {
+                "data": "АС Zenith СУБД Zenith",
+                "type": "string"
+            },
+            "title": "АС Zenith СУБД Zenith"
+        },
+        {
+            "value": {
+                "data": "АС Архитектор (Architect) СУБД Архитектор (Architect)",
+                "type": "string"
+            },
+            "title": "АС Архитектор (Architect) СУБД Архитектор (Architect)"
+        },
+        {
+            "value": {
+                "data": "АС Keystone СУБД Keystone",
+                "type": "string"
+            },
+            "title": "АС Keystone СУБД Keystone"
+        },
+        {
+            "value": {
+                "data": "АС WisdomFlow СУБД WisdomFlow",
+                "type": "string"
+            },
+            "title": "АС WisdomFlow СУБД WisdomFlow"
+        },
+        {
+            "value": {
+                "data": "АС Apex СУБД Apex",
+                "type": "string"
+            },
+            "title": "АС Apex СУБД Apex"
+        },
+        {
+            "value": {
+                "data": "АС Vanguard СУБД Vanguard",
+                "type": "string"
+            },
+            "title": "АС Vanguard СУБД Vanguard"
+        },
+        {
+            "value": {
+                "data": "АС Labyrinth СУБД Labyrinth",
+                "type": "string"
+            },
+            "title": "АС Labyrinth СУБД Labyrinth"
+        },
+        {
+            "value": {
+                "data": "АС Интеграл (Integral) СУБД Интеграл (Integral)",
+                "type": "string"
+            },
+            "title": "АС Интеграл (Integral) СУБД Интеграл (Integral)"
+        },
+        {
+            "value": {
+                "data": "АС AutoPilot СУБД AutoPilot",
+                "type": "string"
+            },
+            "title": "АС AutoPilot СУБД AutoPilot"
+        },
+        {
+            "value": {
+                "data": "АС Базис (Basis) СУБД Базис (Basis)",
+                "type": "string"
+            },
+            "title": "АС Базис (Basis) СУБД Базис (Basis)"
+        },
+        {
+            "value": {
+                "data": "АС Nexus СУБД Nexus",
+                "type": "string"
+            },
+            "title": "АС Nexus СУБД Nexus"
+        },
+        {
+            "value": {
+                "data": "АС OrderFlow СУБД OrderFlow",
+                "type": "string"
+            },
+            "title": "АС OrderFlow СУБД OrderFlow"
+        },
+        {
+            "value": {
+                "data": "АС Sentinel СУБД Sentinel",
+                "type": "string"
+            },
+            "title": "АС Sentinel СУБД Sentinel"
+        },
+        {
+            "value": {
+                "data": "АС Algorithmic (Algo) СУБД Algorithmic (Algo)",
+                "type": "string"
+            },
+            "title": "АС Algorithmic (Algo) СУБД Algorithmic (Algo)"
+        },
+        {
+            "value": {
+                "data": "АС Rapid СУБД Rapid",
+                "type": "string"
+            },
+            "title": "АС Rapid СУБД Rapid"
+        },
+        {
+            "value": {
+                "data": "АС Chronos СУБД Chronos",
+                "type": "string"
+            },
+            "title": "АС Chronos СУБД Chronos"
+        },
+        {
+            "value": {
+                "data": "АС TaskMaster СУБД TaskMaster",
+                "type": "string"
+            },
+            "title": "АС TaskMaster СУБД TaskMaster"
+        },
+        {
+            "value": {
+                "data": "АС Oracle СУБД Oracle",
+                "type": "string"
+            },
+            "title": "АС Oracle СУБД Oracle"
+        },
+        {
+            "value": {
+                "data": "АС Stream СУБД Stream",
+                "type": "string"
+            },
+            "title": "АС Stream СУБД Stream"
+        },
+        {
+            "value": {
+                "data": "АС 1+5 СУБД 1+5",
+                "type": "string"
+            },
+            "title": "АС 1+5 СУБД 1+5"
+        },
+        {
+            "value": {
+                "data": "АС Система СУБД Система",
+                "type": "string"
+            },
+            "title": "АС Система СУБД Система"
+        },
+        {
+            "value": {
+                "data": "АС Swift СУБД Swift",
+                "type": "string"
+            },
+            "title": "АС Swift СУБД Swift"
+        },
+        {
+            "value": {
+                "data": "АС Protoco СУБД Protoco",
+                "type": "string"
+            },
+            "title": "АС Protoco СУБД Protoco"
+        },
+        {
+            "value": {
+                "data": "АС 1+12 СУБД 1+12",
+                "type": "string"
+            },
+            "title": "АС 1+12 СУБД 1+12"
+        },
+        {
+            "value": {
+                "data": "АС Conductor СУБД Conductor",
+                "type": "string"
+            },
+            "title": "АС Conductor СУБД Conductor"
+        },
+        {
+            "value": {
+                "data": "АС IntelliSense СУБД IntelliSense",
+                "type": "string"
+            },
+            "title": "АС IntelliSense СУБД IntelliSense"
+        },
+        {
+            "value": {
+                "data": "АС Synapse СУБД Synapse",
+                "type": "string"
+            },
+            "title": "АС Synapse СУБД Synapse"
+        },
+        {
+            "value": {
+                "data": "АС Saga СУБД Saga",
+                "type": "string"
+            },
+            "title": "АС Saga СУБД Saga"
+        },
+        {
+            "value": {
+                "data": "АС Цикл СУБД Цикл",
+                "type": "string"
+            },
+            "title": "АС Цикл СУБД Цикл"
+        },
+        {
+            "value": {
+                "data": "АС Core СУБД Core",
+                "type": "string"
+            },
+            "title": "АС Core СУБД Core"
+        },
+        {
+            "value": {
+                "data": "АС ProcessFlow СУБД ProcessFlow",
+                "type": "string"
+            },
+            "title": "АС ProcessFlow СУБД ProcessFlow"
+        },
+        {
+            "value": {
+                "data": "АС Matrix СУБД Matrix",
+                "type": "string"
+            },
+            "title": "АС Matrix СУБД Matrix"
+        },
+        {
+            "value": {
+                "data": "АС SmartGrid СУБД SmartGrid",
+                "type": "string"
+            },
+            "title": "АС SmartGrid СУБД SmartGrid"
+        },
+        {
+            "value": {
+                "data": "АС Flow СУБД Flow",
+                "type": "string"
+            },
+            "title": "АС Flow СУБД Flow"
+        },
+        {
+            "value": {
+                "data": "АС Anchor СУБД Anchor",
+                "type": "string"
+            },
+            "title": "АС Anchor СУБД Anchor"
+        },
+        {
+            "value": {
+                "data": "АС Quantum СУБД Quantum",
+                "type": "string"
+            },
+            "title": "АС Quantum СУБД Quantum"
+        },
+        {
+            "value": {
+                "data": "АС Turbo СУБД Turbo",
+                "type": "string"
+            },
+            "title": "АС Turbo СУБД Turbo"
+        },
+        {
+            "value": {
+                "data": "АС Aether СУБД Aether",
+                "type": "string"
+            },
+            "title": "АС Aether СУБД Aether"
+        },
+        {
+            "value": {
+                "data": "АС Accel СУБД Accel",
+                "type": "string"
+            },
+            "title": "АС Accel СУБД Accel"
+        },
+        {
+            "value": {
+                "data": "АС Guardian СУБД Guardian",
+                "type": "string"
+            },
+            "title": "АС Guardian СУБД Guardian"
+        },
+        {
+            "value": {
+                "data": "АС Compass СУБД Compass",
+                "type": "string"
+            },
+            "title": "АС Compass СУБД Compass"
+        },
+        {
+            "value": {
+                "data": "АС Atlas СУБД Atlas",
+                "type": "string"
+            },
+            "title": "АС Atlas СУБД Atlas"
+        },
+        {
+            "value": {
+                "data": "АС Gateway СУБД Gateway",
+                "type": "string"
+            },
+            "title": "АС Gateway СУБД Gateway"
+        },
+        {
+            "value": {
+                "data": "АС Конструктор (Constructor) СУБД Конструктор (Constructor)",
+                "type": "string"
+            },
+            "title": "АС Конструктор (Constructor) СУБД Конструктор (Constructor)"
+        },
+        {
+            "value": {
+                "data": "АС Directive СУБД Directive",
+                "type": "string"
+            },
+            "title": "АС Directive СУБД Directive"
+        },
+        {
+            "value": {
+                "data": "АС Horizon СУБД Horizon",
+                "type": "string"
+            },
+            "title": "АС Horizon СУБД Horizon"
+        },
+        {
+            "value": {
+                "data": "АС Velocity СУБД Velocity",
+                "type": "string"
+            },
+            "title": "АС Velocity СУБД Velocity"
+        },
+        {
+            "value": {
+                "data": "АС Движитель  СУБД Движитель",
+                "type": "string"
+            },
+            "title": "АС Движитель  СУБД Движитель"
+        }
+    ]
+}

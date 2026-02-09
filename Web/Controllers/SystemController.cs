@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.Modules;
 using Web.Models;
 using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,9 +43,9 @@ namespace Web.Controllers
         }
         // POST api/<SystemController>
         [HttpPost]
-        public ActionResult<object> Post([FromBody] DictionaryRequest request)
+        public async Task<object> Post([FromBody] DictionaryRequest request)
         {
-            List<SystemEntity> result = SystemManager.Get(request);
+            List<SystemEntity> result = await SystemManager.Get(request);
             return Ok(result);
         }
         // PUT api/<SystemController>

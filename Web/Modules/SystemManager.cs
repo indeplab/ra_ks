@@ -1,13 +1,17 @@
 ﻿using DA;
+using DocumentFormat.OpenXml.Math;
+using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.UI;
 
 namespace Web.Modules
 {
-    public class SystemManager
+    public class SystemManager : BaseKSManager
     {
         public static SystemEntity Get(long id)
         {
@@ -102,9 +106,42 @@ namespace Web.Modules
             return result;
         }
 
-        public static List<SystemEntity> Get(DictionaryRequest request)
+        public class valueEntity
         {
-            string selectSQL = "";
+            public string title {get;set;}
+        }
+        public class valueEntityList
+        {
+            public valueEntity[] values {get;set;} =  Array.Empty<valueEntity>();
+        }
+        public static async Task<List<SystemEntity>> Get(DictionaryRequest request)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid","01f0bfa2-2571-f229-a4ba-00b15c0c4000"}
+            };
+
+            var req = new
+            {
+                indicator="01f0fcf8-550d-4f23-93fa-00b15c0c4000",
+                sessionUuid="974fb4fc-5287-4c0b-a3b1-fa71549ae3a9",
+                pagination = new
+                    {
+                        page = 1,
+                        perPage = request.Length
+                    },
+                term = request.Term
+            };                
+            List<SystemEntity> result = new List<SystemEntity>();
+            valueEntityList res = await Post<valueEntityList>("/api/built-data-tables/get-filter-values", req, headers);
+            foreach(valueEntity val in res.values)
+            {
+                result.Add(new SystemEntity()
+                {
+                   name = val.title 
+                });
+            }
+            /*string selectSQL = "";
             if (!string.IsNullOrEmpty(request.Name))
             {
                 selectSQL = string.Format(@"
@@ -117,7 +154,6 @@ namespace Web.Modules
                     select * from system where name ilike '%{0}%' limit {1}
                 ", request.Term, request.Length);
             }
-            List<SystemEntity> result = new List<SystemEntity>();
             DataTable data = null;
             using(DataManager manager = new DataManager())
             {
@@ -127,7 +163,7 @@ namespace Web.Modules
             {
                 foreach(DataRow row in data.Rows)
                     result.Add(GetEntity(row));
-            }
+            }*/
             return result;
         }
         public static List<DictionaryEntity> GetA(string type, string term, int length){

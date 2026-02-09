@@ -54,6 +54,7 @@ namespace Web
             services.Configure<SqlConnectionConfiguration>(Configuration.GetSection("ApplicationParam"));
             services.Configure<SqlConnectionConfiguration>(Configuration.GetSection("Ldap"));
             services.Configure<Dictionary<string,string>>(Configuration.GetSection("Ldap:RoleMapping"));
+            services.Configure<SqlConnectionConfiguration>(Configuration.GetSection("KS:Auth"));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => //CookieAuthenticationOptions
