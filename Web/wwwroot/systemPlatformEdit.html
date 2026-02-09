@@ -1,0 +1,197 @@
+<html>
+<head>
+    <title>Платформа реализации</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Тип:</td>
+                <td colspan="2">
+                    <select id="ddlType"></select>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Реализация:</td>
+                <td colspan="2">
+                    <input type="text" id="tbValue" style="width: 100%" maxlength="300" placeholder="Реализация" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Система:</td>
+                <td style="width:50px">
+                    <input type="text" id="tbSystemID" class="textbox" style="text-align:left;width:95%" />
+                </td>
+                <td style="width:450px">
+                    <input type="text" id="tbSystemName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td colspan="2">
+                    <textarea id="tbDescription" class="textarea" style="text-align:left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var sysid = getInt(param?.sysid);
+            $(function () {
+                $.ajax({
+                    async:false,
+                    url: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог типов платформ",
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#ddlType").empty()
+                        $.each(data,function(i,e){
+                            $("#ddlType").append(
+                                $("<option>",{value:getComponentType(e.name),text:e.value})
+                            );
+                        });
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/systemplatform',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            id: id
+                        }),
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#ddlType").val(data.type);
+                            $("#form1").closest("table.popup").setCaption(data.typename);
+                            $("#tbValue").val(data.value);
+                            $("#tbDescription").val(data.desc);
+                            $("#tbSystemID").val(data.systemid);
+                            $("#tbSystemName").val(data.system);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else if (sysid!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: sysid
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbSystemID").val(data.id);
+                            $("#tbSystemName").val(data.name);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                
+                $('#tbValue').autocomplete({
+                    source: API_HOST + "/dictionary/a?length=20&type=value&metric=" + getComponentTypeDictionaryName($('#ddlType').val()?.trim()),
+                    minLength: 0,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbValue').val(ui.item.name);
+                    }
+                });
+                $('#tbValue').click(function (event) {
+                    $('#tbValue').autocomplete("search");
+                });
+                $('#ddlType').on("change",function(){
+                    if($('#tbValue').autocomplete("instance")){
+                        $('#tbValue').autocomplete({
+                            source: API_HOST + "/dictionary/a?length=20&type=value&metric=" + getComponentTypeDictionaryName($('#ddlType').val()?.trim()),
+                        });
+                    }
+                });
+                $('#tbSystemName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbSystemID').val(ui.item.id);
+                        $('#tbSystemName').val(ui.item.name);
+                    }
+                });
+                $('#tbSystemID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbSystemID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbSystemName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+
+            });
+            var systemPlatformEditSave = function(options){
+                if($("#tbValue").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите реализацию");
+                    return;
+                }
+                let optionSelected = $("#ddlType").find("option:selected")
+                $.ajax({
+                    url: API_HOST + '/systemplatform',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        type: $(optionSelected).val(),
+                        typename: $(optionSelected).text(),
+                        value: $("#tbValue").val(),
+                        systemid: $("#tbSystemID").val(),
+                        system:$("#tbSystemName").val(),
+                        desc:$("#tbDescription").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

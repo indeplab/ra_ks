@@ -1,0 +1,115 @@
+<html>
+<head>
+    <title id="caption">Сетевое размещение</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Тип:</td>
+                <td style="width: 450px;">
+                    <select id="ddlType">
+                        <option value="1">Дата-центр</option>
+                        <option value="2">Сетевой сегмент</option>
+                        <!--<option value="3">Кластер</option>-->
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Название:</td>
+                <td>
+                    <input type="text" id="tbName" style="width: 100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Цвет:</td>
+                <td>
+                    <input type="text" id="tbColor" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td>
+                    <textarea id="tbDescription" class="textarea" style="text-align:left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+    </table>
+    <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var typeid = getInt(param?.typeid);
+            $(function () {
+                $("#tbColor").minicolors({
+                    format:"hex",
+                    position:'bottom right'
+                });
+
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/netzone',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#ddlType").val(data.typeid);
+                            $("#form1").closest("table.popup").setCaption(data.name);
+                            $("#tbName").val(data.name);
+                            $("#tbDescription").val(data.description);
+                            $("#tbColor").val(data.color);
+                            $("#tbColor").minicolors("value",{color:(data.color??"white")});
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else
+                    $("#ddlType").val(typeid);
+
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/netzone/a?length=20&typeid=" + $("#ddlType").val(),
+                    minLength: 1,
+                    delay: 100,
+                });
+
+            })
+            var netzoneEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование размещения");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/netzone',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        description: $("#tbDescription").val(),
+                        typeid: $("#ddlType").val(),
+                        color:$("#tbColor").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

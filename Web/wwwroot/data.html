@@ -1,0 +1,571 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Информационная сущность</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content" >
+                <div align="center">
+                    <table border="0" style="padding:4px 4px 4px 80px;">
+                    <tr>
+                        <td class="messageError" colspan="2" id="messageError">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:50px; padding-top:25px; width:220px;vertical-align:top">
+                            <fieldset id="_filter"><legend>Данные о сущности</legend>
+                                <div><a data-id="data" class="selected" title="Информационная сущность"><img src="images/s_data1.png"><span>Общее</span></a></div>
+                                <div><a data-id="system"  title="Системы взаимодействия с сущностью"><img src="images/s_system.png"><span>Сущность систем</span></a></div>
+                                <div><a data-id="interface" title="Интерфейсы передачи сущности"><img src="images/s_interface.png"><span>Информационные потоки</span></a></div>
+                                <div><a data-id="document" title="Архитектурные документы"><img src="../../images/s_otar.png"><span>Архитектура</span></a></div>
+                            </fieldset>
+                        </td>
+                        <td id="dataPlace" style="width: 900px;">
+                            <table class="caption">
+                                <tr>
+                                    <th>
+                                        <span id="lbName"></span>
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="data" data-id="data" style="width:auto;display:none">
+                                <tr>
+                                    <td  class="titlelabel" >Сущность:</td>
+                                    <td style="width: 50px;">
+                                        <span id="lbID"></span>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="tbName" style="width: 350px" placeholder="Наименование" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Описание:</td>
+                                    <td colspan="2">
+                                        <textarea id="tbDescription" class="textarea" 
+                                            style="text-align:Left;width:100%" rows="8" ></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="system" style="width:auto;display:none">
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Условия поиска</legend>
+                                            <table class="data" id="_searchsystem" style="width:auto">
+                                                <tr>
+                                                    <td class="titlelabel">Название:</td>
+                                                    <td>
+                                                        <input type="text" id="tbSystemName" class="textbox" 
+                                                            style="text-align:Left;width:250px" />
+                                                    </td>
+                                                    <td class="titlelabel">Отношение к системе:</td>
+                                                    <td>
+                                                        <select id="ddlDataFlowType">
+                                                            <option value=""></option>
+                                                            <option value="master">Мастер-данные</option>
+                                                            <option value="copy">Копия данных</option>
+                                                            <option value="transfer">Не храниться</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                            <tr>
+                                                <td style="padding-left:15px">
+                                                    <a role-type="Administrator,Operator" class="menu-item" id="mnuAddSystem" title="Добавить в систему"><img src="portal/images/add-new.png"/><span>Добавить в систему</span></a>
+                                                </td>
+                                                <td class="buttonset">
+                                                    <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tblsystem').updateGrid();"/>
+                                                    <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_searchsystem').setPlaceParam(); $('#tblsystem').updateGrid()"/>
+                                                    <input type="button" id="btnSystemToExcel" class="button" value="Экспорт в Excel" style="width: 120px" /> 
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                <table id="tblsystem" border="0" class="grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th sort="Name" style="width:250px">Система</th>
+                                                            <th sort="Flowtype" style="width:150px">Отношение</th>
+                                                            <th style="width:350px">Описание</th>
+                                                            <th style="width:20px"></th>
+                                                        </tr>
+                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                            <td style="width:250px"><a onclick="$('#systemDataPopup').openDialogData('systemDataEdit.html',{id:@ID,sysid:@system_id})">@system</a></td>
+                                                            <td style="width:150px">@Flowtype</td>
+                                                            <td style="width:350px" class="wrapper" title="@Description">@Description</td>
+                                                            <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить сущность из системы" onclick="if(!confirm('Удалить из \'@system\'?')) return(false); deleteItem(@ID)"/></td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="interface" style="width:auto;display:none">
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Условия поиска</legend>
+                                            <table class="data" id="_searchinterface" style="width:auto">
+                                                <tr>
+                                                    <td class="titlelabel">Потребитель:</td>
+                                                    <td>
+                                                        <input type="text" id="tbConsumer" class="textbox" 
+                                                            style="text-align:Left;width:250px" />
+                                                    </td>
+                                                    <td class="titlelabel">Функция:</td>
+                                                    <td>
+                                                        <input type="text" id="tbFunction" class="textbox" 
+                                                            style="text-align:Left;width:250px" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="titlelabel">Поставщик:</td>
+                                                    <td>
+                                                        <input type="text" id="tbSupply" class="textbox" 
+                                                            style="text-align:Left;width:250px" />
+                                                    </td>
+                                                    <td class="titlelabel">Сервис:</td>
+                                                    <td>
+                                                        <input type="text" id="tbSupplyFunctionMethod" class="textbox" 
+                                                            style="text-align:Left;width:250px" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                            <tr>
+                                                <td style="padding-left:15px">
+                                                    <a role-type="Administrator,Operator" class="menu-item" id="mnuAddInterface" title="Добавить в информационный поток"><img src="portal/images/add-new.png"/><span>Добавить в информационный поток</span></a>
+                                                </td>
+                                                <td class="buttonset">
+                                                    <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tblinterface').updateGrid();"/>
+                                                    <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_searchinterface').setPlaceParam(); $('#tblinterface').updateGrid()"/>
+                                                    <input type="button" id="btnInterfaceToExcel" class="button" value="Экспорт в Excel" style="width:120px" /> 
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                <table id="tblinterface" border="0" class="grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th sort="ConsumerName" style="width:185px">Потребитель</th>
+                                                            <th sort="SupplyName" style="width:185px">Поставщик</th>
+                                                            <th sort="SupplyFunction" style="width:180px">Функция</th>
+                                                            <th sort="SupplyMethod" style="width:200px">Сервис</th>
+                                                            <th style="width:20px"></th>
+                                                        </tr>
+                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                            <td style="width:185px"><a onclick="$('#systemDataPopup').openDialogData('interfaceEdit.html',{id:@ID,sid:@supply_id})">@consumername</a></td>
+                                                            <td style="width:185px">@supplyname</td>
+                                                            <td style="width:180px">@supplyfunction</td>
+                                                            <td style="width:200px">@supplymethod</td>
+                                                            <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить из потока" onclick="if(!confirm('Удалить из потока \'@Name\'?')) return(false); deleteItem(@ID)"/></td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="document" style="width:auto;display:none">
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Условия поиска</legend>
+                                            <table class="data" id="_searchdocument" style="width:auto">
+                                                <tr>
+                                                    <td class="titlelabel">Название:</td>
+                                                    <td>
+                                                        <input type="text" id="tbDocName" class="textbox" 
+                                                            style="text-align:Left;width:350px" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                            <tr>
+                                                <td class="buttonset">
+                                                    <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbldocument').updateGrid();"/>
+                                                    <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_searchdocument').setPlaceParam(); $('#tbldocument').updateGrid()"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                <table id="tbldocument" border="0" class="grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th sort="Name" style="width:340px">Документ</th>
+                                                            <th sort="Author" style="width:200px">Автор</th>
+                                                            <th sort="State" style="width:150px">Статус</th>
+                                                            <th style="width:80px">Дата</th>
+                                                        </tr>
+                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                            <td style="width:340px"><a onclick="openDocument(@ID)" >@Name</a></td>
+                                                            <td style="width:200px">@Author</td>
+                                                            <td style="width:150px">@State</td>
+                                                            <td style="width:80px">@Date</td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="data" style="padding-top:25px;display:none">
+                                <tr id="buttonSet" runat="server">
+                                    <td colspan="2" class="buttonset">
+                                        <input role-type="Administrator,Operator" type="button" id="btnSave" class="mainbutton" style="width:140px" value="Сохранить" />
+                                        <input type="button" id="btnCancel" value="Закрыть" style="width:140px" onclick="location.href='dataList.html';return(false);" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        fieldset div{
+            padding: 5px 0px 5px 10px
+        }
+        fieldset div:last-child{
+            padding-bottom: 10px
+        }
+        fieldset div a.selected span{
+            color: black;
+            border-bottom: 1px solid crimson;
+        }
+        fieldset div a img{
+            position:relative;
+            padding-right:5px;
+            top:4px;
+            height: auto;
+            width:16px;
+        }
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+
+    </style>
+    <script>
+        let basepath = "data";
+        let part = $.isnullorempty(getFromQuery(location.href, "part"),basepath);
+        let searchpath = "/systemdata";
+            switch(part){
+                case "interface":
+                    searchpath = "/datainterface"
+                    break;
+                case "document":
+                    searchpath = "/documentreference"
+                    break;
+            }
+        var saveDialog = function (data) {
+            let editSave;
+            switch(part){
+                case "system":
+                    editSave = systemDataEditSave;
+                    break;
+                case "interface":
+                    editSave = interfaceEditSave;
+                    break;
+            }
+            if(typeof editSave=="function"){
+                editSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        $('#tbl' + part).updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function () {
+            let id = getFromQuery(location.href, "id");
+            let searchdata = { did: id };
+            $(this).loadGridData({
+                url: API_HOST + searchpath + "/list",
+                rows: 30,
+                pager: 10,
+                search: $.extend($("#_search" + part).getPlaceParam(), searchdata)
+            });
+        }
+        var toExcel = function(){
+            let id = getFromQuery(location.href, "id");
+            let searchdata = { did: id };
+            let name="";
+            switch(part){
+                case "system":
+                    name = "сущностей системы";
+                    break;
+                case "interface":
+                    name = "данных интерфейсов";
+                    break;
+            }
+            $.ajax({
+                url: API_HOST + searchpath + "/excel",
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                data: JSON.stringify({
+                    rows: 30,
+                    pager: 10,
+                    search: $.extend($("#_search" + part).getPlaceParam(), searchdata)
+                }),
+                success: function (content) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                        var blob = new Blob([content], {
+                            type: "MS Excel"
+                        });
+                    saveAs(blob, "Каталог" + (name!=""?" " +name:"") + ".xls");
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        var deleteItem = function (id) {
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + '/' + part + "data/" + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl' + part).updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        var openDocument = function(id){
+            window.open("index.html?id=" + id + "&s=" + $("#tbName").val(),"__blank");
+        }
+        $(function () {
+            let id = getInt(getQueryParam("id"));
+            $("#menu-main").show();
+            $("#menu-back").show();
+            $("#menu-back").attr({
+                href:"dataList.html"
+            });
+
+            $("#mnuAddSystem").click(function() {$('#systemDataPopup').openDialogData('systemDataEdit.html',{sysid:id});});
+            $("#mnuAddInterface").click(function() {$('#systemDataPopup').openDialogData('interfaceEdit.html',{sid:id});});
+
+            if(id!=0 ){
+                $.ajax({
+                    url: API_HOST + '/data',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $("#lbID").text(formatInt(id));
+                        $("#tbName").val(data.name);
+                        $("#lbName").text(data.name);
+                        $("title").text(data.name);
+
+                        if(part!=basepath) return;
+
+                        $("#tbDescription").val(data.description);
+
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                  },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+
+
+            let loc = location.href.replace(location.search, '').replace(location.hash, '') + "?id=" + id;
+            $("#_filter div a").each(function (i, e) {
+                $(e).attr({
+                    href: loc + "&part=" + $(e).attr("data-id")
+                });
+                $(e).removeClass("selected");
+            });
+            let p = $("#_filter div a[data-id='" + part + "']");
+            if (!p || p.length == 0) {
+                part = basepath;
+                p = $("#_filter div a[data-id='" + part + "']");
+            }
+            $(p).attr({
+                class: "selected"
+            });
+            $("#dataPlace").find("table[data-id]:not([data-id='" + part + "'])").hide();
+            $("#dataPlace").find("table[data-id='" + part + "']").show();
+
+            let grid = $('#tbl' + part);
+            if(grid.length>0){
+                $.loadSearchParam({
+                    url: API_HOST + searchpath,
+                    success:function(data){
+                        $("#_search" + part).setPlaceParam(data);
+                        $(grid).updateGrid(data);
+                    },
+                    error:function(message){
+                        alert(message.responseText);
+                    }
+                });
+            }
+                
+
+            $("#btnSave").click(function(){
+                $("#messageError").text("");
+                if($("#tbName").val()==""){
+                    $("#messageError").text("Укажите наименование сущности");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/data',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:getInt(getQueryParam("id")),
+                        name: $("#tbName").val(),
+                        description: $("#tbDescription").val()
+                    }),
+                    success: function (data) {
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        $("#messageError").text("Ошибка сохранения");
+                    }
+                });
+
+            });
+
+            $("#btnSystemToExcel, #btnInterfaceToExcel").click(function(){
+                toExcel();
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+

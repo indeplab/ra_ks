@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+
+<head>
+    <title>Архитектурный портал</title>
+
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+</head>
+
+<body>
+
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content" style="display: none;">
+                <table style="padding:25px; height:100%; width:100%;" >
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle">
+                            <div align="center" id="phConfirmation" style="display: none;">
+                                <table class="data"style="width:auto">
+                                    <tr>
+                                        <td class="caption" style="text-align:center;vertical-align:top;height:32px">
+                                            <span id="ltConfirmationCaption"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space:nowrap" id="ltConfirmationInfo"></td>
+                                    </tr>
+                                </table>
+                            </div>
+            
+                            <div align="center" id="phRemaind" style="display: none;">
+                                <table class="data" id="remaindOk" style="display:none;width:auto">
+                                    <tr>
+                                        <td class="caption" style="vertical-align:top;height:32px">Восстановление пароля</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space:nowrap">
+                                            На указанный Вами e-mail<br/>отправлено письмо с напоминанием пароля
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="buttonset">
+                                            <input type="button" class="mainbutton" value="Ok" style="width:120px" onclick="location.href='login.html'" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table class="data" id="remaindStep" style="width:auto">
+                                    <tr>
+                                        <td colspan="2" class="caption" style="vertical-align:top;height:32px">Восстановление пароля</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2" class="messageError">
+                                            <span id="lbRemaindMessage"></span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabel">Логин (электронная почта):</td>
+                                        <td>
+                                            <input type="email" id="tbRemaindLogin" style="width: 200px;" placeholder="name@domain.ru"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="buttonset">
+                                            <input type="button" class="mainbutton" id="tbRemaindRequest" value="Отправить" style="width:150px" />
+                                            <input type="button" class="button" value="Отмена" style="width:120px" onclick="location.href='login.html'" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+            
+                            <div align="center" id="phRegistration" style="display: none;">
+                                <table class="data" id="registrationOk" style="display:none;width:auto">
+                                    <tr>
+                                        <td class="caption" style="vertical-align:top;height:32px">Заявка на регистрацию</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="white-space:nowrap">
+                                            Ваша заявка принята, на указанный Вами e-mail<br/>отправлено письмо с подтверждением
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="buttonset">
+                                            <input type="button" class="mainbutton" value="Ok" style="width:120px" onclick="location.href='search.html'" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table class="data" id="registrationStep" style="width:auto">
+                                    <tr>
+                                        <td colspan="2" class="caption" style="vertical-align:top;height:32px">Заявка на регистрацию</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2" class="messageError">
+                                            <span id="lbRegistrationMessage"></span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabel">ФИО:</td>
+                                        <td>
+                                            <input type="text" id="tbName" style="width:250px;" maxlength="250"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabel">Логин (электронная почта):</td>
+                                        <td>
+                                            <input type="email" id="tbNewLogin" style="width:250px" placeholder="name@domain.ru"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabel">Пароль:</td>
+                                        <td>
+                                            <input type="password" id="tbNewPassword" style="width:250px" placeholder="пароль"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabel">Подтвердите пароль:</td>
+                                        <td>
+                                            <input type="password" id="tbConfirmNewPassword" style="width:250px" placeholder="пароль" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="infolabel">
+                                            На электронную почту будет отправлено письмо для подтверждения регистрации
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="buttonset">
+                                            <input type="button" class="mainbutton" id="btnCreateRequest"  value="Отправить заявку" style="width:150px" />
+                                            <input type="button" class="button" value="Отмена" style="width:120px" onclick="location.href='login.html'" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+            
+                            <div align="center" id="phLogin" style="display: none;">
+                                <table class="data" border="0" style="width:auto" id="loginForm">
+                                    <tr>
+                                        <td class="caption" style="text-align:center;vertical-align:top;height:32px">Авторизация</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="messageError">
+                                            <span id="lbMessage" ></span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabelleft">Логин:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="email" id="tbLogin" style="width:250px" placeholder="name@domain.ru"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="titlelabelleft">Пароль: </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="password" id="tbPassword" style="width:250px" placeholder="пароль"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="buttonset" style="text-align:center">
+                                            <input type="button" class="mainbutton" id="btnLogin" value="Войти" style="width:150px" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:center">
+                                            <a href="login.html?action=remaind">Забыли пароль?</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:center">
+                                            <a href="login.html?action=registration">Еще не зарегистрированы?</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+<script>
+    $.fn.setFormError = function (errors) {
+        var place = this;
+        var errplace = $(place).find("tr th.messageError");
+        $(errplace).empty();
+        if(errors){
+            if(!Array.isArray(errors))
+                errors=[errors.toString()];
+            if (errors != null && errors.length > 0) {
+                $(errplace).append("<ul>");
+                errplace = $(errplace).find("ul");
+                $.each(errors, function (index, text) {
+                    $(errplace).append($('<li>', {
+                        text: text
+                    }));
+                });
+            }
+        }
+    }
+    $(function(){
+        $("#menu-help").attr({
+            href:"portal/docs/help-login.pdf",
+            target:"__blank"
+        });
+        $("#menu-help").show();
+
+        let regid = $.isnull(getQueryParam("regid"),"");
+        let action = getQueryParam("action");
+
+        if (regid!="")
+        {
+            $("#phConfirmation").show();
+            $.ajax({
+                url: API_HOST + '/account/confirm',
+                type: 'GET',
+                data: {
+                    requestgiud:regid
+                },
+                success: function (state) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $("#ltConfirmationInfo").empty();
+                    switch (state)
+                    {
+                        case -2:
+                            $("#ltConfirmationCaption").text("Ошибка регистрации");
+                            $("#ltConfirmationInfo").append($("<span>",{text:"Мы не можем найти Вашу заявку, пожалуйста, повторите "}));
+                            $("#ltConfirmationInfo").append($("<a>",{href :"login.html?action=registration", text:"запрос"}));
+                            break;
+                        case -1:
+                            $("#ltConfirmationCaption").text("Спасибо за подтверждение запроса регистрации!");
+                            $("#ltConfirmationInfo").text("В ближайшее время мы рассмотрим Вашу заявку");
+                            break;
+                        default:
+                            $("#ltConfirmationCaption").text("Вы зарегистрированы");
+                            $("#ltConfirmationInfo").append($("<a>",{href :"search.html", text:"Войти"}));
+                            break;
+                    }
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                }
+            });
+        }
+        else{
+            switch(action.toLowerCase().trim()){
+                case "registration":
+                    $("#phRegistration").show();
+                    $("#btnCreateRequest").click(function(){
+                        $("#registrationStep").setFormError();
+                        var name = $('#tbName').val();
+                        var login = $('#tbNewLogin').val();
+                        var pass = $('#tbNewPassword').val();
+                        var pass2 = $('#tbConfirmNewPassword').val();
+                        var errors = new Array();
+                        if (name == '') 
+                            errors.push("Поле 'ФИО' не должно быть пустым");
+                        if (login == '') 
+                            errors.push("Поле 'Логин' не должно быть пустым");
+                        if (pass == '') 
+                            errors.push("Поле 'Пароль' не должно быть пустым");
+                        if (pass != pass2) 
+                            errors.push('Пароли не совпадают');
+                        if (errors.length > 0) {
+                            $("#registrationStep").setFormError(errors);
+                            return
+                        }
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(true);
+                        $.ajax({
+                            url: API_HOST + '/account/request',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: JSON.stringify({
+                                name: name,
+                                login: login,
+                                password: pass
+                            }),
+                            success: function () {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $('#registrationStep').hide();
+                                $('#registrationOk').show();
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#registrationStep").setFormError(message.responseText);
+                                console.error(message);
+                            }
+                        });
+                    });
+                    break;
+                case "remaind":
+                    $("#phRemaind").show();
+                    $("#tbRemaindRequest").click(function(){
+                        $("#remaindStep").setFormError();
+                        var login = $('#tbRemaindLogin').val();
+                        var errors = new Array();
+                        if (login == '') 
+                            errors.push("Поле 'Логин' не должно быть пустым");
+                        if (errors.length > 0) {
+                            $("#remaindStep").setFormError(errors);
+                            return;
+                        }
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(true);
+                        $.ajax({
+                            url: API_HOST + '/account/remaindpwd',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({
+                                "login": login
+                            }),
+                            success: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $('#remaindStep').hide();
+                                $('#remaindOk').show();
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#remaindStep").setFormError(message.responseText);
+                                console.error(message);
+                            }
+                        });
+                    });
+                    break;
+                default:
+                    /*if($.isnull($.currentuser().login,"")!=""){
+                        location.href="search.html";
+                        return;
+                    }*/
+                    $("#phLogin").show();
+                    $("#btnLogin").click(function () {
+                        $("#loginForm").setFormError();
+                        var login = $('#tbLogin').val();
+                        var pass = $('#tbPassword').val();
+                        var errors = new Array();
+                        if (login == '') 
+                            errors.push("Поле 'Логин' не должно быть пустым");
+                        if (pass == '') 
+                            errors.push("Поле 'Пароль' не должно быть пустым");
+                        if (errors.length > 0) 
+                            $("#loginForm").setFormError(errors);
+                        else{
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(true);
+                            $.ajax({
+                                "url": API_HOST + '/account/login',
+                                type: 'POST',
+                                contentType: 'application/json; charset=utf-8',
+                                dataType: 'json',
+                                data: JSON.stringify({
+                                    login: login,
+                                    password: pass
+                                }),
+                                success: function (message) {
+                                    if (typeof showWaitPanel == "function")
+                                        showWaitPanel(false);
+                                    let returl=decodeURIComponent(getQueryParam("returl"));
+                                    //console.log(returl);
+                                    if(returl.indexOf("login.html",0)!=-1 || returl=="")
+                                        location.href = "search.html";
+                                    else
+                                        location.href = $.isnull(returl,"search.html");
+                                },
+                                error: function (message) {
+                                    if (typeof showWaitPanel == "function")
+                                        showWaitPanel(false);
+                                    $("#loginForm").setFormError(message.responseJSON.errorText);
+                                    console.error(message);
+                                }
+                            });
+                        }
+                    });
+                    break;
+            }
+        } 
+        $('#tbPassword').keypress(function (event) {
+            if (event.keyCode == 13) {
+                $('#btnLogin').click();
+                return false;
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Протоколы Архитектурного совета</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="portal/js/filepicker.js"></script>
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+        
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="94%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td class="titlelabel">Номер:</td>
+                                            <td>
+                                                <input type="text" id="tbNumber" class="textbox" style="text-align:Left;width:50px" />
+                                            </td>
+                                            <td class="titlelabel">Даты:</td>
+                                            <td>
+                                                <table>
+                                                    <tr>
+                                                        <td class="titlelabel">c</td>
+                                                        <td><input type="text" id="tbStartDate"/></td>
+                                                        <td class="titlelabel">по</td>
+                                                        <td><input type="text" id="tbEndDate" /></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="titlelabel">Система:</td>
+                                            <td>
+                                                <input type="text" id="tbSystemID" class="textbox" 
+                                                    style="text-align:Left;width:50px" />
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbSystemName" class="textbox" 
+                                                    style="text-align:Left;width:250px" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" onclick="$('#systemDataPopup').openDialogData('councilEdit.html');" title="Добавить протокол"><img src="portal/images/add-new.png"/><span>Добавить протокол</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                            <input type="button" id="btnToExcel" class="button" value="Экспорт в Excel" style="width:120px" /> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                    <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                        <table id="tbl" class="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th sort="number" style="width:80px; text-align:center">Номер</th>
+                                                    <th sort="date" style="width:100px;text-align:center">Дата</th>
+                                                    <th style="width:400px;text-align:center">Системы</th>
+                                                    <th style="width:200px;text-align:center">Протокол</th>
+                                                    <th style="width:20px"></th>
+                                                </tr>
+                                                <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                    <td style="width:80px;text-align:center"><a title="Открыть карточку" href="council.html?id=@ID">@number</a></td>
+                                                    <td style="width:100px;text-align:center"><a title="Открыть карточку" href="council.html?id=@ID">@Date</a></td>
+                                                    <td style="width:400px;">@system</td>
+                                                    <td style="width:200px;text-align:left"><a onclick="openFile('council',@id,'@decision')" title="Скачать протокол">@decision</a></td>
+                                                    <td style="padding-left:0px;text-align:center;" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить протокол" onclick="deleteItem(@id,'@number','@date')"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:baseline;
+        }
+    </style>
+    <script type="text/javascript" title="grid">
+        $(function () {
+
+            $("#menu-main").show();
+
+            $.loadSearchParam({
+                url: API_HOST + "/councillist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+
+            $("#tbStartDate, #tbEndDate").dtpicker({
+                src:"portal/images/calendar.png"
+            });
+            $('#tbSystemName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbSystemName').val(ui.item.name);
+                }
+            });
+            $("#btnToExcel").click(function(){
+                $.ajax({
+                    url: API_HOST + '/councillist/excel',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'html',
+                    data: JSON.stringify({
+                        rows: 15,
+                        pager: 10,
+                        search: $("#_search").getPlaceParam()
+                    }),
+                    success: function (content) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                            var blob = new Blob([content], {
+                                type: "MS Excel"
+                            });
+                        saveAs(blob, "Протоколы Архсовета" + ".xls");
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+        });
+        var saveDialog = function () {
+            if(typeof councilEditSave=="function"){
+                councilEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        location.href = "council.html?id=" + data.id;
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function (data) {
+            $(this).loadGridData({
+                url: API_HOST + "/councillist/list",
+                rows: 30,
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam())
+            });
+        }
+        var deleteItem = function (id,number,date) {
+            if(!confirm('Удалить протокол №' + number + ' от ' + date +'?')) return;
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + '/council/' + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

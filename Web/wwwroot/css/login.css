@@ -1,0 +1,527 @@
+/* common */
+body {
+    font-family: Verdana, Arial;
+    font-size: 12px;
+    margin: 15px 15px 10px 15px;
+    overflow: scroll;
+}
+
+img {
+    border: 0px none transparent;
+}
+
+
+select {
+    height: 20px;
+    font-size: 12px;
+    border: solid 1px silver;
+}
+
+/* link */
+a {
+    color: #3d6b7e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #58acce;
+}
+
+div.login {
+    position: fixed;
+    top: 50%;
+    margin-top: -150px;
+    width: 100%;
+    text-align: center;
+}
+    
+
+td.part {
+    background-color: none;
+    text-decoration: none;
+}
+
+    td.part a span.selected {
+        color: crimson;
+    }
+
+    td.part:hover {
+        background-color: #F1F2F4;
+    }
+
+td a.menu img {
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+td a.menu {
+    cursor: pointer;
+}
+
+td a.menu-item acronym, td a.menu-item-selected acronym {
+    background-color: Transparent;
+    color: #3d6b7e;
+    padding: 3px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+td a.menu-item-selected acronym {
+    color: #b92d36;
+    cursor: pointer;
+}
+
+table.menu > * td {
+    padding: 10px 0 10px 0;
+    white-space: nowrap;
+}
+
+    table.menu > * td input {
+        display: none;
+    }
+
+        table.menu > * td input:checked + label {
+            color: crimson;
+        }
+
+        table.menu > * td input + label {
+            cursor: pointer;
+        }
+
+    table.menu > * td span[data-id]:after {
+        content: attr(data-id);
+        /*background :url("../images/close1.png") 20px 20px no-repeat left;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 3px;*/
+        color: crimson;
+        font-size: 10px;
+        position: relative;
+        top: -6px;
+        left: 1px;
+        height: 20px;
+        width: 20px;
+    }
+
+
+/* main table */
+table.maintable {
+    background-color: white;
+    width: auto;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+    table.maintable thead tr th.page-header {
+        padding-right: 30px;
+        padding-left: 30px;
+        padding-top: 20px;
+        vertical-align: middle;
+        height: 10px;
+        text-align: center;
+        width: 1100px;
+    }
+
+    table.maintable tbody tr td.page-content {
+        vertical-align: top;
+        text-align: center;
+        padding: 5px 10px 5px 10px;
+    }
+
+    table.maintable tfoot tr td.page-footer {
+        background-color: #d1d5d8;
+        text-align: right;
+        padding-right: 5px;
+        color: gray;
+        height: 10px;
+    }
+
+td.header-image {
+    text-align: left;
+    vertical-align: middle;
+}
+
+td.header-text {
+    font-size: 24px;
+    font-weight: normal;
+    text-align: right;
+    padding-top: 10px;
+    vertical-align: bottom;
+}
+
+td.header-subtext {
+    font-size: 10px;
+    text-align: right;
+    font-weight: normal;
+    color: #556E8D;
+    padding-top: 3px;
+}
+
+td.header-menu {
+    text-align: right;
+    padding-top: 5px;
+    vertical-align: top;
+    height: 16px;
+}
+
+/* main menu */
+
+    table.linkstart tr td {
+        padding: 20px;
+        text-align: left;
+    }
+
+    table.linkstart td a, table.linkstart td a:hover {
+        font-size: 20px;
+    }
+
+
+        table.linkstart td a img {
+            margin-bottom: -8px;
+        }
+
+/* head table */
+tr.context-header th {
+    border-bottom: 1px solid #b92d36;
+    text-align: left;
+    font-size: 13px;
+    padding-left: 4px;
+    font-weight: normal;
+}
+
+tr.context-title th {
+    text-align: right;
+    font-size: 16px;
+    color: #336699;
+    font-weight: normal;
+}
+
+td.subcaptionlabel {
+    font-size: 14px;
+    border-bottom: solid 1px Silver;
+}
+
+td.blockbody {
+    padding-top: 10px;
+    padding-left: 30px;
+}
+
+/* caption */
+td.caption {
+    text-align:center;
+    vertical-align: baseline;
+    font-size: 16px;
+    background-color: Transparent;
+    font-weight: normal;
+    width: 200px;
+    padding-left: 10px;
+}
+
+td.head-label {
+    background-color: Transparent;
+    font-weight: normal;
+    width: 200px;
+    color: #3d6b7e;
+    text-align: left;
+}
+
+/* label */
+td.titlelabel, td.titlelabelleft, td.titlelabelmain {
+    font-weight: normal;
+    text-align: right;
+    vertical-align: middle;
+    width: auto;
+}
+
+td.titlelabelleft, td.titlelabelmain {
+    text-align: left !important;
+}
+
+td.infolabel {
+    text-align: left;
+    font-size: 10px;
+    color: gray;
+}
+
+td.titlelabelmain {
+    color: crimson;
+    font-weight: normal;
+}
+
+span.currencylabel {
+    height: 18px;
+    padding-top: 2px;
+}
+
+/* entity table */
+table.data {
+    width: 100%;
+}
+
+    table.data tr td {
+        margin-top: 0px;
+        padding: 3px !important;
+        vertical-align: middle;
+    }
+
+table.caption {
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+    table.caption tr th {
+        font-size: 17px;
+        border-bottom: solid 1px silver;
+        text-align: left;
+        font-weight: normal;
+    }
+/* button set*/
+.buttonset {
+    text-align: right;
+    padding: 10px 5px 5px !important;
+}
+/* input */
+input[type=button]{
+    background: #F1F2F4 url(../images/bg.gif);
+    border-top: 1px solid #B3B4B6;
+    border-left: 1px solid #B3B4B6;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    height: 23px;
+    margin: 0px;
+    width: auto;
+    min-width: 100px;
+    overflow: visible;
+    cursor: pointer;
+    font-size: 11px !important;
+}
+input.mainbutton {
+    color: #b92d36;
+}
+input[type=checkbox]{
+    cursor: pointer;
+}
+input[type=checkbox]+label{
+    cursor: pointer;
+    position: relative;
+    bottom: 2px;
+    left:3px;
+}
+
+
+::-webkit-input-placeholder {
+    color: lightgrey;
+}
+
+::-moz-placeholder {
+    color: lightgrey;
+}
+/* Firefox 19+ */
+:-moz-placeholder {
+    color: lightgrey;
+}
+/* Firefox 18- */
+:-ms-input-placeholder {
+    color: lightgrey;
+}
+
+input.textbox, textarea.textbox, span.textbox, input.datepicker {
+    height: 22px !important;
+    border: solid 1px silver;
+    font-size: 12px;
+    z-index: 100;
+    vertical-align: top;
+}
+
+input.datepicker {
+    margin-top: 3px;
+    width: 75px;
+}
+
+img.datepicker {
+    cursor: pointer;
+    margin-left: 2px;
+    margin-top: 3px;
+    width: 18px;
+    height: 18px
+}
+
+select.mtz-monthpicker {
+    width: 70px;
+    text-align: center;
+}
+
+input.textarea, textarea.textarea, span.textarea {
+    border: solid 1px silver;
+    font-size: 12px;
+}
+
+span.checkbox input, span.radio input {
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+table.radiolist tr td input, table.radiolist tr td label {
+    cursor: pointer;
+    vertical-align: bottom;
+}
+
+table.radiolist tr td label, table.checkboxlist tr td label {
+    padding-left: 3px;
+}
+
+table.checkboxlist tr td input, table.checkboxlist tr td label {
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+input.checkbox {
+    border: none;
+    cursor: pointer;
+}
+
+span.radio input {
+    margin-top: -1px;
+}
+
+input.radio label, span.checkbox label, span.radio label {
+    border: none;
+    cursor: pointer;
+    padding-left: 5px;
+    vertical-align: middle;
+}
+
+table.radio tr td input {
+    border: none;
+    cursor: pointer;
+}
+
+img.tool {
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    border: 0px;
+}
+/* message, marker */
+.messageError {
+    font-weight: normal;
+    color: red; /*#b92d36;*/
+}
+
+.messageErrorPopup {
+    font-weight: normal;
+    color: crimson; /*#b92d36;*/
+    height: 10px;
+}
+
+.messageWarning {
+    color: crimson; /*#b92d36;*/
+    vertical-align: middle;
+}
+
+/* tabs */
+.tab-spacer {
+    display: block;
+    clear: both !important;
+}
+
+.tabs {
+    width: 100%;
+    padding-bottom: 3px;
+    background: url( ../images/tabs/gray-dot.gif) bottom left repeat-x;
+}
+
+    .tabs div {
+        margin-bottom: -3px;
+    }
+
+        .tabs div,
+        .tabs div a,
+        .tabs div a span {
+            float: left;
+        }
+
+.tabTextSelected {
+    vertical-align: bottom;
+}
+
+    .tabTextSelected a {
+        background: url(../images/tabs/tabSelectedRight.gif) right top no-repeat;
+        display: block;
+        text-decoration: none;
+        font-weight: bold;
+        color: #000000;
+        font-size: 11px;
+        cursor: default;
+    }
+
+        .tabTextSelected a span {
+            display: block;
+            background: url( ../images/tabs/tabSelectedBack.gif) left top no-repeat;
+            margin-right: 5px;
+            padding: 3px 0px 0px 10px;
+            height: 22px;
+        }
+
+        .tabTextSelected a:hover {
+            color: #000000;
+        }
+
+.tabText {
+    vertical-align: bottom;
+}
+
+    .tabText a {
+        display: block;
+        background: url( ../images/tabs/tabNormalRight.gif) right top no-repeat;
+        text-decoration: none;
+        margin-top: 3px;
+        cursor: pointer;
+        border-bottom: #a1a5a9 1px solid;
+    }
+
+.topTabsCap {
+    height: 1px;
+    overflow: hidden;
+    font-size: 1px;
+    background-color: #a1a5a9;
+    margin-top: 15px;
+}
+
+.tabText a:hover {
+    margin-top: 0;
+}
+
+.tabText a span {
+    display: block;
+    background: url( ../images/tabs/tabNormalBack.gif) left top no-repeat;
+    padding: 3px 0px 0px 10px;
+    font-size: 11px;
+    text-decoration: none;
+    color: #000000;
+    height: 18px;
+    margin-right: 5px;
+}
+
+.tabText a:hover span {
+    padding-bottom: 5px;
+}
+
+.tabSpace {
+    float: right !important;
+}
+
+div.subTab {
+    border-top-width: 0px;
+    background-color: white;
+    border-left: #a1a5a9 1px solid;
+    border-right: #a1a5a9 1px solid;
+    border-bottom: #a1a5a9 1px solid;
+    padding-left: 10px;
+    padding-right: 10px;
+}

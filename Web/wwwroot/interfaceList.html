@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Интеграционные интерфейсы</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="94%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td class="titlelabel">Поставщик:</td>
+                                            <td>
+                                                <input type="text" id="tbSupplyID" class="textbox" style="text-align:Left;width:50px" />
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbSupply" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Функция поставщика:</td>
+                                            <td>
+                                                <input type="text" id="tbSupplyFunction" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Сервис поставщика:</td>
+                                            <td>
+                                                <input type="text" id="tbSupplyFunctionMethod" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Потребитель:</td>
+                                            <td>
+                                                <input type="text" id="tbConsumerID" class="textbox" 
+                                                    style="text-align:Left;width:50px" />
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbConsumer" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Функция потребителя:</td>
+                                            <td>
+                                                <input type="text" id="tbConsumerFunction" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Данные:</td>
+                                            <td>
+                                                <input type="text" id="tbData" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" onclick="$('#systemDataPopup').openDialogData('interfaceEdit.html');" title="Добавить интерфейс"><img src="portal/images/add-new.png"/><span>Добавить интерфейс</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnGetTemplate" title="Скачать шаблон для загружаемых данных"><img src="portal/images/download.png"/><span>Скачать шаблон</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnLoadList" title="Загрузить данные из заполненного шаблона"><img src="portal/images/add-list.png"/><span>Загрузить список</span></a>
+                                            <input id="fuLoadList" type="file", style="visibility: hidden; width: 0px;"/>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                            <input type="button" id="btnToExcel" class="button" value="Экспорт в Excel" style="width:120px" /> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                    <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                        <table id="tbl" border="0" class="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th sort="ID" style="width:70px">Код</th>
+                                                    <th sort="interfacename" style="width:170px">Наименование</th>
+                                                    <th sort="SupplyName" style="width:170px">Поставщик</th>
+                                                    <th sort="SupplyFunction" style="width:170px">Функция</th>
+                                                    <th sort="SupplyMethod" style="width:170px">Сервис</th>
+                                                    <th style="width:170px">Данные</th>
+                                                    <th sort="ConsumerName" style="width:170px">Потребитель</th>
+                                                    <th style="width:20px"></th>
+                                                </tr>
+                                                <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                    <td style="width:70px">@ID</td>
+                                                    <td style="width:170px"><a href="interface.html?id=@ID">@interfacename</a></td>
+                                                    <td style="width:170px">@supplyname</td>
+                                                    <td style="width:170px">@supplyfunction</td>
+                                                    <td style="width:170px">@supplymethod</td>
+                                                    <td style="width:170px">@interfacedata</td>
+                                                    <td style="width:170px">@consumername</td>
+                                                    <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить интерфейс" onclick="if(!confirm('Удалить интерфейс \'@Name\'?')) return(false); deleteItem(@ID)"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        table.grid tbody tr td.img_field img{
+            width:16px;
+            height:auto;
+            padding-right:3px;
+        }
+        table.grid tbody tr td.img_field span{
+            position:relative;
+            bottom:3px;
+        }
+    </style>
+    <script type="text/javascript" title="grid">
+        $(function () {
+
+            $("#menu-main").show();
+
+            $.loadSearchParam({
+                url: API_HOST + "/interfacelist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+
+            $('#tbSupply').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbSupply').val(ui.item.name);
+                }
+            });
+            $('#tbConsumer').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbConsumer').val(ui.item.name);
+                }
+            });
+
+            $("#btnToExcel").click(function(){
+                $.ajax({
+                    url: API_HOST + '/interfacelist/excel',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'html',
+                    data: JSON.stringify({
+                        rows: 30,
+                        pager: 10,
+                        search: $("#_search").getPlaceParam()
+                    }),
+                    success: function (content) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        var blob = new Blob([content], {
+                            type: "MS Excel"
+                        });
+                        saveAs(blob, "Каталог интерфейсов" + ".xls");
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+            $("#btnGetTemplate").click(function(){
+                $.ajax({
+                    url: API_HOST + '/interfacelist/template',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'html',
+                    success: function (content) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        var blob = new Blob([content], {
+                            type: "MS Excel"
+                        });
+                        saveAs(blob, "Шаблон интерфейсов" + ".xls");
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+            $("#btnLoadList").click(function(){
+                $("#fuLoadList").click();
+            });
+            $("#fuLoadList").on("change", function () {
+                if (this.files.length == 0) return;
+                let name = this.files[0].name;
+                let xhr = new XMLHttpRequest();
+                xhr.upload.onerror = function () {
+                    console.log("Ошибка " + this.status);
+                };
+                xhr.onloadend = function () {
+                    if (xhr.status == 200) {
+                        console.log("Успех");
+                        $('#tbl').updateGrid();
+                        let resp = xhr.response;
+                        //console.log(resp);
+                        if(resp.data){
+                            var blob = new Blob([resp.data], {
+                                type: "application/vnd.ms-excel"
+                            });
+                            name = name.substring(0, name.lastIndexOf('.')) + " - результат.xls";
+                            saveAs(blob, name);
+                        }
+                        if(resp.messages){
+                            let limit = 10;
+                            var len = resp.messages.length;
+                            if(len>limit){
+                                len = limit;
+                                resp.messages[len]='... всего ' + resp.messages.length ;
+                            }
+                            //console.log(resp.messages.slice(0, len+1).join('\n'));
+                            alert(resp.messages.slice(0, len+1).join('\n'));
+                        }
+                    } else {
+                        console.log("Ошибка " + this.status);
+                    }
+                };
+                xhr.open("PUT", API_HOST + '/interface/uploadlist');
+                var formData = new FormData();
+                formData.append("file", this.files[0]);
+                xhr.responseType = 'json';
+                xhr.send(formData);
+                $(this).prop("value", "");
+
+            });
+        });
+        var saveDialog = function () {
+            if(typeof interfaceEditSave=="function"){
+                interfaceEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        $('#tbl').updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function (data) {
+            $(this).loadGridData({
+                url: API_HOST + "/interfacelist/list",
+                rows: 30,
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam())
+            });
+        }
+        var deleteItem = function (id) {
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + '/interface/' + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

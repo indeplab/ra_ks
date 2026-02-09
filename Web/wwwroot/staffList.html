@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Пользователи</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="94%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td class="titlelabel">Логин:</td>
+                                            <td>
+                                                <input type="text" id="tbLogin" class="textbox" maxlength="150" style="text-align:Left;width:250px"/>
+                                            </td>
+                                            <td class="titlelabel">ФИО:</td>
+                                            <td>
+                                                <input type="text" id="tbName" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Роль:</td>
+                                            <td> 
+                                                <select id="ddlRole" >
+                                                    <option selected="true" value=""></option>
+                                                    <option value="1">Администратор</option>
+                                                    <option value="2">Оператор</option>
+                                                    <option value="3">Только чтение</option>
+                                                </select>
+                                            </td>
+                                            <td class="titlelabel">Статус:</td>
+                                            <td> 
+                                                <select id="ddlState">
+                                                    <option selected="true" value=""></option>
+                                                    <option value="-1">Подтверждение e-mail</option>
+                                                    <option value="0">Новая заявка</option>
+                                                    <option value="1">Активный</option>
+                                                    <option value="2">Заблокирован</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a class="menu-item" onclick="$('#systemDataPopup').openDialogData('staffEdit.html');" title="Добавить пользователя"><img src="portal/images/add-new.png"/><span>Добавить пользователя</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                    <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                        <table id="tbl" border="0" class="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th sort="Login" style="width:250px">Логин</th>
+                                                    <th sort="Name" style="width:300px">Оператор</th>
+                                                    <th style="width:200px">Роль</th>
+                                                    <th style="width:150px">Статус</th>
+                                                    <th style="width:20px"></th>
+                                                </tr>
+                                                <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                    <td>@Login</td>
+                                                    <td><a onclick="$('#systemDataPopup').openDialogData('staffEdit.html',{id:@ID})">@Name</a></td>
+                                                    <td>@Role</td>
+                                                    <td>@State</td>
+                                                    <td style="padding-left:0px;text-align:center" class="action-delete"><img src="portal/images/delete.png" title="Удалить пользователя" style="cursor:pointer" onclick="if(!confirm('Удалить @Name?')) return(false); deleteItem('@ID')"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        table.grid tbody tr td.img_field img{
+            width:16px;
+            height:auto;
+            padding-right:3px;
+        }
+        table.grid tbody tr td.img_field span{
+            position:relative;
+            bottom:3px;
+        }
+    </style>
+    <script type="text/javascript" title="grid">
+        $(function () {
+            if(!isAdmin())
+                location.href="search.html";
+
+            $("#menu-main").show();
+
+            $.loadSearchParam({
+                url: API_HOST + "/accountlist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+        });
+        var saveDialog = function () {
+            if(typeof staffEditSave=="function"){
+                staffEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        $('#tbl').updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function (data) {
+            $(this).loadGridData({
+                url: API_HOST + "/accountlist/list",
+                rows: 30,
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam())
+            });
+        }
+        var deleteItem = function (id) {
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + '/account/' + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

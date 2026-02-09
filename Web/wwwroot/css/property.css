@@ -1,0 +1,417 @@
+﻿div.property{
+    display: table-cell !important;
+    height:100%;
+    width:30px;
+    background-color:var(--backgroung-color);
+    opacity:0.85;
+    z-index:2;
+    padding:5px;
+    color: black;
+}
+div.property table {
+    padding-bottom: 5px;
+}
+div.property.open{
+    width:350px;
+} 
+div.property.open table {
+    width: 100%;
+}
+div.property.open table tr td.propertyPin a{
+    background-image: url(../images/unpin.png);
+}
+div.propertyContext{
+    display: table-row;
+}
+.propertyPin a{
+    float:right;
+    position: relative;   
+    right: 2px;
+    z-index:3;
+    background-image: url(../images/pin.png);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+}
+.propertyPin{
+    /*display: table-row;*/
+    height: 1%;
+}
+.propertyAction{
+    text-align: right;
+    /*display: table-row;*/
+    height: 1%;
+    padding-bottom: 5px;
+}
+.propertyAction a img{
+    width: 22px !important;
+    height: 22px !important;
+}
+a.action img{
+    width: 22px !important;
+    height: 22px !important;
+    position: relative;
+    top: 2px;
+    border-radius: 30%;
+    border: 1px solid transparent;
+    padding: 2px;
+}
+a.action span.link{
+    position: relative;
+    top:4px;
+}
+a.action[data-mode="1"] img{
+    background-color: var(--selectedaction-color);
+}
+div.propertyHolder{
+    display: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    position: relative;
+    top: -10px;
+}
+div.propertyHolder span{
+    margin-top: 10px;
+    color:black;
+}
+div.propertyHolder label{
+    color:black;
+    display: block;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    width: 100%;
+}
+input[type='text'].propertyName{
+    background-color: transparent;
+    font-size: 18px;
+    color: black;
+    border-bottom: 1px solid gray;
+    /*position: relative;
+    top: -13px;*/
+    /*font-weight:bold;*/
+}
+div.propertyCaption{
+    font-size:110%;
+    border-bottom:solid 1px gray;
+    padding-top:5px;
+}
+table.data tr td input[type='text']{
+    background-color: transparent;
+    color: black;
+    border-bottom: 1px solid #34495E;
+    display: inline-block;
+    width: auto;
+    font-size: 14px;
+    margin-left: 5px;
+    width: 100%;
+}
+table.data tr td input[type='text'].readonly{
+    border-bottom: 1px none transparent;
+}
+table.data tr td select{
+    background-color: transparent;
+    color: black;
+    border-bottom: 1px solid #34495E;
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 5px;
+}
+table.data.sheet tr td {
+    padding: 0px;
+}
+table.data.sheet tr td >:first-child{
+    font-size: 120%;
+    margin-bottom: 7px;
+}
+table.data.sheet tr td >:last-child{
+    margin-bottom: 15px;
+}
+table.data.sheet tr td input[type='text'], table.data.sheet tr td select{
+    margin-left: 0px;
+}
+table.data.sheet tr td input[type='radio'], table.data.sheet tr td input[type='file']{
+    cursor: pointer;
+}
+table.data.sheet tr td input[type='radio']+label{
+    position: relative;
+    font-size: 14px;
+    bottom: 1px;
+    cursor: pointer;
+}
+label.caption{
+    position: relative;
+    top: 4px;
+    font-size: 16px;
+}
+label.caption span{
+    padding-left: 4px;
+}
+table.data{
+    padding: 2px;
+    width: 100%;
+}
+table.data tr td.label{
+    font-size: 14px;    
+    width: auto;
+}
+
+ul.datalist{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+ul.datalist li{
+    padding: 4px;
+    list-style: none;
+    white-space: nowrap;
+}
+ul.datalist li input[type='checkbox']{
+    position: relative;
+    top:2px;
+}
+ul.datalist li input[type='text']{
+    background-color: transparent;
+    color: black;
+    border-bottom: 1px solid #34495E;
+    /*width: 90%;*/
+    font-size: 14px;
+    margin-left: 3px;
+}
+ul.datalist li input[type='text'].highlight {
+    font-weight: bold;
+}
+ul.datalist li a img{
+    position: relative;
+    float: right;
+    width: 16px;
+    height: 16px;
+    bottom: 20px;
+}
+ul.datalist li div.itemStatusPlace{
+    position: relative;
+    float: right;
+    bottom: 18px;
+}
+ul.datalist li select{
+    position: relative;
+    float: right;
+    bottom: 21px;
+    width: auto;
+    background-color: transparent;
+}
+textarea {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    opacity: 0.8;
+    font-size: 14px;
+    height: 50px;
+    border-radius: 2px;
+}
+.elementProperty a.action img{
+    position: relative;
+    top: 4px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+}
+a.inlineaction img{
+    width: 16px;
+    height: 16px;
+}
+/*.itemStatusPlace,*/ .itemConfigPlace{
+    display: inline;
+}
+/*.itemStatusPlace .itemstatus,*/ .itemConfigPlace .itemconfig{
+    border-radius: 50% 50%;
+    width: 10px;
+    height: 10px;
+    display:inline-block;
+    margin-right: 3px;
+    cursor: pointer;
+    border:1px solid transparent;
+}
+div.findplace {
+    border: 1px solid silver;
+    border-radius: 2px;
+}
+div.findplace input[type="text"]{
+    background-color: transparent;
+    position: relative;
+    top: -6px;
+}
+div.findplace input[type="text"]::placeholder{
+    color: gray;
+}
+
+.itemConfigPlace .mc{
+    background-color:  var(--new-color);
+}
+.itemConfigPlace .bc{
+    background-color:  var(--exist-color);
+}
+.itemConfigPlace .bo{
+    background-color:  var(--change-color);
+}
+.itemConfigPlace .op{
+    background-color:  var(--external-color);
+}
+
+.itemStatusPlace{
+    border-radius: 50% 50%;
+    width: 10px;
+    height: 10px;
+    display:inline-block;
+    margin-right: 3px;
+    cursor: pointer;
+    border:1px solid black;
+}
+.itemStatusPlace .inlinemenu{
+    position: absolute;
+    margin-top:12px;
+    margin-left: -5px;
+    background-color:white;
+    opacity:0.85 !important;
+    text-align:center;
+    padding: 0px 3px 3px 3px !important;
+    z-index: 999;
+    width: 13px;
+    border:1px solid silver;
+}
+.itemStatusPlace .inlinemenu .itemstatus{
+    border-radius: 50% 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: 3px;
+    display:block;
+    cursor: pointer;
+    border:1px solid black;
+}
+
+.itemStatusPlace[data-state='new'], .itemStatusPlace .inlinemenu .new{
+    background-color:  var(--new-color);
+}
+.itemStatusPlace[data-state='exist'], .itemStatusPlace .inlinemenu .exist{
+    background-color:  var(--exist-color);
+}
+.itemStatusPlace[data-state='change'], .itemStatusPlace .inlinemenu .change{
+    background-color:  var(--change-color);
+}
+.itemStatusPlace[data-state='external'], .itemStatusPlace .inlinemenu .external{
+    background-color:  var(--external-color);
+}
+.itemStatusPlace[data-state='replicate'], .itemStatusPlace .inlinemenu .replicate{
+    background-color:  var(--replicate-color);
+}
+.itemStatusPlace[data-state='abstract'], .itemStatusPlace .inlinemenu .abstract{
+    background-color:  var(--abstract-color);
+}
+span.minicolors-swatch{
+    position: absolute !important;
+    top:-8px !important;
+    cursor: pointer;
+}
+span.minicolors-swatch-color{
+    position: absolute;
+    top: -10px !important;
+}
+#docSchema {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    margin-left: -150px;
+    margin-top: -35px;
+    text-align: center;
+}
+
+#securityArchitect{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 400px;
+    margin-top: -200px;
+    margin-left: -400px;
+}
+#securityArchitect table{
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+#securityArchitect table tr th{
+    border: 1px solid black;
+    padding: 3px;
+    vertical-align:middle !important;
+}
+#securityArchitect table tr td{
+    border: 1px solid black;
+    padding: 3px;
+}
+#securityArchitect table tr td input[type='text']{
+    height: 100%;
+    width: 98%;
+    background-color: transparent;
+}
+
+a.entitylink{
+    position: relative;
+    top:3px;
+    left:3px;
+}
+a.entity3link{
+    position: relative;
+    left:4px;
+    bottom: 3px;
+}
+a.entity4link{
+    position: relative;
+    padding-top:4px;
+    padding-left:2px;
+}
+a.add2schema{
+    position: absolute;
+    padding-top: 24px;
+}
+a.entitylink img, a.entity2link img, a.entity3link img, a.add2schema img{
+    width: 16px;
+    height: auto;
+}
+a.entity4link img{
+    bottom: auto !important;
+}
+div.datar.open a.dataPin{
+    background-image: url(../images/pinup.png);
+}
+div.datar a.dataPin{
+    position: relative;
+    float: right;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    z-index:3;
+    background-image: url(../images/pindown.png);
+    margin-top: -4px;
+}
+
+#elementMetric tr td.label{
+    width:50%;
+}
+
+div.element-part {
+    display: flex;
+    padding: 10px 0px 10px 0px;
+}
+div.element-part div a{
+    text-decoration: none;
+    color: gray;
+    padding: 0px 5px 0px 5px;
+}
+div.element-part div a.selected{
+    color: black;
+    border-bottom: 1px solid crimson;
+}

@@ -1,0 +1,678 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Интеграционный интерфейс</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <table id="interfaceDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th>Добавить сущность</th>
+                <td onclick="$('#interfaceDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td  class="titlelabel" >Название:</td>
+                            <td>
+                                <input type="hidden" id="hfDataID" value="0" /> 
+                                <input type="text" id="tbDataName" style="width: 450px" maxlength="300" placeholder="Наименование данных" tabindex="0"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Добавить" style="width:120px" onclick="insertItem();" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#interfaceDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content" >
+                <div align="center">
+                    <table border="0" style="padding:4px 4px 4px 80px;">
+                    <tr>
+                        <td class="messageError" colspan="2" id="messageError">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:50px; padding-top:25px; width:220px;vertical-align:top">
+                            <fieldset id="_filter"><legend>Данные об интерфейсе</legend>
+                                <div><a data-id="interface" class="selected" title="Интеграционный интерфейс"><img src="images/s_interface.png"><span>Общее</span></a></div>
+                                <div><a data-id="document" title="Архитектурные документы"><img src="../../images/s_otar.png"><span>Архитектура</span></a></div>
+                            </fieldset>
+                        </td>
+                        <td id="dataPlace" style="width: 900px;">
+                            <table class="caption">
+                                <tr>
+                                    <th>
+                                        <span id="lbName"></span>
+                                    </th>
+                                </tr>
+                            </table>
+                            <table class="data" data-id="interface" style="width:auto;display:none">
+                                <tr>
+                                    <td  class="titlelabel" >Название:</td>
+                                    <td style="width: 50px;">
+                                        <span id="lbID"></span>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="text" id="tbName" style="width: 350px" placeholder="Наименование" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Тип взаимодействия:</td>
+                                    <td colspan="3">
+                                        <input type="text" id="tbInteractionType" class="textbox" style="text-align:Left;width:412px" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Поставщик:</td>
+                                    <td style="width:50px">
+                                        <input type="text" id="tbSupplyID" class="textbox" style="text-align:Left;width:50px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" id="tbSupplyName" class="textbox" style="text-align:Left;width:350px" />
+                                    </td>
+                                    <td style="width: 20px; text-align: right;">
+                                        <a class="action" id="supplylink"><img src="portal/images/link.png"/></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Функция поставщика:</td>
+                                    <td colspan="3">
+                                        <input type="hidden" id="hfSupplyFunctionID"/>
+                                        <select id="ddlSupplyFunction" style="width: 412px;"></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Сервис поставщика:</td>
+                                    <td colspan="3">
+                                        <span id="lbMethod" ></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Подключение поставщика:</td>
+                                    <td colspan="3">
+                                        <input type="text" id="tbSupplyConnection" class="textbox" style="text-align:left;width:412px" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Потребитель:</td>
+                                    <td style="width:50px">
+                                        <input type="text" id="tbConsumerID" class="textbox" style="text-align:left;width:50px" />
+                                    </td>
+                                    <td>
+                                        <input type="text" id="tbConsumerName" class="textbox" style="text-align:left;width:350px" />
+                                    </td>
+                                    <td style="width: 20px; text-align: right;">
+                                        <a class="action" id="consumerlink"><img src="portal/images/link.png"/></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Функция потребителя:</td>
+                                    <td colspan="3">
+                                        <input type="hidden" id="hfConsumerFunctionID" />
+                                        <select id="ddlConsumerFunction" style="width:412px"></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Подключение потребителя:</td>
+                                    <td colspan="3">
+                                        <input type="text" id="tbConsumerConnection" class="textbox" style="text-align:left;width:412px" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  class="titlelabel" >Интеграционная платформа:</td>
+                                    <td colspan="3">
+                                        <input type="text" id="tbIntegrationPlatform" class="textbox" style="text-align:left;width:412px" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Описание:</td>
+                                    <td colspan="3">
+                                        <textarea ID="tbDescription" class="textarea" style="text-align:left;width:412px;height: 40px;" rows="2" ></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Направление данных:</td>
+                                    <td colspan="3">
+                                        <select id="ddlDirection" style="width: 412px;">
+                                            <option value="0">Потребитель получает данные</option>
+                                            <option value="1">Поставщик получает данные</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="titlelabel">Передаваемые сущности:</td>
+                                    <td colspan="3">
+                                        <a role-type="Administrator,Operator" class="menu-item" onclick="$('#interfaceDataPopup').addItem();" title="Добавить сущность"><img src="portal/images/add-new.png"/><span>Добавить сущность</span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td colspan="3" id="dataList" style="width: 412px;" >
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="document" style="width:auto;display:none">
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Условия поиска</legend>
+                                            <table class="data" id="_searchdocument" style="width:auto">
+                                                <tr>
+                                                    <td class="titlelabel">Название:</td>
+                                                    <td>
+                                                        <input type="text" id="tbDocName" class="textbox" 
+                                                            style="text-align:Left;width:350px" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                            <tr>
+                                                <td class="buttonset">
+                                                    <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbldocument').updateGrid();"/>
+                                                    <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_searchdocument').setPlaceParam(); $('#tbldocument').updateGrid()"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                <table id="tbldocument" border="0" class="grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th sort="Name" style="width:340px">Название</th>
+                                                            <th sort="Author" style="width:200px">Автор</th>
+                                                            <th sort="State" style="width:150px">Статус</th>
+                                                            <th style="width:80px">Дата</th>
+                                                        </tr>
+                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                            <td style="width:340px"><a onclick="openDocument(@ID)">@Name</a></td>
+                                                            <td style="width:200px">@Author</td>
+                                                            <td style="width:150px">@State</td>
+                                                            <td style="width:80px">@Date</td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+        
+                            <table class="data" data-id="interface" style="padding-top:25px;display:none">
+                                <tr id="buttonSet" runat="server">
+                                    <td colspan="2" class="buttonset">
+                                        <input role-type="Administrator,Operator" type="button" id="btnSave" class="mainbutton" style="width:140px" value="Сохранить" />
+                                        <input type="button" id="btnCancel" value="Закрыть" style="width:140px" onclick="location.href='interfaceList.html';return(false);" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        fieldset div{
+            padding: 5px 0px 5px 10px
+        }
+        fieldset div:last-child{
+            padding-bottom: 10px
+        }
+        fieldset div a.selected span{
+            color: black;
+            border-bottom: 1px solid crimson;
+        }
+        fieldset div a img{
+            position:relative;
+            padding-right:5px;
+            top:4px;
+            height: auto;
+            width:16px;
+        }
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        #dataList div{
+            white-space: nowrap;
+        }
+        #dataList  span{
+            position: relative;
+            bottom: 7px;
+        }
+
+    </style>
+    <script>
+        let basepath = "interface";
+        let part = $.isnullorempty(getFromQuery(location.href, "part"),basepath);
+        let searchpath = "/interfacelist";
+        switch(part){
+            case "document":
+                searchpath = "/documentreference"
+                break;
+        }
+        $.fn.addItem=function(){
+            $(this).css({
+                visibility:"hidden"
+            });
+            $(this).showDialog();
+            
+            $(this).css({
+                left:parseInt($(this).css("left")) - parseInt($(this).parents("table.popup").css("left")),
+                top:parseInt($(this).css("top")) - parseInt($(this).parents("table.popup").css("top")),
+                visibility:"visible"
+            });
+        }
+        function insertItem(){
+            $("#dataList").appendItem({
+                id:$('#hfDataID').val(), 
+                name:$('#tbDataName').val()
+            });
+            $('#interfaceDataPopup').showDialog(false);
+        }
+        $.fn.appendItem = function(e){
+            let place = this;
+            let img =$("<img>",{
+                src:"portal/images/delete.png",
+                style:"cursor:pointer",
+                title:"Удалить сущность потока"
+            });
+            $(img).on("click", function(){
+                if(confirm("Удалить '" +e.name +"'?")){
+                    $(img).closest("div").remove();
+                }
+            });
+            $(place).append($("<div>").append(
+                $("<span>",{"data-type":"data",text:e.name,"data-id":e.id}),
+                img
+            ));
+        }
+        $.fn.getItems = function(){
+            let place = this;
+            let res=[];
+            $(place).find("tr td[data-type]").each(function(i,e){
+                res.push({
+                    id:$(e).attr("data-id"),
+                    name:$(e).text()
+                });
+            });
+            return JSON.stringify(res);
+        }
+
+        $.fn.updateFunction = function(id){
+            let place = this;
+            $(place).empty();
+            id=getInt(id);
+            if(id==0) return;
+            getdata({
+                async:false,
+                url: API_HOST + "/systemfunction/a?length=1000&sysid=" + id,
+                success:function(ui){
+                    $(place).append($('<option>',{
+                        value:0,
+                        text:''
+                    })); 
+                    $.each(ui,function(i,e){
+                        $(place).append($('<option>',{
+                            value:e.functionid,
+                            text:e.function,
+                            "data-method":e.method
+                        })); 
+                    })
+                }
+            });
+        }
+        $.fn.updateGrid = function () {
+            let id = getFromQuery(location.href, "id");
+            let searchdata = { lid: id };
+            $(this).loadGridData({
+                url: API_HOST + searchpath + "/list",
+                rows: 30,
+                pager: 10,
+                search: $.extend($("#_search" + part).getPlaceParam(), searchdata)
+            });
+        }
+        
+        var openDocument = function(id){
+            window.open("index.html?id=" + id + "&s=" + $("#tbName").val(),"blank");
+        }
+        $(function () {
+            let id = getInt(getQueryParam("id"));
+            $("#menu-main").show();
+            $("#menu-back").show();
+            $("#menu-back").attr({
+                href:"interfaceList.html"
+            });
+
+            if(id!=0 ){
+                $.ajax({
+                    url: API_HOST + '/interface',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $("#lbID").text(formatInt(id));
+                        $("#lbName").text(data.name);
+                        $("title").text(data.name);
+                        $("#tbName").val(data.name);
+
+                        if(part!=basepath) return;
+
+                        $("#tbConsumerID").val(data.consumerid);
+                        $("#tbConsumerName").val(data.consumername);
+                        $("#tbSupplyID").val(data.supplyid);
+                        $("#tbSupplyName").val(data.supplyname);
+
+                        $("#hfSupplyFunctionID").val(data.supplyfunctionid);
+                        $("#hfConsumerFunctionID").val(data.consumerfunctionid);
+                        $("#lbMethod").text(data.consumermethod);
+
+                        $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+                        $('#ddlSupplyFunction').val($('#hfSupplyFunctionID').val());
+
+                        $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+                        $('#ddlConsumerFunction').val($('#hfConsumerFunctionID').val());
+
+                        $("#tbConsumerConnection").val(data.consumerint);
+                        $("#tbSupplyConnection").val(data.supplyint);
+                        $("#tbIntegrationPlatform").val(data.interactionplatform);
+                        $("#tbInteractionType").val(data.interaction);
+                        $("#tbDescription").val(data.description);
+                        $("#ddlDirection").val(data.issupplyreсeive?1:0);
+
+                        $("#dataList").empty();
+                        $.each(data.data,function(i,e){
+                            $("#dataList").appendItem(e);
+                        });
+
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                  },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+
+
+            let loc = location.href.replace(location.search, '').replace(location.hash, '') + "?id=" + id;
+            $("#_filter div a").each(function (i, e) {
+                $(e).attr({
+                    href: loc + "&part=" + $(e).attr("data-id")
+                });
+                $(e).removeClass("selected");
+            });
+            let p = $("#_filter div a[data-id='" + part + "']");
+            if (!p || p.length == 0) {
+                part = "data";
+                p = $("#_filter div a[data-id='" + part + "']");
+            }
+            $(p).attr({
+                class: "selected"
+            });
+            $("#dataPlace").find("table[data-id]:not([data-id='" + part + "'])").hide();
+            $("#dataPlace").find("table[data-id='" + part + "']").show();
+
+            let grid = $('#tbl' + part);
+            if(grid.length>0){
+                $.loadSearchParam({
+                    url: API_HOST + searchpath,
+                    success:function(data){
+                        $("#_search" + part).setPlaceParam(data);
+                        $(grid).updateGrid(data);
+                    },
+                    error:function(message){
+                        alert(message.responseText);
+                    }
+                });
+            }
+                
+            $('#tbDataName').autocomplete({
+                source: API_HOST + "/data/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#hfDataID').val(ui.item.id);
+                    $('#tbDataName').val(ui.item.name);
+                }
+            });
+            $('#tbDataName').keyup(function (event) {
+                if(event.keyCode!=13)
+                    $('#hfDataID').val('');
+            });
+
+            $('#tbSupplyName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbSupplyID').val(ui.item.id);
+                    $('#tbSupplyName').val(ui.item.name);
+                    $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+                }
+            });
+            $('#tbSupplyID').on("change",function(){
+                $('#tbSupplyName').val('');
+                getdata({
+                    acync: false,
+                    url: API_HOST + "/system?id=" + getInt($('#tbSupplyID').val()),
+                    success:function(data){
+                        $('#tbSupplyName').val(data.name);
+                    }
+                });
+                $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+            });
+            $("#supplylink").click(function(){
+                if($('#tbSupplyID').val()!="")
+                    window.open("system.html?id=" + $('#tbSupplyID').val(),'_blank');
+            })
+            $('#ddlSupplyFunction').on("change",function(){
+                var optionSelected = $(this).find("option:selected");
+                $("#lbMethod").text($(optionSelected).attr("data-method"));
+                $('#hfSupplyFunctionID').val($('#ddlSupplyFunction').val());
+            });
+            $('#ddlConsumerFunction').on("change",function(){
+                $('#hfConsumerFunctionID').val($('#ddlConsumerFunction').val());
+            });
+
+
+            $('#tbConsumerName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbConsumerID').val(ui.item.id);
+                    $('#tbConsumerName').val(ui.item.name);
+                    $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+                }
+            });
+            $('#tbConsumerID').on("change",function(){
+                $('#tbConsumerName').val('');
+                getdata({
+                    acync:false,
+                    url:API_HOST + "/system?id=" + getInt($('#tbConsumerID').val()),
+                    success:function(data){
+                        $('#tbConsumerName').val(data.name);
+                    }
+                });
+                $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+            });
+            $("#consumerlink").click(function(){
+                if($('#tbConsumerID').val()!="")
+                    window.open("system.html?id=" + $('#tbConsumerID').val(),'_blank');
+            })
+            $('#tbSupplyConnection, #tbConsumerConnection').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог интеграционных интерфейсов",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbIntegrationPlatform').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог интеграционных платформ",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbInteractionType').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог типов взаимодействий",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbSupplyConnection, #tbConsumerConnection, #tbIntegrationPlatform, #tbInteractionType').click(function (event) {
+                $(this).autocomplete("search");
+            });
+
+            $("#btnSave").click(function(){
+                $("#messageError").text("");
+                if($("#tbName").val()==""){
+                    $("#messageError").text("Укажите наименование интерфейса");
+                    return;
+                }
+                let data = [];
+                $("#dataList div span[data-type='data']").each(function(i,e){
+                    data.push({
+                        id:$(e).attr("data-id"),
+                        name: $(e).text()
+                    });
+                });
+                $.ajax({
+                    url: API_HOST + '/interface',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:getInt(getQueryParam("id")),
+                        name: $("#tbName").val(),
+                        description: $("#tbDescription").val(),
+                        consumerint: $("#tbConsumerConnection").val(),
+                        supplyint: $("#tbSupplyConnection").val(),
+                        interactionplatform:$("#tbIntegrationPlatform").val(),
+                        interaction:$("#tbInteractionType").val(),
+                        consumerid:$("#tbConsumerID").val(),
+                        supplyid:$("#tbSupplyID").val(),
+                        supplyfunctionid:$("#hfSupplyFunctionID").val(),
+                        consumerfunctionid:$("#hfConsumerFunctionID").val(),
+                        issupplyreсeive: getInt($("#ddlDirection").val())==1?true:false,
+                        data:data
+                    }),
+                    success: function (data) {
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        $("#messageError").text("Ошибка сохранения");
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+

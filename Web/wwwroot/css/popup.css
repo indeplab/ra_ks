@@ -1,0 +1,124 @@
+﻿table.popup {
+    display: none;
+    background-color: White;
+    position: absolute;
+    border: solid 1px #34495E;
+    z-index: 100;
+    padding: 5px 0px 5px 0px;
+}
+table.popup thead tr th {
+    text-align: left;
+    font-size: 18px !important;
+    font-weight: normal;
+    color: #34495E;
+    padding: 3px 3px 5px 15px;
+    cursor: move;
+}
+table.popup thead tr td.messageError {
+    color: crimson;
+    padding-left:10px;
+    font-size: 100%;
+}
+
+table.popup thead tr:first-child td {
+    background-position-x: right;
+    background-image: url('../images/close.png');
+    background-size:18px;
+    background-repeat: no-repeat;
+    background-position:top;
+    background-position-y: 2px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    padding-left:10px;
+}
+table.popup tbody tr td.popuptoolbox{
+    padding-left: 20px;
+}
+table.popup tbody tr td.popuptoolbox a img{
+    width: 20px;
+    height:20px;
+}
+table.popup tbody tr td {
+    padding:5px;
+}
+.popupinputholder {
+    border: solid 1px silver;
+    padding: 5px 5px 5px 5px;
+    width: auto;
+    border-radius: 2px;
+}
+.popupdescription{
+    padding: 10px;
+    color: orange;
+}
+img.deletelist{
+    position: relative;
+    top:5px;
+    width: 20px;
+    height: auto;
+}
+a.openlist{
+    color: darkblue;
+}
+ul.checkboxlist li{
+    padding: 4px 0px 4px 0px;
+}
+ul.checkboxlist li input[type='checkbox']+label{
+    position: relative;
+    bottom: 1px;
+}
+table.checkboxlist tbody tr:nth-child(odd){
+    background-color: whitesmoke;
+}
+ul.folderlist li a img, ul.folderlist li div img{
+    width: 16px;
+    height: auto;
+    position: relative;
+    top: 3px;
+}
+ul.folderlist li a span, ul.folderlist li div span{
+    margin-left: 5px;
+}
+ul.folderlist li div{
+    opacity: 0.5;
+}
+#filelistpath a{
+    padding:0px 2px 0px 2px;
+}
+#filelistpath a:hover{
+    color:darkblue;
+}
+div.item_fn_name{
+    color: black;
+}
+div.item_fn_service{
+    color: darkgray;
+    padding-left:5px;
+}
+
+div.doctype{
+    padding: 5px 15px 7px 15px;
+    text-align: justify;
+    font-size: 90%;
+    width: fit-content;
+}
+div.doctype:after{
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    vertical-align: top;
+    content: '';
+}
+div.doctype div{
+    display: inline-block;
+    padding-right: 20px;
+}
+div.doctype div a{
+    text-decoration: none;
+    color: gray;
+}
+div.doctype div a.selected{
+    color: #3d6b7e;
+    border-bottom: 1px solid crimson;
+}

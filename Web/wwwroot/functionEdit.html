@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <title>Функция</title>
+    </head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Раздел:</td>
+                <td>
+                    <input type="hidden" id="tbParentID"/>
+                    <span id="tbParentName">/</span>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Название:</td>
+                <td>
+                    <input type="text" id="tbName"  style="width:450px" maxlength="300" placeholder="Наименование функции" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td>
+                    <textarea  id="tbDescription" class="textarea" 
+                        style="text-align:Left;width:450px" rows="8"></textarea>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var parentid = getInt(param?.parentid);
+            $(function () {
+                if(id!=0){
+                    $.ajax({
+                        url: API_HOST + '/function',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbName").val(data.name);
+                            $("#form1").closest("table.popup").setCaption(data.name);
+                            $("#tbParentID").val(data.parentid);
+                            $("#tbParentName").text("/" + data.parent);
+                            $("#tbDescription").val(data.description);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else{
+                    if(parentid!=0){
+                        $("#tbParentID").val(parentid);
+                        $.ajax({
+                            url: API_HOST + '/function',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: parentid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#tbParentName").text("/" + data.name);
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                }
+                
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/function/a?length=20",
+                    minLength: 2,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbName').val(ui.item.name);
+                        $('#tbParentName').text("/" + ui.item.parent);
+                        $('#tbParentID').val(ui.item.parentid);
+                        $('#tbDescription').val(ui.item.description);
+                    }
+                });
+            });
+            var functionEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование функции");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/function',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        parentid:getInt($("#tbParentID").val()),
+                        description: $("#tbDescription").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

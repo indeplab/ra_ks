@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Каталог данных</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="94%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td class="titlelabel">Наименование:</td>
+                                            <td colspan="2">
+                                                <input type="text" id="tbName" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Система:</td>
+                                            <td>
+                                                <input type="text" id="tbSystemID" class="textbox" 
+                                                    style="text-align:Left;width:50px" />
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbSystemName" class="textbox" 
+                                                    style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Интерфейс:</td>
+                                            <td>
+                                                <input type="text" id="tbInterfaceName" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" onclick="$('#systemDataPopup').openDialogData('dataEdit.html');" title="Добавить данные"><img src="portal/images/add-new.png"/><span>Добавить данные</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                            <input type="button" id="btnToExcel" class="button" value="Экспорт в Excel" style="width:120px" /> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                    <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                        <table id="tbl" border="0" class="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th sort="ID" style="width:70px">Код</th>
+                                                    <th sort="data_name" style="width:250px">Наименование</th>
+                                                    <th sort="type_name" style="width:250px">Используется в</th>
+                                                    <th sort="flowtype" style="width:120px">Тип</th>
+                                                    <th style="width:20px"></th>
+                                                </tr>
+                                                <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                    <td style="width:70px">@ID</td>
+                                                    <td style="width:350px"><a href="data.html?id=@ID"">@data_name</a></td>
+                                                    <td style="width:350px" class="img_field"><a onclick="$('#systemDataPopup').openItemDialog(@type_id1,'@type_code')">@img_value<span>@type_name</span></a></td>
+                                                    <td style="width:120px">@flow_type</td>
+                                                    <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить данные" onclick="deleteItem(@ID,'@Name',@type_id2,'@type_code','@type_name')"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        table.grid tbody tr td.img_field img{
+            width:16px;
+            height:auto;
+            padding-right:3px;
+        }
+        table.grid tbody tr td.img_field span{
+            position:relative;
+            bottom:3px;
+        }
+    </style>
+    <script type="text/javascript" title="grid">
+        let typeCode = "data";
+        $(function () {
+
+            $("#menu-main").show();
+
+            $.loadSearchParam({
+                url: API_HOST + "/datalist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+
+            $('#tbSystemName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbSystemName').val(ui.item.name);
+                }
+            });
+
+            $("#btnToExcel").click(function(){
+                $.ajax({
+                    url: API_HOST + '/datalist/excel',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'html',
+                    data: JSON.stringify({
+                        rows: 30,
+                        pager: 10,
+                        search: $("#_search").getPlaceParam()
+                    }),
+                    success: function (content) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                            var blob = new Blob([content], {
+                                type: "MS Excel"
+                            });
+                        saveAs(blob, "Каталог сущностей" + ".xls");
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+        });
+        var saveDialog = function () {
+            if(typeof dataEditSave=="function"){
+                dataEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        $('#tbl').updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function (data) {
+            $(this).loadGridData({
+                url: API_HOST + "/datalist/list",
+                rows: 30,
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam())
+            });
+        }
+        $.fn.openItemDialog = function (type_id, type_code) {
+            let data = { id: type_id };
+            switch(type_code){
+                case "supply":
+                    type_code="interface";
+                    break;
+                case "consumer":
+                    type_code="interface";
+                    break;
+            }
+            $(this).openDialogData(type_code + 'Edit.html', { id: type_id });
+        }
+        var deleteItem = function (id, name, type_id, type_code, type_name) {
+            let caption = "Удалить '" + name + "'?";
+            let pref="";
+            switch (type_code) {
+                case "systemData":
+                    pref="/system";
+                    caption = "Удалить данные '" + name + "' из системы '" + type_name + "'?";
+                    break;
+                case "interface":
+                    pref="/interface";
+                    caption = "Удалить данные '" + name + "' из интерфейса '" + type_name + "'?";
+                    break;
+            }
+            if (!confirm(caption)) return (false); 
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + "/data" + pref + "/" + (type_code !=typeCode?type_id:id),
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

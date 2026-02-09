@@ -1,0 +1,494 @@
+<html>
+    <head>
+        <title>Интеграционный интерфейс</title>
+    </head>
+<body>
+    <form id="form1" >
+        <table id="interfaceDataPopup" class="popup" >
+            <thead>
+                <tr>
+                    <th>Добавить сущность</th>
+                    <td onclick="$('#interfaceDataPopup').showDialog(false);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="messageError"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td  class="titlelabel" >Название:</td>
+                                <td>
+                                    <input type="hidden" id="hfDataID" value="0" /> 
+                                    <input type="text" id="tbDataName" style="width: 450px" maxlength="300" placeholder="Наименование данных" tabindex="0"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="buttonset">
+                        <input type="button" class="mainbutton" value="Добавить" style="width:120px" onclick="insertItem();" />
+                        <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#interfaceDataPopup').showDialog(false);" />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Название:</td>
+                <td colspan="3">
+                    <input type="text" id="tbName" style="width: 100%" maxlength="300" placeholder="Наименование интерфейса" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Тип взаимодействия:</td>
+                <td colspan="3">
+                    <input type="text" id="tbInteractionType" class="textbox" style="text-align:Left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Поставщик:</td>
+                <td style="width:50px">
+                    <input type="text" id="tbSupplyID" class="textbox" style="text-align:Left;width:50px" />
+                </td>
+                <td style="width:450px">
+                    <input type="text" id="tbSupplyName" class="textbox" style="text-align:Left;width:100%" />
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="supplylink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Функция поставщика:</td>
+                <td colspan="3">
+                    <input type="hidden" id="hfSupplyFunctionID"/>
+                    <select id="ddlSupplyFunction" style="width:100%"></select>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Сервис поставщика:</td>
+                <td colspan="3">
+                    <span id="lbMethod" ></span>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Подключение поставщика:</td>
+                <td colspan="3">
+                    <input type="text" id="tbSupplyConnection" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Потребитель:</td>
+                <td style="width:50px">
+                    <input type="text" id="tbConsumerID" class="textbox" style="text-align:left;width:50px" />
+                </td>
+                <td style="width:450px">
+                    <input type="text" id="tbConsumerName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="consumerlink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Функция потребителя:</td>
+                <td colspan="3">
+                    <input type="hidden" id="hfConsumerFunctionID" />
+                    <select id="ddlConsumerFunction" style="width:100%"></select>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Подключение потребителя:</td>
+                <td colspan="3">
+                    <input type="text" id="tbConsumerConnection" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Интеграционная платформа:</td>
+                <td colspan="3">
+                    <input type="text" id="tbIntegrationPlatform" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td colspan="3">
+                    <textarea ID="tbDescription" class="textarea" style="text-align:left;width:100%;height: 40px;" rows="2" ></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Передаваемые сущности:</td>
+                <td colspan="3">
+                    <a role-type="Administrator,Operator" class="menu-item" onclick="$('#interfaceDataPopup').addItem();" title="Добавить сущность"><img src="portal/images/add-new.png"/><span>Добавить сущность</span></a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td colspan="3" id="dataList">
+                </td>
+            </tr>
+        </table>
+        <style>
+            #dataList div{
+                white-space: nowrap;
+            }
+            #dataList  span{
+                position: relative;
+                bottom: 7px;
+            }
+            img.link{
+                cursor:pointer;
+                width:18px;
+                height:18px;
+                padding-left:2px;
+                position:relative;
+                bottom: 2px;
+            }
+        </style>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var cid = getInt(param?.cid);
+            var sid = getInt(param?.sid);
+            $.fn.addItem=function(){
+                $(this).css({
+                    visibility:"hidden"
+                });
+                $(this).showDialog();
+                
+                $(this).css({
+                    left:parseInt($(this).css("left")) - parseInt($(this).parents("table.popup").css("left")),
+                    top:parseInt($(this).css("top")) - parseInt($(this).parents("table.popup").css("top")),
+                    visibility:"visible"
+                });
+            }
+            function insertItem(){
+                 $("#dataList").appendItem({
+                    id:$('#hfDataID').val(), 
+                    name:$('#tbDataName').val()
+                });
+                $('#interfaceDataPopup').showDialog(false);
+            }
+            $.fn.appendItem = function(e){
+                let place = this;
+                let img =$("<img>",{
+                    src:"portal/images/delete.png",
+                    style:"cursor:pointer;height:16px;width:16px;position:relative;bottom:3px",
+                    title:"Удалить сущность потока"
+                });
+                let img2 =$("<img>",{
+                    src:"portal/images/link.png",
+                    class:"link",
+                    style:"cursor:pointer;height:14px;width:14px;position:relative;bottom:4px",
+                    title:"Открыть карточку"
+                });
+                $(img).on("click", function(){
+                    if(confirm("Удалить '" +e.name +"'?")){
+                        $(img).closest("div").remove();
+                    }
+                });
+                $(img2).on("click", function(){
+                    window.open("data.html?id=" + e.id,'_blank');
+                });
+                $(place).append($("<div>").append(
+                    $("<span>",{"data-type":"data",text:e.name,"data-id":e.id, style:"padding-right: 3px"}),
+                    img2,
+                    img
+                ));
+            }
+            $.fn.getItems = function(){
+                let place = this;
+                let res=[];
+                $(place).find("tr td[data-type]").each(function(i,e){
+                    res.push({
+                        id:$(e).attr("data-id"),
+                        name:$(e).text()
+                    });
+                });
+                return JSON.stringify(res);
+            }
+
+            $.fn.updateFunction = function(id){
+                let place = this;
+                $(place).empty();
+                id=getInt(id);
+                if(id==0) return;
+                getdata({
+                    async:false,
+                    url: API_HOST + "/systemfunction/a?length=1000&sysid=" + id,
+                    success:function(ui){
+                        $(place).append($('<option>',{
+                            value:0,
+                            text:''
+                        })); 
+                        $.each(ui,function(i,e){
+                            $(place).append($('<option>',{
+                                value:e.functionid,
+                                text:e.function,
+                                "data-method":e.method
+                            })); 
+                        })
+                    }
+                });
+            }
+            $(function () {
+                if(id!=0){
+                    $.ajax({
+                        url: API_HOST + '/interface',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbName").val(data.name);
+                            $("#tbConsumerID").val(data.consumerid);
+                            $("#tbConsumerName").val(data.consumername);
+                            $("#tbSupplyID").val(data.supplyid);
+                            $("#tbSupplyName").val(data.supplyname);
+
+                            $("#hfSupplyFunctionID").val(data.supplyfunctionid);
+                            $("#hfConsumerFunctionID").val(data.consumerfunctionid);
+                            $("#lbMethod").text(data.consumermethod);
+
+                            $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+                            $('#ddlSupplyFunction').val($('#hfSupplyFunctionID').val());
+
+                            $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+                            $('#ddlConsumerFunction').val($('#hfConsumerFunctionID').val());
+
+                            $("#tbConsumerConnection").val(data.consumerint);
+                            $("#tbSupplyConnection").val(data.supplyint);
+                            $("#tbIntegrationPlatform").val(data.interactionplatform);
+                            $("#tbInteractionType").val(data.interaction);
+                            $("#tbDescription").val(data.description);
+
+                            $("#dataList").empty();
+                            $.each(data.data,function(i,e){
+                                $("#dataList").appendItem(e);
+                            });
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else{ 
+                    if (sid!=0){
+                        $.ajax({
+                            async:false,
+                            url: API_HOST + '/system',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: sid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#tbSupplyID").val(data.id);
+                                $("#tbSupplyName").val(data.name);
+                                $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                    if (cid!=0){
+                        $.ajax({
+                            async:false,
+                            url: API_HOST + '/system',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: cid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#tbConsumerID").val(data.id);
+                                $("#tbConsumerName").val(data.name);
+                                $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                }
+            });
+            $('#tbDataName').autocomplete({
+                source: API_HOST + "/data/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#hfDataID').val(ui.item.id);
+                    $('#tbDataName').val(ui.item.name);
+                }
+            });
+            $('#tbDataName').keyup(function (event) {
+                if(event.keyCode!=13)
+                    $('#hfDataID').val('');
+            });
+
+            $('#tbSupplyName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbSupplyID').val(ui.item.id);
+                    $('#tbSupplyName').val(ui.item.name);
+                    $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+                }
+            });
+            $('#tbSupplyID').on("change",function(){
+                $('#tbSupplyName').val('');
+                getdata({
+                    acync: false,
+                    url: API_HOST + "/system?id=" + getInt($('#tbSupplyID').val()),
+                    success:function(data){
+                        $('#tbSupplyName').val(data.name);
+                    }
+                });
+                $('#ddlSupplyFunction').updateFunction($('#tbSupplyID').val());
+            });
+            $('#ddlSupplyFunction').on("change",function(){
+                var optionSelected = $(this).find("option:selected");
+                $("#lbMethod").text($(optionSelected).attr("data-method"));
+                $('#hfSupplyFunctionID').val($('#ddlSupplyFunction').val());
+            });
+            $('#ddlConsumerFunction').on("change",function(){
+                $('#hfConsumerFunctionID').val($('#ddlConsumerFunction').val());
+            });
+
+
+            $('#tbConsumerName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 2,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbConsumerID').val(ui.item.id);
+                    $('#tbConsumerName').val(ui.item.name);
+                    $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+                }
+            });
+            $('#tbConsumerID').on("change",function(){
+                $('#tbConsumerName').val('');
+                getdata({
+                    acync:false,
+                    url:API_HOST + "/system?id=" + getInt($('#tbConsumerID').val()),
+                    success:function(data){
+                        $('#tbConsumerName').val(data.name);
+                    }
+                });
+                $('#ddlConsumerFunction').updateFunction($('#tbConsumerID').val());
+            });
+            $('#tbSupplyConnection, #tbConsumerConnection').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог интеграционных интерфейсов",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbIntegrationPlatform').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог интеграционных платформ",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbInteractionType').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value&metric=Каталог типов взаимодействий",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbSupplyConnection, #tbConsumerConnection, #tbIntegrationPlatform, #tbInteractionType').click(function (event) {
+                $(this).autocomplete("search");
+            });
+
+            $("#supplylink").click(function(){
+                if($('#tbSupplyID').val()!="")
+                    window.open("system.html?id=" + $('#tbSupplyID').val(),'_blank');
+            })
+            $("#consumerlink").click(function(){
+                if($('#tbConsumerID').val()!="")
+                    window.open("system.html?id=" + $('#tbConsumerID').val(),'_blank');
+            })
+
+            var interfaceEditSave = function(options){
+                let error = [];
+                if($("#tbName").val()=="")
+                    error.push("Укажите наименование интерфейса");
+                if(getInt($("#tbConsumerID").val())==0)
+                    error.push("Укажите потребителя интерфейса");
+                if(getInt($("#tbSupplyID").val())==0)
+                    error.push("Укажите поставщика интерфейса");
+                if(error.length>0){
+                    if(options && typeof options.error == "function") options.error(error);
+                    return;
+                }
+                let data = [];
+                $("#dataList div span[data-type='data']").each(function(i,e){
+                    data.push({
+                        id:$(e).attr("data-id"),
+                        name: $(e).text()
+                    });
+                });
+                $.ajax({
+                    url: API_HOST + '/interface',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        description: $("#tbDescription").val(),
+                        supplyid:getInt($("#tbSupplyID").val()),
+                        consumerid:getInt($("#tbConsumerID").val()),
+                        supplyfunctionid:getInt($("#hfSupplyFunctionID").val()),
+                        consumerfunctionid:getInt($("#hfConsumerFunctionID").val()),
+                        consumermethod:$("#lbMethod").text(),
+                        consumerint: $("#tbConsumerConnection").val(),
+                        supplyint: $("#tbSupplyConnection").val(),
+                        interactionplatform:$("#tbIntegrationPlatform").val(),
+                        interaction:$("#tbInteractionType").val(),
+                        data:data
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

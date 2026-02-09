@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Зоны сетевого размещения</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/jquery.minicolors.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.minicolors.css" />
+
+    <script src="lib/FileSaver.js"></script>
+    <script src="portal/js/color.js"></script>
+
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content" >
+                <div align="center">
+                    <table border="0" style="padding:4px 4px 4px 80px;">
+                        <tr>
+                            <td class="messageError" colspan="2" id="messageError">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-right:50px; padding-top:25px; width:220px;vertical-align:top">
+                                <fieldset id="_filter"><legend>Сетевые размещения</legend>
+                                    <div><a data-id="1" title="Дата-центры"><img src="../../images/s_datacenter.png"><span>Дата-центры</span></a></div>
+                                    <div><a data-id="2" class="selected" title="Сетевые сегменты"><img src="../../images/s_netzone.png"><span>Сетевые сегменты</span></a></div>
+                                    <!--<div><a data-id="3" class="selected" title="Кластера"><img src="../../images/s_cluster.png"><span>Кластера</span></a></div>-->
+                                </fieldset>
+                            </td>
+                            <td id="dataPlace" style="width: 900px;">
+                                <table class="data">
+                                    <tr>
+                                        <td>
+                                            <fieldset><legend>Условия поиска</legend>
+                                                <table class="data" id="_search" style="width:auto">
+                                                    <tr>
+                                                        <td class="titlelabel">Название:</td>
+                                                        <td>
+                                                            <input type="text" id="tbName" class="textbox" style="text-align:Left;width:250px" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                                <tr>
+                                                    <td style="padding-left:15px">
+                                                        <a role-type="Administrator,Operator" class="menu-item" id="mnuAdd" title="Добавить"><img src="portal/images/add-new.png"/><span>Добавить</span></a>
+                                                    </td>
+                                                    <td class="buttonset">
+                                                        <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                                        <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                                        <input type="button" id="btnToExcel" class="button" value="Экспорт в Excel" style="width: 120px" /> 
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                                <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                    <table id="tbl" border="0" class="grid">
+                                                        <thead>
+                                                            <tr>
+                                                                <th sort="Name" style="width:250px">Название</th>
+                                                                <th style="width:60px">Цвет</th>
+                                                                <th style="width:350px">Описание</th>
+                                                                <th style="width:20px"></th>
+                                                            </tr>
+                                                            <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                                <td style="width:250px"><a onclick="$('#systemDataPopup').openDialogData('netzoneEdit.html',{id:@ID})">@Name</a></td>
+                                                                <td style="width:40px;text-align: center;"><div data-bgcolor style="background-color: @color;width: 80%;height:1px;"></div></td>
+                                                                <td style="width:350px" class="wrapper" title="@Description">@Description</td>
+                                                                <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить" onclick="if(!confirm('Удалить \'@Name\'?')) return(false); deleteItem(@ID)"/></td>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        fieldset div{
+            padding: 5px 0px 5px 10px
+        }
+        fieldset div:last-child{
+            padding-bottom: 10px
+        }
+        fieldset div a.selected span{
+            color: black;
+            border-bottom: 1px solid crimson;
+        }
+        fieldset div a img{
+            position:relative;
+            padding-right:5px;
+            top:4px;
+            height: auto;
+            width:16px;
+        }
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:top;
+        }
+
+    </style>
+    <script>
+        let basepath = "2";
+        let part = $.isnullorempty(getFromQuery(location.href, "part"),basepath);
+
+        var saveDialog = function (data) {
+            if(typeof netzoneEditSave=="function"){
+                netzoneEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').showDialog(false);
+                        $('#tbl').updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#systemDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function () {
+            let grid = this;
+            $(grid).loadGridData({
+                url: API_HOST + "/netzonelist/list",
+                rows: 30,
+                pager: 10,
+                search: $.extend($("#_search").getPlaceParam(), {typeid:part}),
+                success:function(){
+                    /*$(grid).find("tbody").find("div[data-bgcolor]").each(function(i,e){
+                        try{
+                            let color = RGBvalues.fontcolor($(e).css("background-color"));
+                            $(e).css({
+                                color: color
+                            });
+                        }
+                        catch{}
+                    })*/
+                }
+            });
+        }
+        var toExcel = function(){
+            let name="";
+            switch(part){
+                case "1":
+                    name = "дата-центров";
+                    break;
+                case "2":
+                    name = "сетевых сегментов";
+                    break;
+            }
+            $.ajax({
+                url: API_HOST + "/netzonelist/excel",
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                data: JSON.stringify({
+                    rows: 30,
+                    pager: 10,
+                    search: $.extend($("#_search").getPlaceParam(), {typeid:part})
+                }),
+                success: function (content) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                        var blob = new Blob([content], {
+                            type: "MS Excel"
+                        });
+                    saveAs(blob, "Каталог" + (name!=""?" " +name:"") + ".xls");
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        var deleteItem = function (id) {
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + "/netzone/" + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+
+        $(function () {
+            $("#menu-main").show();
+
+            $("#mnuAdd").click(function() {$('#systemDataPopup').openDialogData('netzoneEdit.html',{typeid:part});});
+            let name="Добавить";
+            switch(part){
+                case "1":
+                    name = "Добавить дата-центр";
+                    break;
+                case "2":
+                    name:"Добавить сетевой сегмент";
+                    break;
+            }
+            $("#mnuAdd").attr({
+                title:name
+            });
+            $("#mnuAdd").find("span").text(name);
+
+            let loc = location.href.replace(location.search, '').replace(location.hash, '');
+            $("#_filter div a").each(function (i, e) {
+                $(e).attr({
+                    href: loc + "?part=" + $(e).attr("data-id")
+                });
+                $(e).removeClass("selected");
+            });
+            let p = $("#_filter div a[data-id='" + part + "']");
+            if (!p || p.length == 0) {
+                part = basepath;
+                p = $("#_filter div a[data-id='" + part + "']");
+            }
+            $(p).attr({
+                class: "selected"
+            });
+
+            $.loadSearchParam({
+                url: API_HOST + "/netzonelist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+                
+            $('#tbName').autocomplete({
+                source: API_HOST + "/netzone/a?length=20&typeid=" + part,
+                //source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbName').val(ui.item.name);
+                }
+            });
+
+            $("#btnToExcel").click(function(){
+                toExcel();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+

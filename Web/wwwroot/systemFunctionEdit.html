@@ -1,0 +1,202 @@
+<html>
+<head>
+    <title>Функция</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data" >
+            <tr>
+                <td  class="titlelabel" >Название:</td>
+                <td colspan="3" >
+                    <input type="hidden" id="hfFunctionID" value="0" /> 
+                    <input type="text" id="tbName" style="width: 100%" maxlength="300" placeholder="Наименование функции" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Система:</td>
+                <td style="width:50px;">
+                    <input type="text" id="tbSystemID" class="textbox" style="text-align:Left;width:95%" />
+                </td>
+                <td style="width: 450px;">
+                    <input type="text" id="tbSystemName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="systemlink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Сервис:</td>
+                <td colspan="3">
+                    <input type="text" id="tbMethod" style="width: 100%" maxlength="300" placeholder="Метод функции" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td colspan="3">
+                    <textarea id="tbDescription" class="textarea" style="text-align:Left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var sysid = getInt(param?.sysid);
+            var fnid = getInt(param?.fid);
+            $(function () {
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/systemfunction',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            id: id
+                        }),
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#hfFunctionID").val(data.functionid);
+                            $("#form1").closest("table.popup").setCaption(data.function);
+                            $("#tbName").val(data.function);
+                            $("#tbMethod").val(data.method);
+                            $("#tbDescription").val(data.functiondescription);
+                            $("#tbSystemID").val(data.systemid);
+                            $("#tbSystemName").val(data.system);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else {
+                    if (sysid!=0){
+                        $.ajax({
+                            async:false,
+                            url: API_HOST + '/system',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: sysid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#tbSystemID").val(data.id);
+                                $("#tbSystemName").val(data.name);
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                
+                    if (fnid!=0){
+                        $.ajax({
+                            async:false,
+                            url: API_HOST + '/function',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: fnid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#hfFunctionID").val(data.id);
+                                $("#tbName").val(data.name);
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                }
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/function/a?length=20",
+                    minLength: 2,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#hfFunctionID').val(ui.item.id);
+                        $('#tbName').val(ui.item.name);
+                        $('#tbDescription').val(ui.item.description);
+                    }
+                });
+                $('#tbSystemName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbSystemID').val(ui.item.id);
+                        $('#tbSystemName').val(ui.item.name);
+                    }
+                });
+                $('#tbSystemID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbSystemID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbSystemName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+                $("#systemlink").click(function(){
+                    if($('#tbSystemID').val()!="")
+                        window.open("system.html?id=" + $('#tbSystemID').val(),'_blank');
+                })
+            });
+            var systemFunctionEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование функции");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/systemfunction',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        functionid:$("#hfFunctionID").val(),
+                        "function": $("#tbName").val(),
+                        method: $("#tbMethod").val(),
+                        functiondescription: $("#tbDescription").val(),
+                        systemid: $("#tbSystemID").val(),
+                        system:$("#tbSystemName").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

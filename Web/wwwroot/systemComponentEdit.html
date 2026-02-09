@@ -1,0 +1,143 @@
+<html>
+<head>
+    <title>Компонента системы</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td class="titlelabel">Компонента:</td>
+                <td style="width:50px">
+                    <input type="text" id="tbComponentID" class="textbox" style="text-align:left;width:95%" />
+                </td>
+                <td style="width:450px">
+                    <input type="text" id="tbComponentName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Система:</td>
+                <td style="width:50px">
+                    <input type="text" id="tbSystemID" class="textbox" style="text-align:left;width:95%" />
+                </td>
+                <td style="width:450px">
+                    <input type="text" id="tbSystemName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var sysid = getInt(param?.sysid);
+            $(function () {
+                if (sysid!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: sysid
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbSystemID").val(data.id);
+                            $("#tbSystemName").val(data.name);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                
+                $('#tbSystemName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbSystemID').val(ui.item.id);
+                        $('#tbSystemName').val(ui.item.name);
+                    }
+                });
+                $('#tbSystemID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbSystemID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbSystemName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+                $('#tbComponentName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbComponentID').val(ui.item.id);
+                        $('#tbComponentName').val(ui.item.name);
+                    }
+                });
+                $('#tbComponentID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbComponentID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbComponentName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+
+            });
+            var systemComponentEditSave = function(options){
+                if($("#tbComponentID").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите компонент");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/systemcomponent',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:$("#tbComponentID").val(),
+                        parentid: $("#tbSystemID").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

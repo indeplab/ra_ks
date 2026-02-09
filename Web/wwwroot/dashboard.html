@@ -1,0 +1,932 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Карта возможностей</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+    <script src="lib/chosen.jquery.min.js"></script>
+    <link rel="stylesheet" href="css/chosen.css">
+
+    <script src="portal/js/color.js"></script>
+    <!--<script src="lib/jquery.table2excel.min.js"></script>-->
+    <script src="lib/jspdf.debug.js"></script>
+
+</head>
+<body>
+    <table id="editFilterPopup" class="popup">
+        <thead>
+            <tr>
+                <th>Фильтр</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2" >
+                    <a class="menu-item" onclick="addCondition()" title="Добавить условие" style="padding-left: 8px;"><img src="portal/images/add-new.png"/><span>Добавить условие</span></a>
+                    <div style="overflow: auto; width: 450px; height: 250px;padding-top:5px">
+                        <ul id="filterList" class="datalist" ></ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Применить" onclick="applyFilter()"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <table id="editLabelPopup" class="popup">
+        <thead>
+            <tr>
+                <th>Наклейки</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2" >
+                    <div style="overflow: auto; width: 450px; height: 250px;padding-top:5px">
+                        <ul id="labelList" class="datalist" ></ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Применить" onclick="applyLabel()"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <table id="saveAs" class="popup">
+        <thead>
+            <tr>
+                <th id="saveasCaption">Сохранить как</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td  class="titlelabel" >Название:</td>
+                            <td>
+                                <input type="hidden" id="tbID" />
+                                <input type="text" id="tbName"  style="width:450px" maxlength="300" placeholder="Наименование" tabindex="0"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabel">Описание:</td>
+                            <td>
+                                <textarea  id="tbDescription" class="textarea" 
+                                    style="text-align:Left;width:450px" rows="8"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Сохранить" id="saveassuccess"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div >
+                    <table style="width: 100%;" >
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Выбор метрик</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td  class="titlelabel" >Срез значений:</td>
+                                            <td >
+                                                <select id="ddlEntity">
+                                                    <option value="1">Автоматизированная система</option>
+                                                    <!--<option value="2">Информационная сущность</option>
+                                                    <option value="3">Платформы реализации</option>-->
+                                                </select>
+                                            </td>
+                                            <td></td>
+                                            <td>
+                                                <input type="checkbox" id="cbGroupByTargetSystem"/><label for="cbGroupByTargetSystem">Группировать по целевой</label>
+                                            </td>      
+                                            <td></td>                                  
+                                            <td>
+                                                <label for="cbPortrait" style="cursor: pointer;"><input id="cbPortrait" type="radio" name="grOrientationType" /><span style="position: relative;bottom:2px">Портретная</span></label>
+                                                <label for="cbLandscape" style="cursor: pointer;"><input id="cbLandscape" type="radio" name="grOrientationType" checked /><span style="position: relative;bottom:2px">Альбомная</span></label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Горизонталь:</td>
+                                            <td colspan="3">
+                                                <select id="tbHDictionary" placeholder_text_multiple="Выберите срез" class="chosen-select" multiple ></select>
+                                            </td>
+                                            <td class="titlelabel">Вертикаль:</td>
+                                            <td colspan="3">
+                                                <select id="tbVDictionary" placeholder_text_multiple="Выберите срез" class="chosen-select" multiple ></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Наклейки:</td>
+                                            <td colspan="3">
+                                                <select id="tbLabel" placeholder_text_multiple="Выберите срез" class="chosen-select" multiple ></select>
+                                            </td>
+                                            <td class="titlelabel">Значения:</td>
+                                            <td colspan="3">
+                                                <input type="text" id="tbDictionary" class="textbox" style="text-align:Left;width:200px;" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Фильтр:</td>
+                                            <td colspan="5">
+                                                <input type="text" readonly id="tbFilter" class="textbox" style="text-align:Left;width:100%;" />
+                                            </td>
+                                            <td >
+                                                <a onclick="editFilter()" class="menu-item" style="padding-left: 5px;"><img src="portal/images/edit.png"/> </a>
+                                                <a onclick="clearFilter()" class="menu-item"><img src="portal/images/delete.png"/> </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnNew" title="Новый"><img src="portal/images/new.png"/><span>Новый</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnSave" title="Сохранить"><img src="portal/images/save.png"/><span>Сохранить</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnSaveAs" title="Сохранить как"><img src="portal/images/saveas.png"/><span>Сохранить как</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnDelete" title="Удалить"><img src="portal/images/delete.png"/><span>Удалить</span></a>
+                                            <a class="menu-item" id="btnToPdf" title="Экспорт в PDF"><img src="portal/images/pdf.png"/><span>Экспорт в PDF</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Сформировать" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="tbl" style="padding: 5px 0px 5px 0px; overflow:auto;" >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            height:auto;
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        div.grid-item-wrapper, div.grid-item-children{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        div.grid-item-group{
+            border: 1px solid gray;
+            border-style:dashed;
+            border-color: blue;
+            border-radius: 5px;
+            min-height: 30px;
+            margin:3px;
+            padding: 2px 2px 2px 5px;
+            display: flex;
+            white-space: nowrap;
+        }
+        div.grid-item{
+            border: 1px solid gray;
+            border-radius: 5px;
+            min-height: 30px;
+            margin:3px;
+            padding: 2px 5px 2px 5px;
+            min-width: 120px;
+            /*max-width: 300px;*/
+        }
+        div.grid-item a{
+            position: relative;
+            white-space: normal;
+        }
+        div.grid-item span{
+            font-size: 90%;
+        }
+        #tbl table{
+            border-collapse:collapse;            
+        }
+        #tbl table tr td{
+            padding: 3px;
+            border: 1px solid gray; 
+        }
+        #tbl table tr:first-child td{
+            font-size: 105%;
+            text-align: center;
+        }
+        #tbl table tr td:first-child{
+            font-size: 105%;
+            align-content: center;
+            text-align: center;
+        }
+        #tbl table tr td:first-child div{
+            /*transform-origin: center center;*/
+            transform: rotate(-90deg);
+            max-width: 40px;
+            /*writing-mode: vertical-lr;*/
+        }
+
+    </style>
+    <script type="text/javascript" title="grid">
+        let conditions=["=","<>"];
+        $(function () {
+            
+            let id = getInt(getQueryParam("id"));
+            $("#menu-main").show();
+
+            $("#tbl").css({
+                "max-width":window.innerWidth-120
+            });
+            $(window).resize(function(event){
+                $("#tbl").css({
+                    "max-width":window.innerWidth-120
+                });
+            });
+
+            /*$("#labelList").empty();
+            $.ajax({
+                url: API_HOST + "/dictionary/a?length=50&type=name&entityid=" + $("#ddlEntity").val(),
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success:function(result){
+                    $(result).sort(function(a,b){
+                        if(a.order<b.order) return -1;
+                        if(a.order>b.order) return 1;
+                        return (a.name<b.name?-1:1);
+                    }).each(function (i, e) {
+                        $("#labelList").append($("<li>",{style:"padding:5px 0px 5px 5px"}).append(
+                            $("<input>",{type:"checkbox", id:"cbLabel" + i.toString(),"data-value":e.name}),
+                            $("<label>",{text:e.name,style:"position:relative;top:-2px",for:"cbLabel" + i.toString()})
+                        ));
+                    });
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });*/
+            getdata({
+                async:false,
+                url: API_HOST + "/dashboard/a?length=50&type=name&entityid=" + $("#ddlEntity").val(),
+                success:function(ui){
+                    $("#tbHDictionary, #tbVDictionary, #tbLabel").empty();
+                    $.each(ui,function(i,e){
+                        $("#tbHDictionary, #tbVDictionary, #tbLabel").append($('<option>',{
+                            value:e.name,
+                            text:e.name,
+                            title:e.description
+                        })); 
+                    });
+                }
+            });
+            //$("#tbHDictionary").val(["Операционная система"]);
+            //$("#tbHDictionary").val(["Менеджер ИТ", "Value Stream"]);
+            /*$("#tbHDictionary").chosen({
+                width: "200px",
+                placeholder_text_multiple:"Выберите метрики"
+            });*/
+            //console.log($("#tbHDictionary").val());
+            if(id!=0 ){
+                $.ajax({
+                    url: API_HOST + '/mapdata',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: id
+                    },
+                    success: function (result) {
+                        $("title").text(result.name);
+                        $("#tbName").val(result.name),
+                        $("#tbDescription").val(result.description),
+                        $("#_search").setPlaceParam(JSON.parse(result.data));
+                        $("#tbHDictionary, #tbVDictionary, #tbLabel").chosen({
+                            width:"100%",
+                            placeholder_text_multiple:"Выберите метрики"
+                        });
+                        $('#tbl').updateGrid();
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                  },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+            /*$('#tbVDictionary').autocomplete({
+                source: API_HOST + "/dashboard/a?length=50&type=name&entityid=1",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });*/
+            $('#tbDictionary').autocomplete({
+                source: API_HOST + "/dictionary/a?length=50&type=name&entityid=" + $("#ddlEntity").val(),
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(this).val(ui.item.name);
+                }
+            });
+            $('#tbDictionary').click(function (event) {
+                $(this).autocomplete("search");
+            });
+
+            $("#btnNew").click(function(){
+                location.search="";
+            })
+            $("#btnSave").click(function(){
+                $("#saveasCaption").text("Сохранить");
+                $("#tbID").val(id);
+                $("#tbName").val($("title").text());
+                $("#saveAs").showDialog();
+            });
+            $("#btnSaveAs").click(function(){
+                $("#saveasCaption").text("Сохранить как");
+                $("#tbID").val("0");
+                $("#tbName").val($("title").text());
+                $("#saveAs").showDialog();
+            });
+            $("#saveassuccess").click(function(){
+                let errors=[];
+                $('#saveAs').setError();
+                if($("#tbName").val()==""){
+                    errors.push("Укажите назввние");
+                }
+                if(errors.length>0){
+                    $('#saveAs').setError(errors);
+                    return;
+                }
+                $('#saveAs').setError();
+                showWaitPanel(true);
+                $.ajax({
+                    url: API_HOST + '/mapdata',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:$("#tbID").val(),
+                        type:"dashboard",
+                        name:$("#tbName").val(),
+                        description:$("#tbDescription").val(),
+                        data: JSON.stringify($("#_search").getPlaceParam())
+                    }),
+                    success: function (data) {
+                        showWaitPanel(false);
+                        $("#saveAs").showDialog(false);
+                        $("title").text($("#tbName").val());
+                        if(getInt($("#tbID").val())!=data.id)
+                            location.search="id=" + data.id;
+                    },
+                    error: function (message) {
+                        showWaitPanel(false);
+                        console.error(message);
+                        $("#messageError").text(message);
+                    }
+                });
+            });
+            $("#btnDelete").click(function(){
+                if(getInt(id)==0) return;
+                if(!confirm("Удалить карту?"))
+                    return;
+                showWaitPanel(true);
+                $.ajax({
+                    url: API_HOST + '/mapdata/' + id,
+                    type: 'DELETE',
+                    success: function (data) {
+                        showWaitPanel(false);
+                        location.search="";
+                    },
+                    error: function (message) {
+                        showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+
+            $("#btnToPdf").click(function(){
+                let div = $("#tbl");
+                let table = $("#tbl table");
+                let w=getInt($(table).css("width"));
+                let h=getInt($(table).css("height"));
+                //console.log(w,h);
+                let name = $("#tbName").val();
+                const pdf = new jsPDF({
+                    orientation: (w>h?'l':'p'),
+                    unit: 'px',
+                    format: "a3",
+                  });
+                $(table).css({
+                    "background-color": "white"
+                });
+                $(div).css({
+                    overflow:"visible"
+                });
+                pdf.addHTML($(table), () => {
+                  pdf.save(name + ".pdf");
+                    $(div).css({
+                        overflow:"auto"
+                    });
+                    $(table).css({
+                        "background-color": "transparent"
+                    });
+                });
+                //pdf.addSVG($('#your-svg-element')[0].outerHTML, 10, 10, 100, 100);
+            });
+        });
+        var getDashboard = function(id){
+            return {
+                id: id,
+                name: $("#tbName").val(),
+                entity_id: getInt($("#ddlEntity").val()),
+                hmetric: $("#tbHDictionary").val(),
+                vmetric: $("#tbVDictionary").val(),
+                metric: $("#tbDictionary").val(),
+                description: $("#tbDescription").val()??"",
+                grouped: $('#cbGroupByTargetSystem').is(':checked') ? true : false,
+                label:$("#tbLabel").val(),
+                filter:$("#tbFilter").val()??"",
+                orientation:$("#cbLandscape").is(':checked')?"landscape":"portrait"
+            }
+        }
+        $.fn.updateGrid = function(){
+            let place = this;
+            $.fn.createLegend = function(){
+                let entityid=$("#ddlEntity").val();
+                let metric=$("#tbDictionary").val();
+                let legend = this;
+                $.ajax({
+                    url: API_HOST + "/dictionary/a?entityid="+entityid+"&length=20&type=value&metric="+(metric??""),
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (lmetric) {
+                        $(lmetric).sortbyorder().each(function(im,val){
+                            let divitem = $("<div>",{text:val.value});
+                            if(val.color){
+                                $(divitem).css({
+                                    color: RGBvalues.fontcolor(val.color),
+                                    "background-color":val.color,
+                                    padding:"5px",
+                                    "margin-left":"5px",
+                                    "width":"fit-content"
+                                });
+                            }
+                            legend.append(divitem);
+                        });
+                    }
+                });
+            }
+            $.ajax({
+                url: API_HOST + '/dashboard/grid',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(getDashboard(getInt(getQueryParam("id")))),
+                success: function (data) {
+                    $(place).empty();
+                    let table = $("<table>");
+                    let thead = $("<tr>");
+                    $(thead).append($("<td>"));
+                    if(data?.hmetric){
+                        $(data.hmetric).sortbyorder().each(function(i,e){
+                            $(thead).append($("<td>",{text:e.name}));
+                        });
+                    }
+                    $(table).append(thead);
+                    if(data?.vmetric){
+                        let createMetric = function(val, datametric){
+                            let a =  $("<a>",{text:val.name,href:"system.html?id=" + val.id, target:"_blank"});
+                            let divitem = $("<div>",{class:"grid-item"}).append(a);
+                            if(val.labels){
+                                val.labels.forEach(item =>{
+                                    $(divitem).append(
+                                        $("<br>"),
+                                        $("<span>",{text:item.value, title:item.name + ": " + item.value})
+                                    );
+                                });
+                            }
+                            if(val.color){
+                                //console.log(val.color, RGBvalues.color(val.color), RGBvalues.fontcolor(val.color));
+                                $(divitem).css({
+                                    "background-color":val.color
+                                });
+                                $(a).css({
+                                    color: RGBvalues.fontcolor(val.color)
+                                });
+                            }
+                            let items = datametric.filter(val2 => (val2.parentid==val.id));
+                            if(items.length>0){
+                                let children =  $("<div>",{class:"grid-item-children"});
+                                divitem.append(children);
+                                $.each(items.sort(function(a,b){
+                                    if(getInt(a.order)<getInt(b.order)) return -1;
+                                    if(getInt(a.order)>getInt(b.order)) return 1;
+                                    return (a.name<b.name?-1:1);
+                                }),function(ival,val2){
+                                    let name = val2.name;
+                                    if(val2.name.indexOf(val.name +". ")==0) name=name.substring(val.name.length+2);
+                                    if(val2.name.indexOf(val.name +" . ")==0) name=name.substring(val.name.length+3);
+                                    $(children).append(createMetric($.extend(val2,{
+                                        name:name
+                                    }),datametric));
+                                });
+                            }
+                            return divitem;
+                        }
+                        let createMetricGroup = function(val){
+                            return $("<div>",{class:"grid-item-group","data-id":val.id});
+                        }
+                        let grouped = $('#cbGroupByTargetSystem').is(':checked');
+                        $(data.vmetric).sortbyorder().each(function(iv,v){
+                            let tr = $("<tr>");
+                            $(tr).append($("<td>").append($("<div>" ,{text:v.name})));
+                            $(data.hmetric).sortbyorder().each(function(ih,h){
+                                let td=$("<div>",{class:"grid-item-wrapper"});
+                                if(grouped){
+                                    $.each(data?.metric.filter(val => (val.v==v.name && val.h==h.name && val.targetid==0 && val.parentid==0)).sort(function(a,b){
+                                        if(getInt(a.order)<getInt(b.order)) return -1;
+                                        if(getInt(a.order)>getInt(b.order)) return 1;
+                                        return (a.name<b.name?-1:1);
+                                    }),function(ival,val){
+                                        let items = data?.metric.filter(val2 => (val2.targetid==val.id && val2.parentid==0));
+                                        if(items.length>0){
+                                            let group = createMetricGroup(val);
+                                            $(td).append(
+                                                group.append(
+                                                    createMetric(val,data?.metric)
+                                                )
+                                            );
+                                            $.each(items.sort(function(a,b){
+                                                if(getInt(a.order)<getInt(b.order)) return -1;
+                                                if(getInt(a.order)>getInt(b.order)) return 1;
+                                                return (a.name<b.name?-1:1);
+                                            }),function(ival,val){
+                                                $(group).append(createMetric(val,data?.metric));
+                                            });
+                                        }
+                                        else
+                                            $(td).append(createMetric(val,data?.metric));
+                                    });
+                                }
+                                else{
+                                    $.each(data?.metric.filter(val => (val.v==v.name && val.h==h.name)).sort(function(a,b){
+                                        return (a.name<b.name?-1:1);
+                                    }),function(ival,val){
+                                        $(td).append(createMetric(val, data?.metric));
+                                    });
+                                }
+                                $(tr).append($("<td>").append(td));
+                            });
+                            $(table).append(tr);
+                        });
+                    }
+                    if(data?.hmetric){
+                        let cols=data.hmetric.length;
+                        let legend = $("<div>",{style:"display:flex"});
+                        $(table).append($("<tr>").append(
+                            $("<td>"),
+                            $("<td>",{colspan:cols}).append(legend)
+                        ));
+                        $(legend).createLegend();
+                    }
+                    $(place).append(table);
+
+                    let fontwidth=8;
+                    $(table).find("tr td:first-child").each(function(i,e){
+                        let div=$(e).find("div");
+                        //console.log($(div).text().length  ,$(div).css("width"), $(div).css("height"))
+                        if($(div).text()!=""){
+                            mh=0;
+                            for (const phrase of $(div).text().split(' ')){
+                                mh=Math.max(mh,phrase.length);
+                            }
+                            $(e).css({
+                                height:mh * fontwidth
+                            });
+
+                            /*var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                            $(svg)[0].setAttribute("preserveAspectRatio","xMinYMin slice");
+                            $(svg)[0].setAttribute("viewBox","0 0 10 10");
+                            $(svg)[0].setAttribute("width","10");
+                            $(svg)[0].setAttribute("height","10");
+                            $(svg).css({
+                                display:"block",
+                                width:"10px",
+                                height:"10px",
+                            });
+                            $(svg)[0].setAttribute("id","your-svg-element");
+                            var el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            $(el).attr({
+                                d:"M1 1 L10 10",
+                                stroke:"rgb(0, 0, 0)"
+                            });
+                            $(svg).append(el);
+                            $(div).append(svg);*/
+                        }
+                    });
+
+                    /*$.fn.setGroupSize = function(){
+                        let place = this;
+                        let min=0;
+                        let mw=5,mh=2;
+                        let width=mw;
+                        let height=mh;
+                        $(place).children("div.grid-item").each(function(divi,div){
+                            $(div).children("div.grid-item-children").each(function(i1,g){
+                                $(g).setGroupSize();
+                                let w1=getInt($(g).css("width"));
+                                min=Math.max(w1,min);
+                                width+=(w1+mw);
+                                height+=(getInt($(g).css("height"))+mh);
+
+                            });
+
+                            let w=getInt($(div).css("width"));
+                            min=Math.max(w,min);
+                            width+=(w+mw);
+                            height+=(getInt($(div).css("height"))+mh);
+                        })
+                        $(place).css({
+                            width:Math.max((width+height)/2,min+mw*2+8)
+                        });
+                    }
+                    $(table).find("div.grid-item-children").each(function(i,e){
+                        $(e).setGroupSize();
+                    });
+
+                    for(let i=2; i<$(table).find("tr:first-child td").length;i++){
+                        let min=0;
+                        let mw=0;
+                        for(let j=2; j<$(table).find("tr td:first-child").length;j++){
+                            let width=5;
+                            let height=2;
+                            $(table).find("tr:nth-child(" + j + ") td:nth-child(" + i + ") div.grid-item-wrapper").children("div").each(function(divi,div){
+                                let w=getInt($(div).css("width"));
+                                min=Math.max(w,min);
+                                width+=(w+5);
+                                height+=(getInt($(div).css("height"))+2);
+                            });
+                            mw = Math.max((width+height)/2,min+18,mw);
+                        }
+                        $(table).find("tr:not(:first-child) td:nth-child(" + i + ") div.grid-item-wrapper").css({
+                            width:mw
+                        });
+                    }*/
+                    //console.log($(table).css("width"), $(table).css("height"))
+                    let w=getInt($(table).css("width"));
+                    let h=getInt($(table).css("height"));
+                    //let coef=(w>h?0.616161:0.383838);
+                    let coef=($('#cbLandscape').is(':checked')?0.616161:0.383838);
+                    $(table).css({
+                        width:(w+h)*coef
+                    });
+                    //console.log($(table).css("width"), $(table).css("height"))
+
+
+                    /*var td = $(table).find("tr:nth-child(2) td:nth-child(4)");
+                    $(td).css({
+                        position: "relative"
+                    })
+                    var div = $("<div>");
+                    $(div).css({
+                        display:"block",
+                        width:"10px",
+                        height:"10px",
+                        "background-color": "crimson",
+                        "border-radius": "50%",
+                        position:"absolute",
+                        border: "0px none transparent",
+                        top:-5+getInt($(td).css("height"))/2,
+                        left:-5+(getInt($(td).css("width"))+7)/30*(30-1)
+                    });
+                    $(td).append(div);*/
+
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        $.fn.sortbyorder = function(){
+            this.sort(function(a,b){
+                ord_a=getInt(a.order);
+                ord_b=getInt(b.order);
+                return (ord_a<ord_b?-1:(ord_a>ord_b?1:(a.name<b.name?-1:1)));
+            });
+            return this;
+        }
+
+
+        let addCondition=function(options){
+            let entityid=$("#ddlEntity").val();
+            let metric = $("<input>",{
+                type:"text",
+                "data-type":"metric",
+                value:(options?.metric??""),
+                style:"width:200px"
+            });
+            let value = $("<input>",{
+                type:"text",
+                "data-type":"value",
+                value:(options?.value??""),
+                style:"width:160px"
+            });
+            let condition=$("<select>",{
+                "data-type":"condition",
+                style:"width:40px; margin:0px 3px 0px 3px"
+            });
+            for(const c in conditions){
+                condition.append($("<option>",{text:conditions[c],value:conditions[c]}));
+            }
+            condition.val((options?.condition)??"=");
+            $(value).autocomplete({
+                source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+(options?.metric??""),
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(value).val(ui.item.name);
+                }
+            });
+            $(metric).autocomplete({
+                source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=name",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(metric).val(ui.item.name);
+                    $(value).autocomplete({
+                        source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+ui.item.name,
+                        minLength: 0,
+                        delay: 100,
+                        select: function (event, ui) {
+                            $(value).val(ui.item.name);
+                        }
+                    });
+                }
+            });
+            $(metric).change(function(){
+                $(value).autocomplete({
+                    source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+$(this).val(),
+                    minLength: 0,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $(value).val(ui.item.name);
+                    }
+                });
+            })
+            $(metric).click(function (event) {
+                $(metric).autocomplete("search");
+            });
+            $(value).click(function (event) {
+                $(value).autocomplete("search");
+            });
+            let del = $("<a>",{
+                title:"Удалить",
+                style:"position:relative;top:4px;left:2px"
+            }).append($("<img>",{
+                src: "images/delete1.png",
+                style:"left:5px;bottom:auto;width:16px;height:16px"
+            }));
+            $(del).click(function(){
+                $(del).closest("li").remove();
+            });
+            $("#filterList").append($("<li>",{style:"padding:5px 0px 5px 5px"}).append(
+                $(metric),
+                $(condition),
+                $(value),
+                $(del)
+            ));
+    
+        }
+        let editFilter=function(){
+            $("#filterList").empty();
+            for (const phrase of $("#tbFilter").val().split(';')){
+                for(const c of conditions){
+                    if(phrase.trim()!="" && phrase.split(c).length==2){
+                        addCondition({
+                            condition:c,
+                            metric:phrase.split(c)[0].trim(),
+                            value:phrase.split(c)[1].trim()
+                        });
+                    }
+                }
+            }
+            $("#editFilterPopup").showDialog();
+        }
+        let applyFilter=function(){
+            let val="";
+            $("#filterList").find("li").each(function(i,e){
+                val+=$(e).children("input[data-type='metric']").val() 
+                    +$(e).children("select[data-type='condition']").val()
+                    +$(e).children("input[data-type='value']").val()
+                    +";";
+            })
+            $("#tbFilter").val(val);
+            $("#editFilterPopup").showDialog(false);
+        }
+        let clearFilter=function(){
+            $("#tbFilter").val("");
+        }
+        /*let editLabel=function(){
+            $("#labelList").find("li input[type=checkbox]").prop("checked",false);
+            $("#tbLabel").val().split(";").forEach(item=>{
+                $("#labelList").find("li input[type=checkbox][data-value='" + item.trim() + "']").prop("checked",true);
+            })
+            $("#editLabelPopup").showDialog();
+        }
+        let applyLabel=function(){
+            let list = [];
+            $("#labelList").find("li input[type=checkbox]:checked").each(function(i,e){
+                list.push($(e).attr("data-value"));
+            });
+            $("#tbLabel").val(list.join(";"));
+            $("#editLabelPopup").showDialog(false);
+        }
+        let clearLabel=function(){
+            $("#tbLabel").val("");
+        }*/
+
+    </script>
+
+</body>
+</html>

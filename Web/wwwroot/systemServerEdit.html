@@ -1,0 +1,182 @@
+<html>
+<head>
+    <title>Сервер</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data" >
+            <tr>
+                <td  class="titlelabel" >Название:</td>
+                <td colspan="2" >
+                    <input type="hidden" id="hfServerID" value="0" /> 
+                    <input type="text" id="tbName" style="width: 100%" maxlength="300" placeholder="Наименование сервера" tabindex="0"/>
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="serverlink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Система:</td>
+                <td style="width:50px;">
+                    <input type="text" id="tbSystemID" class="textbox" style="text-align:Left;width:95%" />
+                </td>
+                <td style="width: 450px;">
+                    <input type="text" id="tbSystemName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="systemlink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >IP адрес:</td>
+                <td colspan="3">
+                    <input type="text" id="tbIP" style="width: 100%" maxlength="300" placeholder="IP адрес" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td colspan="3">
+                    <textarea id="tbDescription" class="textarea" style="text-align:Left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var sysid = getInt(param?.sysid);
+            $(function () {
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/systemserver',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            id: id
+                        }),
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#hfServerID").val(data.serverid);
+                            $("#form1").closest("table.popup").setCaption(data.server);
+                            $("#tbName").val(data.server);
+                            $("#tbIP").val(data.ip);
+                            $("#tbDescription").val(data.serverdescription);
+                            $("#tbSystemID").val(data.systemid);
+                            $("#tbSystemName").val(data.system);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else if (sysid!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: sysid
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbSystemID").val(data.id);
+                            $("#tbSystemName").val(data.name);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/netobject/a?length=20&typeid=1",
+                    minLength: 2,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#hfServerID').val(ui.item.id);
+                        $('#tbName').val(ui.item.name);
+                        $('#tbIP').val(ui.item.alias);
+                        $('#tbDescription').val(ui.item.description);
+                    }
+                });
+                $('#tbSystemName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbSystemID').val(ui.item.id);
+                        $('#tbSystemName').val(ui.item.name);
+                    }
+                });
+                $('#tbSystemID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbSystemID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbSystemName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+                $("#systemlink").click(function(){
+                    if($('#tbSystemID').val()!="")
+                        window.open("system.html?id=" + $('#tbSystemID').val(),'_blank');
+                });
+                $("#serverlink").click(function(){
+                    if($('#hfServerID').val()!="")
+                        window.open("netobject.html?id=" + $('#hfServerID').val(),'_blank');
+                });
+            });
+            var systemServerEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование сервера");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/systemserver',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        serverid:$("#hfServerID").val(),
+                        server: $("#tbName").val(),
+                        ip: $("#tbIP").val(),
+                        serverdescription: $("#tbDescription").val(),
+                        systemid: $("#tbSystemID").val(),
+                        system:$("#tbSystemName").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

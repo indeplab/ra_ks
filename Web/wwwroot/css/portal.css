@@ -1,0 +1,87 @@
+﻿body {
+    font-size: 14px;
+    font-family:Arial;
+    font-weight: lighter;
+    font-style: normal;
+    padding: 15px;
+    background-color: #d1d5d8;
+    -webkit-touch-callout: text !important;
+    -webkit-user-select: text !important;
+    -khtml-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+body::after{
+    content: "";
+    display: block;
+    background-image: url('../images/architect2.jpeg');
+    background-repeat: no-repeat;
+    background-position:top center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.15;
+}
+div.top-menu{
+    left: 20px;
+}
+div.top-left-menu{
+    position: fixed;
+    left: 20px;
+    top: 33px;
+    height: 100%;
+    width: 200px;
+}
+div.top-left-menu div{
+    padding-top: 15px;
+}
+div.top-left-menu div a{
+    color: gray;
+    text-decoration: none;
+}
+div.top-left-menu div a.selected{
+    color: black;
+    border-bottom: 1px solid crimson;
+}
+::placeholder{
+    color:rgb(192, 192, 192);
+}
+div.body{
+    position: fixed;
+    left: 240px;
+    height: 94%;
+    padding-right: 20px;
+    overflow: auto;
+}
+div.body div[data-id]{
+    display: none;
+}
+div.body-caption{
+    font-size: 120%;
+    padding-bottom: 5px;
+}
+div.body-description{
+    font-size: 80%;
+    padding-bottom: 5px;
+}
+table.body-data tr td{
+    padding: 7px 5px 7px 0px;
+}
+table.body-data tr:hover{
+    background-color: rgb(245, 245, 245, 0.6);
+}
+table.body-data tr td.label{
+    color: gray;
+    width: 200px;
+}
+table.body-data tr td:not(.label){
+    padding-left: 5px;
+    color: black;
+}
+table.body-data tr td a{
+    text-decoration: none;
+}

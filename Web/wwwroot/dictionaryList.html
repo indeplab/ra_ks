@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Архитектурные метрики</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+    <script src="lib/jquery.minicolors.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.minicolors.css" />
+
+    <script src="portal/js/color.js"></script>
+    <script src="portal/js/imagepicker.js"></script>
+
+</head>
+<body>
+    <table id="dictionaryDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#dictionaryDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveDialog()" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#dictionaryDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="94%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td  class="titlelabel" >Назначение:</td>
+                                            <td >
+                                                <select id="ddlEntity">
+                                                </select>
+                                            </td>
+                                            <td class="titlelabel">Метрика:</td>
+                                            <td>
+                                                <input type="text" id="tbDictionary" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                            <td class="titlelabel">Значение:</td>
+                                            <td> 
+                                                <input type="text" id="tbMetric" class="textbox" style="text-align:Left;width:250px" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" onclick="newDictionary()" title="Добавить метрику"><img src="portal/images/add-new.png"/><span>Добавить метрику</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Найти" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                            <input type="button" id="btnToExcel" class="button" value="Экспорт в Excel" style="width:120px" /> 
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                    <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                        <table id="tbl" border="0" class="grid">
+                                            <thead>
+                                                <tr>
+                                                    <th sort="Entity" style="width:200px">Назначение</th>
+                                                    <th sort="Name" style="width:250px">Метрика</th>
+                                                    <th style="width:150px">Значение</th>
+                                                    <th style="width:60px">Порядок</th>
+                                                    <th style="width:350px">Описание</th>
+                                                    <th style="width:20px"></th>
+                                                </tr>
+                                                <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                    <td style="width:200px">@Entity</td>
+                                                    <td style="width:250px"><a onclick="$('#dictionaryDataPopup').openDialogData('dictionaryEdit.html',{id:@ID})">@Name</a></td>
+                                                    <td style="width:150px">@Value</td>
+                                                    <td style="width:40px;text-align: center;"><div data-bgcolor style="background-color: @color;width: 80%;height: 15px;">@ord</div></td>
+                                                    <td style="width:350px" class="wrapper" title="@Description">@Description</td>
+                                                    <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить значение" onclick="if(!confirm('Удалить из \'@Name\'\nметрику \'@Value\'?')) return(false); deleteItem(@ID)"/></td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:top;
+        }
+    </style>
+    <script type="text/javascript" title="grid">
+        $(function () {
+
+            $("#menu-main").show();
+
+            $.loadSearchParam({
+                url: API_HOST + "/dictionarylist",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });
+            getdata({
+                async:false,
+                url: API_HOST + "/dictionary/entity",
+                success:function(ui){
+                    $("#ddlEntity").empty();
+                    $("#ddlEntity").append($('<option>',{
+                        value:0,
+                        text:'Все'
+                    })); 
+                    $.each(ui,function(i,e){
+                        $("#ddlEntity").append($('<option>',{
+                            value:e.id,
+                            text:e.name,
+                            title:e.description
+                        })); 
+                    })
+                }
+            });
+
+            $('#tbDictionary').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=name",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbDictionary').val(ui.item.name);
+                }
+            });
+            $('#tbDictionary').click(function (event) {
+                $('#tbDictionary').autocomplete("search");
+            });
+            $('#tbMetric').autocomplete({
+                source: API_HOST + "/dictionary/a?length=20&type=value",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $('#tbMetric').val(ui.item.name);
+                }
+            });
+
+            $("#btnToExcel").click(function(){
+                $.ajax({
+                    url: API_HOST + '/dictionarylist/excel',
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'html',
+                    data: JSON.stringify({
+                        rows: 30,
+                        pager: 10,
+                        search: $("#_search").getPlaceParam()
+                    }),
+                    success: function (content) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                            var blob = new Blob([content], {
+                                type: "MS Excel"
+                            });
+                        saveAs(blob, "Справочник метрик" + ".xls");
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+        });
+        var saveDialog = function () {
+            if(typeof dictionaryEditSave=="function"){
+                dictionaryEditSave({
+                    success: function(data){
+                        showWaitPanel(false);
+                        $('#dictionaryDataPopup').showDialog(false);
+                        $('#tbl').updateGrid();
+                    },
+                    error: function(message){
+                        showWaitPanel(false);
+                        $('#dictionaryDataPopup').setError(message);
+                    }
+                })
+            }
+        }
+        $.fn.updateGrid = function (data) {
+            let grid = this;
+            $(this).loadGridData({
+                url: API_HOST + "/dictionarylist/list",
+                rows: 30,
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam()),
+                success:function(){
+                    $(grid).find("tbody").find("div[data-bgcolor]").each(function(i,e){
+                        try{
+                            let color = RGBvalues.fontcolor($.isnull($(e).css("background-color"),"white"));
+                            //console.log($(e).css("background-color"),color);
+                            $(e).css({
+                                color: color
+                            });
+                        }
+                        catch{}
+                    })
+                }
+            });
+        }
+        var newDictionary = function(){
+            $('#dictionaryDataPopup').openDialogData('dictionaryEdit.html',{
+                type: $("#ddlEntity").val(),
+                metric: $("#tbDictionary").val()
+            });            
+        }
+        var deleteItem = function (id) {
+            showWaitPanel(true);
+            $.ajax({
+                url: API_HOST + '/dictionary/' + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl').updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

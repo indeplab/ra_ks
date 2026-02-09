@@ -1,0 +1,63 @@
+div.data-tree-holder{
+    padding: 5px 5px 5px 5px;
+}
+ul.data-tree{
+    padding-left: 10px;
+    width: 100%;
+    list-style: none;
+}
+ul.data-tree.noroot{
+    padding-left: 0px !important;
+}
+li.data-tree{
+    white-space: nowrap;
+}
+li.data-tree div{
+    background-repeat: no-repeat;
+    background-size: 16px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: relative;
+    top: 1px;
+}
+li.data-tree > a, li.data-leaf > a{
+    border: solid 1px transparent;
+    padding-left: 2px;
+    padding-right: 2px;
+    position: relative;
+    top:-3px;
+}
+li.data-tree.opened >ul{
+    display: block;
+    padding-top: 3px;
+}
+li.data-tree.opened > div{
+    display: inline-block;
+    background-image: url(../images/minus.png);
+}
+li.data-tree.closed > ul{
+    display: none;
+}
+li.data-tree.closed > div{
+    display: inline-block;
+    background-image: url(../images/plus.png);
+}
+li.data-leaf > div{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+li.data-leaf.selected > a, li.data-tree.selected > a{
+    background-color: #ecf1f3;
+    border: solid 1px #b4d0db;
+}
+li.data-leaf.copied > a, li.data-tree.copied > a{
+    background-color: #ecf1f3;
+    border: solid 1px #b4d0db;
+}
+li.data-leaf.cutted > a, li.data-tree.cutted > a{
+    background-color: transparent;
+    border: solid 1px transparent;
+    color: #aac4cf;
+}

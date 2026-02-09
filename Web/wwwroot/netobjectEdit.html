@@ -1,0 +1,177 @@
+<html>
+<head>
+    <title id="caption">Сетевое оборудование</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Тип:</td>
+                <td style="width: 450px;">
+                    <select id="ddlType">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Название:</td>
+                <td>
+                    <input type="text" id="tbName" style="width: 100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">IP адрес:</td>
+                <td>
+                    <input type="text" id="tbIP"  />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">ЦОД:</td>
+                <td style="width:450px">
+                    <input type="hidden" id="tbDCID" class="textbox" style="text-align:Left;width:50px" />
+                    <input type="text" id="tbDCName" class="textbox" style="text-align:Left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Сетевой сегмент:</td>
+                <td style="width:450px">
+                    <input type="hidden" id="tbZoneID" class="textbox" style="text-align:Left;width:50px" />
+                    <input type="text" id="tbZoneName" class="textbox" style="text-align:Left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td>
+                    <textarea id="tbDescription" class="textarea" style="text-align:left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+    </table>
+    <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var typeid = getInt(param?.typeid);
+            $(function () {
+                $.ajax({
+                    async:false,
+                    url: API_HOST + '/netobject/type',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        $("#ddlType").empty();
+                        $.each(data,function(i,e){
+                            $("#ddlType").append(
+                                $("<option>",{
+                                    value:e.id,
+                                    text:e.name
+                                })
+                            )
+                        });
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+    
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/netobject',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#ddlType").val(data.typeid);
+                            $("#form1").closest("table.popup").setCaption(data.name);
+                            $("#tbName").val(data.name);
+                            $("#tbIP").val(data.ip);
+                            $("#tbDCID").val(data.netdcid);
+                            $("#tbDCName").val(data.datacenter);
+                            $("#tbZoneID").val(data.netzoneid);
+                            $("#tbZoneName").val(data.zone);
+                            $("#tbDescription").val(data.description);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else
+                    $("#ddlType").val(typeid);
+
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/netobject/a?length=20&typeid=" + $("#ddlType").val(),
+                    minLength: 0,
+                    delay: 100,
+                });
+
+                $('#tbDCName').autocomplete({
+                    source: API_HOST + "/netzone/a?length=20&typeid=1",
+                    minLength: 0,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbDCID').val(ui.item.id);
+                        $('#tbDCName').val(ui.item.name);
+                    }
+                });
+                $('#tbDCName').click(function (event) {
+                    $('#tbDCName').autocomplete("search");
+                });
+                $('#tbZoneName').autocomplete({
+                    source: API_HOST + "/netzone/a?length=20&typeid=2",
+                    minLength: 0,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbZoneID').val(ui.item.id);
+                        $('#tbZoneName').val(ui.item.name);
+                    }
+                });
+                $('#tbZoneName').click(function (event) {
+                    $('#tbZoneName').autocomplete("search");
+                });
+            })
+            var netobjectEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование оборудования");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/netobject',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        ip: $("#tbIP").val(),
+                        description: $("#tbDescription").val(),
+                        typeid: getInt($("#ddlType").val()),
+                        netdcid:getInt($('#tbDCID').val()),
+                        netzoneid:getInt($("#tbZoneID").val())
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

@@ -1,0 +1,753 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Каталог функций</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/treedata.css" />
+    <script src="lib/treedata.js"></script>
+
+</head>
+<body>
+    <table id="systemDataPopup" class="popup" >
+        <thead>
+            <tr>
+                <th></th>
+                <td onclick="$('#systemDataPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" id="systemPopupSave" class="mainbutton" value="Сохранить" style="width:120px"  />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#systemDataPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div align="center">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" id="mnuNew" title="Добавить"><img src="portal/images/add-new.png"/><span>Добавить</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="mnuCut" title="Вырезать"><img src="portal/images/cut.png"/><span>Вырезать</span></a>
+                                            <a class="menu-item" style="display: none;" id="mnuCopy" title="Копировать"><img src="portal/images/copy.png"/><span>Копировать</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="mnuPaste" title="Вставить"><img src="portal/images/paste.png"/><span>Вставить</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="mnuDelete" title="Удалить"><img src="portal/images/delete.png"/><span>Удалить</span></a>
+                                            <a class="menu-item" id="mnuProperty" title="Свойства"><img src="portal/images/property.png"/><span>Свойства</span></a>
+                                            <a class="menu-item" id="mnuExcel" title="Экспорт в Excel"><img src="portal/images/excel.png"/><span>Экспорт</span></a>
+                                            <div style="display:inline-block;position:relative;top:-7px">
+                                                <a class="menu-item" id="mnuSearch" style="position: absolute; top:5px; left:4px" title="Поиск"><img src="portal/images/search.png"/></a>
+                                                <input type="text" id="tbFunctionName" class="textbox" style="text-align:Left;width:250px; padding-left:22px; background-color:transparent" placeholder="Поиск" />
+                                                <a class="menu-item" id="mnuClearSearch" style="position: absolute; top:5px; right:2px" title="Поиск"><img src="portal/images/delete.png"/></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="width:500px;vertical-align:top">
+                                            <fieldset><legend>Список функций</legend>
+                                                <div id="fnGroupTree" class="data-tree-holder" style="width:100%; height:600px; overflow: auto;">
+                                                </div>
+                                            </fieldset>
+                                        </td>
+                                        <td id="dataPlace" style="padding-left: 15px;">
+                                            <table class="caption">
+                                                <tr>
+                                                    <th>
+                                                        <span id="lbName"></span>
+                                                        <div id="sectionPart" class="section-part" style="position: relative; float:right">
+                                                            <div>
+                                                                <a data-id="function" class="selected">Свойства</a>
+                                                            </div>
+                                                            <div>
+                                                                <a data-id="system">Системы</a>
+                                                            </div>
+                                                            <div>
+                                                                <a data-id="interface" >Интерфейсы</a>
+                                                            </div>
+                                                            <div>
+                                                                <a data-id="document" >Архитектура</a>
+                                                            </div>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                            <table class="data" data-id="function" style="width:auto;display:none">
+                                                <tr>
+                                                    <td  class="titlelabel" >Функция:</td>
+                                                    <td style="width: 50px;">
+                                                        <span id="lbID"></span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" id="tbName" style="width: 350px" placeholder="Наименование" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="titlelabel">Описание:</td>
+                                                    <td colspan="2">
+                                                        <textarea id="tbDescription" class="textarea" 
+                                                            style="text-align:Left;width:100%" rows="8" ></textarea>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                        
+                                            <table class="data" data-id="system" style="width:auto;display:none">
+                                                <tr>
+                                                    <td>
+                                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                                            <tr>
+                                                                <td style="padding-left:15px">
+                                                                    <a role-type="Administrator,Operator" class="menu-item" id="mnuAddSystem" title="Добавить в систему"><img src="portal/images/add-new.png"/><span>Добавить в систему</span></a>
+                                                                    <a class="menu-item" id="mnuSystemToExcel" title="Экспорт в Excel"><img src="portal/images/excel.png"/><span>Экспорт</span></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                                <table id="tblsystem" border="0" class="grid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th sort="Name" style="width:250px">Система</th>
+                                                                            <th sort="Method" style="width:250px">Сервис</th>
+                                                                            <th style="width:250px">Описание</th>
+                                                                            <th style="width:20px"></th>
+                                                                        </tr>
+                                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                                            <td style="width:250px"><a onclick="$('#systemDataPopup').openDialogData('systemFunctionEdit.html',{id:@ID,sysid:@system_id})">@system</a></td>
+                                                                            <td style="width:250px">@Method</td>
+                                                                            <td style="width:250px" class="wrapper" title="@Description">@Description</td>
+                                                                            <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить сущность из системы" onclick="if(!confirm('Удалить из \'@system\'?')) return(false); deleteItem(@ID)"/></td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                            </div>
+                                                        </fieldset>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                        
+                                            <table class="data" data-id="interface" style="width:auto;display:none">
+                                                <tr>
+                                                    <td>
+                                                        <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                                            <tr>
+                                                                <td style="padding-left:15px">
+                                                                    <a role-type="Administrator,Operator" class="menu-item" id="mnuInterfaceToExcel" title="Экспорт в Excel"><img src="portal/images/excel.png"/><span>Экспорт</span></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                                <table id="tblinterface" border="0" class="grid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th sort="ConsumerName" style="width:185px">Потребитель</th>
+                                                                            <th sort="SupplyName" style="width:185px">Поставщик</th>
+                                                                            <th sort="SupplyMethod" style="width:180px">Сервис</th>
+                                                                            <th style="width:200px">Данные</th>
+                                                                            <th style="width:20px"></th>
+                                                                        </tr>
+                                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                                            <td style="width:185px"><a onclick="$('#systemDataPopup').openDialogData('interfaceEdit.html',{id:@ID,sid:@supply_id})">@consumername</a></td>
+                                                                            <td style="width:185px">@supplyname</td>
+                                                                            <td style="width:180px">@supplymethod</td>
+                                                                            <td style="width:200px">@interfacedata</td>
+                                                                            <td style="padding-left:0px;text-align:center" class="action-delete"><img role-type="Administrator,Operator" src="portal/images/delete.png" style="cursor:pointer" title="Удалить из потока" onclick="if(!confirm('Удалить из потока \'@Name\'?')) return(false); deleteItem(@ID,@consumer_function_id,@supply_function_id)"/></td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                            </div>
+                                                        </fieldset>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class="data" data-id="document" style="width:auto;display:none">
+                                                <tr>
+                                                    <td>
+                                                        <fieldset><legend>Результаты поиска (<span></span> записей)</legend>
+                                                            <div style="padding: 5px 5px 5px 5px; width:100%;" align="center">
+                                                                <table id="tbldocument" border="0" class="grid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th sort="Name" style="width:340px">Документ</th>
+                                                                            <th sort="Author" style="width:200px">Автор</th>
+                                                                            <th sort="State" style="width:150px">Статус</th>
+                                                                            <th style="width:80px">Дата</th>
+                                                                        </tr>
+                                                                        <tr style="display:none" onmouseover="this.className='itemmo'" onmouseout="this.className=''">
+                                                                            <td style="width:340px"><a onclick="openDocument(@ID)">@Name</a></td>
+                                                                            <td style="width:200px">@Author</td>
+                                                                            <td style="width:150px">@State</td>
+                                                                            <td style="width:80px">@Date</td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                </table>
+                                                            </div>
+                                                        </fieldset>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class="data" data-id="function" style="padding-top:25px;display:none">
+                                                <tr id="buttonSet" runat="server">
+                                                    <td colspan="2" class="buttonset">
+                                                        <input role-type="Administrator,Operator" type="button" id="btnSave" class="mainbutton" style="width:140px" value="Сохранить" />
+                                                        <input type="button" id="btnCancel" value="Закрыть" style="width:140px" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        div.data-tree-holder{
+            padding: 0px !important;
+        }
+        fieldset > div{
+            padding: 5px 0px 5px 10px
+        }
+        fieldset > div:last-child{
+            padding-bottom: 10px
+        }
+        fieldset > div a.selected span{
+            color: black;
+            border-bottom: 1px solid crimson;
+        }
+        fieldset > div a img{
+            position:relative;
+            padding-right:5px;
+            top:4px;
+            height: auto;
+            width:16px;
+        }
+        table.grid tbody tr td {
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        #mnuProperty.selected{
+            border-bottom: solid 1px crimson;
+        }
+
+    </style>
+    <script>
+        let basepath = "function";
+        let fid = getInt(getQueryParam("id"));
+        let part = $.isnullorempty(getFromQuery(location.href, "part"),basepath);
+        let searchpath = "/functionlist";
+        var saveSystemFunctionDialog = function () {
+            systemFunctionEditSave({
+                success: function(data){
+                    showWaitPanel(false);
+                    $('#systemDataPopup').showDialog(false);
+                    $('#tbl' + part).updateGrid();
+                },
+                error: function(message){
+                    showWaitPanel(false);
+                    $('#systemDataPopup').setError(message);
+                }
+            });
+        }
+        var saveFunctionDialog = function () {
+            functionEditSave({
+                success: function(data){
+                    showWaitPanel(false);
+                    $('#systemDataPopup').showDialog(false);
+                    fid = data.id;
+                    loadTree();
+                },
+                error: function(message){
+                    showWaitPanel(false);
+                    $('#systemDataPopup').setError(message);
+                }
+            });
+        }
+        $.fn.updateGrid = function () {
+            let searchdata = { fid: fid.toString() };
+            $(this).loadGridData({
+                url: API_HOST + searchpath + "/list",
+                rows: 30,
+                pager: 10,
+                search: $.extend($("#_search" + part).getPlaceParam(), searchdata)
+            });
+        }
+        var toExcel = function(data){
+            let searchdata = { fid: fid.toString() };
+            let name="функций";
+            switch(part){
+                case "system":
+                    name = "систем функции";
+                    break;
+                case "interface":
+                    name = "интерфейсов функции";
+                    break;
+            }
+            $.ajax({
+                url: API_HOST + searchpath + "/excel",
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                data: JSON.stringify({
+                    rows: 30,
+                    pager: 10,
+                    search: $.extend($("#_search" + part).getPlaceParam(), searchdata, data)
+                }),
+                success: function (content) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                        var blob = new Blob([content], {
+                            type: "MS Excel"
+                        });
+                    saveAs(blob, "Каталог" + (name!=""?" " +name:"") + ".xls");
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        var deleteItem = function (id,cid,sid) {
+            showWaitPanel(true);
+            let pt = part;
+            if(part=="interface"){
+                if(getInt(cid)==fid) pt="consumer";
+                else pt="supply";
+            }
+            $.ajax({
+                url: API_HOST + '/function/' + pt + "/" + id,
+                type: 'DELETE',
+                success: function (data) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    $('#tbl' + part).updateGrid();
+                },
+                error: function (message) {
+                    if (typeof showWaitPanel == "function")
+                        showWaitPanel(false);
+                    console.error(message);
+                    alert(message.responseText);
+                }
+            });
+        }
+        
+        var openDocument = function(id){
+            window.open("index.html?id=" + id + "&s=" + $("#tbName").val(),"blank");
+        }
+        var loadData = function(){
+            $("#sectionPart div a").removeClass("selected");
+            let p = $("#sectionPart div a[data-id='" + part + "']");
+            if (!p || p.length == 0) {
+                part = basepath;
+                p = $("#sectionPart div a[data-id='" + part + "']");
+            }
+            $(p).attr({
+                class: "selected"
+            });
+            $("#dataPlace").find("table[data-id]:not([data-id='" + part + "'])").hide();
+            $("#dataPlace").find("table[data-id='" + part + "']").show();
+            setPropertyVisibility();
+            if(isPropertyShow()){            
+                $.ajax({
+                    url: API_HOST + '/function',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: fid
+                    },
+                    success: function (data) {
+                        $("#lbID").text(formatInt(fid));
+                        $("#tbName").val(data.name);
+                        $("#lbName").text(data.name);
+                        $("title").text(data.name);
+
+                        if(part=="function"){
+                            $("#tbDescription").val(data.description);
+                        }
+                        else{
+                            searchpath = "/systemfunction";
+                            switch(part){
+                                case "interface":
+                                    searchpath = "/functioninterface"
+                                    break;
+                                case "document":
+                                    searchpath = "/documentreference"
+                                    break;
+                            }
+                            let grid = $('#tbl' + part);
+                            if(grid.length>0){
+                                $.loadSearchParam({
+                                    url: API_HOST + searchpath,
+                                    success:function(data){
+                                        $("#_search" + part).setPlaceParam(data);
+                                        $(grid).updateGrid(data);
+                                    },
+                                    error:function(message){
+                                        alert(message.responseText);
+                                    }
+                                });
+                            }
+                        }
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+        }
+        
+        var propertyVisibility = function(value){
+            if(value==undefined){
+                if(isPropertyShow())
+                    $("#mnuProperty").removeClass("selected");
+                else {
+                    if(!$("#mnuProperty").hasClass("selected")) $("#mnuProperty").addClass("selected");
+                }
+            }
+            else{
+                if(value==true){
+                    if(!$("#mnuProperty").hasClass("selected")) $("#mnuProperty").addClass("selected");
+                }
+                else 
+                    $("#mnuProperty").removeClass("selected");
+            }
+            setPropertyVisibility();
+        }
+        var isPropertyShow = function(){
+            return $("#mnuProperty").hasClass("selected");
+        }
+        var setPropertyVisibility = function(){
+            if(isPropertyShow() && fid!=0)
+                $("#dataPlace").show();
+            else
+                $("#dataPlace").hide();
+        }
+        var loadTree = function(options){
+            $.ajax({
+                url: API_HOST + '/function',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify({
+                    length:50000,
+                    name:'%'
+                }),
+                success: function (data) {
+                    let ul = $("#fnGroupTree");
+                    $(ul).empty();
+                    $(ul).treedata({
+                        element:{id:0},
+                        list:data,
+                        select:function(e, li, event){
+                            if(!(event.ctrlKey || event.metaKey || event.shiftKey))
+                                $("#fnGroupTree").treeget(".selected").treeunselect();
+                            $(li).treeselect();
+                            fid = getInt(e.id);
+                            loadData();
+                            //$("#fnvalue").val(e.name);
+                            //$("#fnPurpose").val(e.description);
+                        },
+                        dblclick:function(e, li, event){
+                            if(!isPropertyShow()){
+                                propertyVisibility(true);
+                                fid = getInt(e.id);
+                                loadData();
+                            }
+                        }
+                    });
+                    if(fid!=0){
+                        let item = $(ul).treeget("[data-id=" + fid + "]");
+                        $(item).treeopenall();
+                        $(item).treeselect();
+                    }
+
+                    if (options && typeof options.success == "function") options.success();
+                },
+                error: function (message) {
+                    console.error(message);
+                    $("#messageError").text("Ошибка чтения данных");
+                }
+            });
+        }
+        $(function () {
+
+            $("#menu-main").show();
+            $("#menu-back").hide();
+
+            loadTree();
+
+            $("#sectionPart div a").on("click",function () {
+                part = $(this).attr("data-id");
+                loadData();
+            });
+            loadData();
+
+            $("#mnuAddSystem").click(function() {
+                $("#systemDataPopup").find("input.mainbutton").off("click");
+                $("#systemDataPopup").find("input.mainbutton").on("click",function(){
+                    saveSystemFunctionDialog();
+                });
+                $('#systemDataPopup').openDialogData('systemFunctionEdit.html',{fid:fid});
+            });
+            $("#btnSave").click(function(){
+                $("#messageError").text("");
+                if($("#tbName").val()==""){
+                    $("#messageError").text("Укажите наименование функции");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/function',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:fid,
+                        name: $("#tbName").val(),
+                        description: $("#tbDescription").val()
+                    }),
+                    success: function (data) {
+                        $("#fnGroupTree").treeget("[data-id="+fid+"] a").text($("#tbName").val());
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        $("#messageError").text("Ошибка сохранения");
+                    }
+                });
+
+            });
+            $("#btnCancel").click(function(){
+                propertyVisibility(false);
+                loadData();
+            });
+            $("#mnuNew").click(function(){
+                let parent = $("#fnGroupTree").treeget(".selected");
+                if(parent.length>1){
+                    alert("Выберите 1 раздел для создания");
+                    return;
+                }
+                let parentid = getInt($(parent).attr("data-id"));
+                $("#systemDataPopup").find("input.mainbutton").off("click");
+                $("#systemDataPopup").find("input.mainbutton").on("click",function(){
+                    saveFunctionDialog();
+                });
+                $('#systemDataPopup').openDialogData('functionEdit.html',{parentid:parentid});
+            });
+            $("#mnuCut").click(function(){
+                $("#fnGroupTree").treecut();
+            });
+            $("#mnuCopy").click(function(){
+                $("#fnGroupTree").treecopy();
+            });
+            $("#mnuPaste").click(function(){
+                let target = $("#fnGroupTree").treeget(".selected");
+                if(target.length!=1){
+                    alert("Выберите 1 раздел для перемещения");
+                    return;
+                }
+                let data = $(target).treegetdata();
+                let errors = [];
+                $("#fnGroupTree").treeget(".cutted, li.copied").each(function(i,e){
+                    let edata = $(e).treegetdata();
+                    if($(target).treehasparent(edata.id)){
+                        errors.push("'" + edata.name + "' является родителем '" + data.name + "'");
+                    }
+                });
+                if(errors.length>0){
+                    let maxlen = 10;
+                    let len = errors.length;
+                    if(len>maxlen){
+                        errors.slice(0, maxlen);
+                        errors.push("... всего " + len + " сообщений");
+                    }
+                    alert(errors.join('\n'));
+                    return;
+                }
+                let children=[];
+                fid = getInt(data.id);
+                $("#fnGroupTree").treeget(".cutted").each(function(i,e){
+                    children.push({
+                        id:getInt($(e).treegetdata().id),
+                        parentid:fid,
+                        state:"cut"
+                    });
+                });
+                $("#fnGroupTree").treeget(".copied").each(function(i,e){
+                    children.push({
+                        id:getInt($(e).treegetdata().id),
+                        parentid:fid,
+                        state:"copy"
+                    });
+                });
+                $.ajax({
+                    url: API_HOST + '/function/changeparent',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(
+                        children
+                    ),
+                    success: function (data) {
+                        loadTree();
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert("Ошибка сохранения");
+                    }
+                });
+            });
+            $("#mnuProperty").click(function(){
+                propertyVisibility();
+                loadData();
+            });
+            $("#mnuDelete").click(function(){
+                let data = $("#fnGroupTree").treeget("[data-id=" + fid + "]").treegetdata();
+                if(confirm("Удалить функцию '" + data.name + "'?")){
+                    showWaitPanel(true);
+                    $.ajax({
+                        url: API_HOST + "/function/" + fid,
+                        type: 'DELETE',
+                        success: function () {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            fid = getInt(data.parentid);
+                            loadTree();
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+            });
+
+            $("#mnuSearch").click(function(){
+                $("#fnGroupTree").treesearch($("#tbFunctionName").val());
+            });
+            $("#tbFunctionName").on("change",function(){
+                $("#fnGroupTree").treesearch($("#tbFunctionName").val());
+            });
+            $("#tbFunctionName").on("keyup",function(event){
+                //if(event.keyCode==13)
+                $("#fnGroupTree").treesearch($("#tbFunctionName").val());
+                $("#mnuClearSearch").css({
+                    display: $("#tbFunctionName").val()==""?"none":"block"
+                });
+            });
+            $("#mnuClearSearch").click(function(){
+                $("#tbFunctionName").val("");
+                $("#fnGroupTree").treesearch("");
+                $("#mnuClearSearch").css({
+                    display: $("#tbFunctionName").val()==""?"none":"block"
+                });
+            });
+            $("#mnuClearSearch").css({
+                display: $("#tbFunctionName").val()==""?"none":"block"
+            });
+            $("#mnuExcel").click(function(){
+                toExcel({
+                    "tnName":$("#mnuSearch").val()
+                })
+            });
+            $("#mnuSystemToExcel, #mnuInterfaceToExcel").click(function(){
+                toExcel();
+            });
+            document.addEventListener('keydown', function (event) {
+                if(event.keyCode==27){
+                    $("#fnGroupTree").treeget(".cutted").removeClass("cutted");
+                    $("#fnGroupTree").treeget(".copied").removeClass("copied");
+                    $("#fnGroupTree").treeget(".selected:not([data-id=" + fid + "])").removeClass("selected");
+                }
+            });
+            
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+

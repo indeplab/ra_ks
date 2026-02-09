@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>Протокол Архсовета</title>
+    </head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Номер:</td>
+                <td>
+                    <input type="text" id="tbNumber"  style="width:70px" maxlength="10" placeholder="Номер" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Дата:</td>
+                <td>
+                    <input type="text" id="tbDate"  style="width:80px" maxlength="10" placeholder="Дата" tabindex="0"/>
+                </td>
+            </tr>
+        </table>
+        <script>
+            $(function () {
+                if(!$("#tbDate").isdtpicker()){
+                    $("#tbDate").dtpicker({
+                        src:"portal/images/calendar.png"
+                    });
+                }
+            });
+            var councilEditSave = function(options){
+                let data={
+                    number:getInt($("#tbNumber").val())
+                }
+                let error = [];
+                if(data.number==0)
+                    error.push("Укажите номер протокола");
+                if(($("#tbDate").val()??"")!=""){
+                    data.date=new Date(getDate($("#tbDate").val()));
+                    if(!(data.date instanceof Date && !isNaN(data.date)))
+                        error.push("Укажите дату заседания");
+                    else
+                        data.date.setDate(data.date.getDate() + 1);
+                }
+                if(error.length>0){
+                    if(options && typeof options.error == "function") options.error(error);
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/council',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

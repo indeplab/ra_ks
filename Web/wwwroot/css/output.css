@@ -1,0 +1,83 @@
+﻿div.output{
+    display: table-row;
+    height: 30px;
+    width: 100%;
+    background-color:white;
+    opacity:0.92;
+    z-index: 4;
+}
+div.output ul.content{
+    display: none;
+}
+#outputCaption{
+    position: relative; 
+    float: left;
+    padding-top: 5px;
+    font-size: 80%;
+    padding-left: 6px;
+}
+div.output div.footer-menu{
+    background-color:#D9D9D9;
+    border: 1px solid silver;
+    z-index:2;
+    padding:2px 5px 5px 5px;
+    color: black;
+    height: 18px;
+}
+div.output div.footer-menu a{
+    padding-left: 3px;
+}
+div.output div.footer-menu a img{
+    border-radius: 25%;
+    border: 1px solid transparent;
+    width: 16px;
+    height: auto;
+    opacity: 1 !important;
+    padding: 1px;
+}
+div.output div.footer-menu a.selected img{
+    background-color: var(--selectedaction-color);
+}
+#outputContent{
+    width: 100%;
+    height: 100%;
+}
+#outputContent li{
+    padding: 4px;
+    list-style: none;
+    /*white-space: nowrap;*/
+}
+#outputContent li img{
+    position: relative;
+    height: 16px;
+    padding-right: 4px;
+    padding-left: 2px;
+    top: 3px;
+}
+#outputContent li a:hover{
+    text-decoration: underline;
+}
+#outputContent li span{
+    font-size: 90%;
+}
+
+div.output.open{
+    height:150px;
+} 
+div.output.open ul.content{
+    display: block;
+}
+div.output.open a.outputPin{
+    background-image: url(../images/pindown.png);
+}
+div.output a.outputPin{
+    background-size: 16px;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    z-index:3;
+    background-image: url(../images/pinup.png);
+    opacity: 1 !important;
+    padding-bottom: 2px;
+}

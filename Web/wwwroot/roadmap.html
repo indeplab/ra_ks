@@ -1,0 +1,1129 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Дорожная карта</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/grid.css" />
+
+    <script src="lib/FileSaver.js"></script>
+
+    <script src="portal/js/color.js"></script>
+    <!--<script src="lib/jquery.table2excel.min.js"></script>-->
+    <script src="lib/jspdf.debug.js"></script>
+
+    <script src="js/svg.js"></script>
+    <script src="lib/jquery.table2excel.min.js"></script>
+    <script src="lib/html2canvas.min.js"></script>
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+
+
+</head>
+<body>
+    <table id="saveAs" class="popup">
+        <thead>
+            <tr>
+                <th id="saveasCaption">Сохранить как</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td  class="titlelabel" >Название:</td>
+                            <td>
+                                <input type="hidden" id="tbID" />
+                                <input type="text" id="tbName"  style="width:450px" maxlength="300" placeholder="Наименование" tabindex="0"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabel">Описание:</td>
+                            <td>
+                                <textarea  id="tbDescription" class="textarea" 
+                                    style="text-align:Left;width:450px" rows="8"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Сохранить" id="saveassuccess"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <table id="editFilterPopup" class="popup">
+        <thead>
+            <tr>
+                <th>Фильтр</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2" >
+                    <a class="menu-item" onclick="addCondition()" title="Добавить условие" style="padding-left: 8px;"><img src="portal/images/add-new.png"/><span>Добавить условие</span></a>
+                    <div style="overflow: auto; width: 450px; height: 250px;padding-top:5px">
+                        <ul id="filterList" class="datalist" ></ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Применить" onclick="applyFilter()"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <div >
+                    <table style="width: 100%;" >
+                        <tr>
+                            <td class="messageError"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <fieldset><legend>Условия поиска</legend>
+                                    <table class="data" id="_search" style="width:auto">
+                                        <tr>
+                                            <td class="titlelabel">Cрез:</td>
+                                            <td colspan="5">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <select id="ddlType" style="width: 200px;"></select>
+                                                        </td>
+                                                        <td>
+                                                            <label for="cbSystem" style="cursor: pointer;"><input id="cbSystem" type="radio" name="grType" /><span style="position: relative;bottom:2px">В разрезе систем</span></label>
+                                                            <label for="cbMilestone" style="cursor: pointer;"><input id="cbMilestone" type="radio" name="grType" /><span style="position: relative;bottom:2px">В разрезе вех</span></label>
+                                                        </td>
+
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Система:</td>
+                                            <td>
+                                                <input type="text" id="tbID" class="textbox" 
+                                                    style="text-align:Left;width:50px" placeholder="Код" />
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbAlias" class="textbox" 
+                                                    style="text-align:Left;width:130px" placeholder="Алиас"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" id="tbSystemName" class="textbox" 
+                                                    style="text-align:Left;width:250px" placeholder="Название"/>
+                                            </td>
+                                            <td class="titlelabel">Период:</td>
+                                            <td>
+                                                <table>
+                                                    <tr>
+                                                        <td class="titlelabel">c</td>
+                                                        <td><input type="text" id="dtStartDate"/></td>
+                                                        <td class="titlelabel">по</td>
+                                                        <td><input type="text" id="dtEndDate" /></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titlelabel">Фильтр:</td>
+                                            <td colspan="5">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" readonly id="tbFilter" class="textbox" style="text-align:Left;width:100%;" />
+                                                        </td>
+                                                        <td >
+                                                            <a onclick="editFilter()" class="menu-item" style="padding-left: 5px;"><img src="portal/images/edit.png"/> </a>
+                                                            <a onclick="clearFilter()" class="menu-item"><img src="portal/images/delete.png"/> </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <!--<tr>
+                                            <td colspan="4">
+                                                <label for="cbPortrait" style="cursor: pointer;"><input id="cbPortrait" type="radio" name="grOrientationType" /><span style="position: relative;bottom:2px">Портретная</span></label>
+                                                <label for="cbLandscape" style="cursor: pointer;"><input id="cbLandscape" type="radio" name="grOrientationType" checked="checked" /><span style="position: relative;bottom:2px">Альбомная</span></label>
+                                            </td>
+                                        </tr>-->
+                                    </table>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;margin-top:2px;margin-bottom:1px">
+                                    <tr>
+                                        <td style="padding-left:15px">
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnNew" title="Новый"><img src="portal/images/new.png"/><span>Новый</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnSave" title="Сохранить"><img src="portal/images/save.png"/><span>Сохранить</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnSaveAs" title="Сохранить как"><img src="portal/images/saveas.png"/><span>Сохранить как</span></a>
+                                            <a role-type="Administrator,Operator" class="menu-item" id="btnDelete" title="Удалить"><img src="portal/images/delete.png"/><span>Удалить</span></a>
+                                            <a class="menu-item" id="btnCopy" title="Копировать"><img src="portal/images/copy.png"/><span>Копировать</span></a>
+                                            <a class="menu-item" id="btnToPng" title="Экспорт в PNG"><img src="portal/images/image.png"/><span>Экспорт в PNG</span></a>
+                                            <a class="menu-item" id="btnToExcel" title="Экспорт в Excel"><img src="portal/images/excel.png"/><span>Экспорт в Excel</span></a>
+                                            <a class="menu-item" id="btnToPdf" title="Экспорт в PDF"><img src="portal/images/pdf.png"/><span>Экспорт в PDF</span></a>
+                                        </td>
+                                        <td id="searchPlace" class="buttonset">
+                                            <input type="button" class="mainbutton" value="Сформировать" style="width:120px" onclick="$('#tbl').updateGrid();"/>
+                                            <input type="button" class="button" value="Очистить" style="width:120px" onclick="$('#_search').setPlaceParam(); $('#tbl').updateGrid()"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="tblplace" style="padding: 5px 0px 5px 0px; overflow:auto;" >
+                        <div id="tblholder">
+                            <table id="tbl"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <style>
+        table.grid tbody tr td {
+            height:auto;
+            padding-left:10px;
+            vertical-align:middle;
+        }
+        div.grid-item-wrapper, div.grid-item-children{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        div.grid-item-group{
+            border: 1px solid gray;
+            border-style:dashed;
+            border-color: blue;
+            border-radius: 5px;
+            min-height: 30px;
+            margin:3px;
+            padding: 2px 2px 2px 5px;
+            display: flex;
+            white-space: nowrap;
+        }
+        div.grid-item{
+            border: 1px solid gray;
+            border-radius: 5px;
+            min-height: 30px;
+            margin:3px;
+            padding: 2px 5px 2px 5px;
+            min-width: 120px;
+            /*max-width: 300px;*/
+        }
+        div.grid-item a{
+            position: relative;
+            white-space: normal;
+        }
+        #tbl table{
+            border-collapse:collapse;            
+        }
+        #tbl table tr td{
+            padding: 8px;
+            border: 0.5px solid silver;
+        }
+        #tbl table tr td:first-child{
+            font-size: 105%;
+            text-align: left;
+        }
+        #tbl table tr:first-child td{
+            font-size: 105%;
+            text-align: center;
+        }
+        #tbl table tr.caption td{
+            background-color: rgb(29,74,113);
+            color: white;
+        }
+        #tbl tfoot tr td{
+            padding-top: 10px;
+            text-align: center;
+        }
+        div.legend{
+            display: flex;
+        }
+        div.legend span{
+            padding-left: 3px;
+            padding-right: 8px;
+        }
+        span.status{
+            color: crimson;
+        }
+
+    </style>
+    <script type="text/javascript" title="grid">
+        let conditions=["=","<>"];
+        $(function () {
+            let id = getInt(getQueryParam("id"));
+            $("#menu-main").show();
+
+            $("#tblplace").css({
+                "max-width":window.innerWidth-120
+            });
+            $(window).resize(function(event){
+                $("#tblplace").css({
+                    "max-width":window.innerWidth-120
+                });
+            });
+            getdata({
+                async:false,
+                url: API_HOST + "/dictionary/a?length=20&type=value&metric=Типы событий",
+                success:function(ui){
+                    $("#ddlType").empty();
+                    $.each(ui,function(i,e){
+                        $("#ddlType").append($('<option>',{
+                            value:e.name,
+                            text:e.name,
+                            title:e.description
+                        })); 
+                    });
+                }
+            });
+            if(id!=0 ){
+                $.ajax({
+                    url: API_HOST + '/mapdata',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: id
+                    },
+                    success: function (result) {
+                        $("title").text(result.name);
+                        $("#tbName").val(result.name),
+                        $("#tbDescription").val(result.description),
+                        $("#_search").setPlaceParam(JSON.parse(result.data));
+                        $('#tbl').updateGrid();
+
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                  },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+
+            /*$.loadSearchParam({
+                url: API_HOST + "/targetboard",
+                success:function(data){
+                    $("#_search").setPlaceParam(data);
+                    $('#tbl').updateGrid(data);
+                },
+                error:function(message){
+                    alert(message.responseText);
+                }
+            });*/
+
+            $('#tbAlias, #tbParentAlias').autocomplete({
+                source: API_HOST + "/system/a?type=alias&length=20",
+                minLength: 1,
+                delay: 100
+            });
+            $('#tSystembName, #tbParentName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100
+            });
+            $("#dtStartDate, #dtEndDate").dtpicker({
+                src:"portal/images/calendar.png"
+            });
+
+            $("#btnToPdf").click(function(){
+                let table = $("#tbl");
+                let w = 0;
+                $("#tbl div").each(function(i,e){
+                    w = Math.max(w, $(e).width()+$(e).offset().left);
+                });
+                $("#tblholder").css({
+                    "width":w
+                });
+                let h=getInt($(table).css("height"));
+                //console.log(w,h);
+                let name = $("title").text();
+                $(table).css({
+                    "background-color": "white"
+                });
+                html2canvas($("#tblholder")[0]).then(function(canvas) {
+                    const pdf = new jsPDF({
+                        orientation: (w>h?'l':'p'),
+                        unit: 'px',
+                        format: [w,h]
+                    });
+                    var img = canvas.toDataURL("image/jpeg");
+                    pdf.addImage(img, 'JPEG', 0, 0, w, h);
+                    pdf.save(name + ".pdf");
+                });
+            });
+            $("#btnToExcel").click(function(){
+                $('#tbl table').table2excel({
+                    name: $("title").text(),
+                    filename: $("title").text(),
+                    fileext: '.xlsx',
+                    preserveColors: true,
+                });
+            });
+            $("#btnToPng").click(function(){
+                /*let div = $("#tblplace");
+                $(div).css({
+                    overflow:"visible"
+                });*/
+                let mwidth = 0;
+                $("#tbl div").each(function(i,e){
+                    mwidth = Math.max(mwidth, $(e).width()+$(e).offset().left);
+                });
+                $("#tblholder").css({
+                    "width":mwidth
+                });
+                html2canvas($("#tblholder")[0]).then(function(canvas) {
+                    canvas.toBlob(function(blob){
+                            saveAs(blob,$("title").text() + ".png");
+                        }
+                        ,"image/png"
+                    );
+                    /*$(div).css({
+                        overflow:"auto"
+                    });*/
+                });
+            });
+            $("#btnCopy").click(function(){
+                let txt = $('#tbl table')[0].outerHTML;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(txt)
+                        .then(function () { }
+                            , function (err) {
+                                // возможно, пользователь не дал разрешение на чтение данных из буфера обмена
+                                console.log('Something went wrong', err);
+                                alert("Невозможно скопировать данные в буфер обмена");
+                            });
+                }
+                else if(window.clipboardData){
+                    window.clipboardData.setData("Text", txt);
+                }
+                else
+                    alert("Невозможно скопировать данные в буфер обмена");
+            });
+            $("#cbLandscape, #cbPortrait").change(function(){
+                $('#tbl table').setOrientation();
+            })
+        
+            $("#btnNew").click(function(){
+                location.search="";
+            })
+            $("#btnSave").click(function(){
+                $("#saveasCaption").text("Сохранить");
+                $("#tbID").val(id);
+                $("#tbName").val($("title").text());
+                $("#saveAs").showDialog();
+            });
+            $("#btnSaveAs").click(function(){
+                $("#saveasCaption").text("Сохранить как");
+                $("#tbID").val("0");
+                $("#tbName").val($("title").text());
+                $("#saveAs").showDialog();
+            });
+            $("#saveassuccess").click(function(){
+                let errors=[];
+                $('#saveAs').setError();
+                if($("#tbName").val()==""){
+                    errors.push("Укажите назввние");
+                }
+                if(errors.length>0){
+                    $('#saveAs').setError(errors);
+                    return;
+                }
+                $('#saveAs').setError();
+                showWaitPanel(true);
+                $.ajax({
+                    url: API_HOST + '/mapdata',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:$("#tbID").val(),
+                        type:"roadmap",
+                        name:$("#tbName").val(),
+                        description:$("#tbDescription").val(),
+                        data: JSON.stringify($("#_search").getPlaceParam())
+                    }),
+                    success: function (data) {
+                        showWaitPanel(false);
+                        $("#saveAs").showDialog(false);
+                        $("title").text($("#tbName").val());
+                        if(getInt($("#tbID").val())!=data.id)
+                            location.search="id=" + data.id;
+                    },
+                    error: function (message) {
+                        showWaitPanel(false);
+                        console.error(message);
+                        $("#messageError").text(message);
+                    }
+                });
+            });
+            $("#btnDelete").click(function(){
+                if(getInt(id)==0) return;
+                if(!confirm("Удалить карту?"))
+                    return;
+                showWaitPanel(true);
+                $.ajax({
+                    url: API_HOST + '/mapdata/' + id,
+                    type: 'DELETE',
+                    success: function (data) {
+                        showWaitPanel(false);
+                        location.search="";
+                    },
+                    error: function (message) {
+                        showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            });
+        
+        });
+        $.fn.setOrientation = function(){
+            let table = this;
+            let w=getInt($(table).css("width"));
+            let h=getInt($(table).css("height"));
+            let coef=($('#cbLandscape').is(':checked')?0.616161:0.383838);
+            $(table).css({
+                width:(w+h)*coef
+            });
+        }
+        $.fn.updateGrid = function(data, rows){
+            let place = this;
+            $(place).loadGridData({
+                url: API_HOST + "/roadmap/list",
+                showcontent:false,
+                rows: (rows??300),
+                pager: 10,
+                search: (data??$("#_search").getPlaceParam()),
+                success:function(data){
+                    let startDate=new Date(getDate($("#dtStartDate").val()));
+                    let endDate=new Date(getDate($("#dtEndDate").val()));
+
+                    let mindate = new Date(getDate(data.minAggregate));
+                    if(mindate.getDate()<20){
+                        mindate.setDate(1);
+                        mindate.setMonth(mindate.getMonth()-1);
+                    }
+                    mindate = (startDate instanceof Date && !isNaN(startDate))? startDate : mindate;
+                    let maxdate = new Date(getDate(data.maxAggregate));
+                    maxdate = (endDate instanceof Date && !isNaN(endDate))? endDate : (maxdate<mindate?mindate:maxdate);
+                
+                    //console.log(formatDate(mindate),formatDate(maxdate));
+
+                    let table = $("<table>");
+                    
+                    let quarter_tr = $("<tr>",{class:"caption"});
+                    quarter_tr.append($("<td>",{
+                        rowspan:2,
+                        text:($("#cbSystem").prop("checked")?"Наименование информационной системы (ИС)":"Программное обеспечение As Is/ To Be")
+                    }));
+
+                    let month_tr = $("<tr>",{class:"caption"});
+                    var quarter = Math.floor((mindate.getMonth() + 3) / 3);
+                    let quarter_td = $("<td>",{
+                        "data-year":mindate.getFullYear(),
+                        "data-quarter":quarter,
+                        text: quarter + " кв. " + mindate.getFullYear()
+                    });
+                    let mintq = 0;
+                    for(var year=mindate.getFullYear();year<=maxdate.getFullYear();year++){
+                        let startmonth=0;
+                        let endmonth = 11;
+                        if(year==mindate.getFullYear())
+                            startmonth = mindate.getMonth();
+                        if(year==maxdate.getFullYear())
+                            endmonth = maxdate.getMonth();
+
+                        for(var month=startmonth;month<=endmonth;month++){
+                            let dt = new Date(year,month,1);
+                            if(quarter!=Math.floor((dt.getMonth() + 3) / 3)){
+                                quarter=Math.floor((dt.getMonth() + 3) / 3);
+                                if(mintq>1)
+                                    quarter_td.attr("colspan",mintq);
+                                quarter_tr.append(quarter_td)
+                                quarter_td = $("<td>",{
+                                    "data-year":dt.getFullYear(),
+                                    "data-quarter":quarter,
+                                    text: quarter + " кв. " + dt.getFullYear()
+                                });
+                                mintq=0;   
+                            }
+                            mintq++
+                            $(month_tr).append($("<td>",{
+                                "data-year":year,
+                                "data-month":month,
+                                text: dt.toLocaleString('ru', { month: 'long' })
+                            }));
+                        }
+                    }
+                    if(mintq>1)
+                        quarter_td.attr("colspan",mintq);
+                    quarter_tr.append(quarter_td)
+                    $(table).append(quarter_tr);
+                    $(table).append(month_tr);
+
+                    let columns = $(month_tr).find("td").length;
+
+                    let list = [];
+                    let addToListSystem = function(id,date,event,value,note,img,color,name,state){
+                        let dt=new Date(getDate(date));
+                        //let caption = formatDate(dt) + ": " + event;// + (!$.isempty(note)?" " + note:event);
+                        //console.log($.isempty(note),isemptyobject(note),note.toString());
+                        if(dt instanceof Date && !isNaN(dt)){
+                            //debugger;
+                            if(
+                                (!(startDate instanceof Date && !isNaN(startDate)) || dt>=startDate)
+                                && (!(endDate instanceof Date && !isNaN(endDate)) || dt<=endDate)
+                            ){
+
+                                date = formatDate(new Date(dt.getFullYear(),dt.getMonth(),15));
+                                let pos = list.find(i => i.name==name);
+                                if(pos){
+                                    let pos2 = pos.dates.find(i => i.mdate == date && i.type==value);
+                                    if(pos2){
+                                        pos2.list.push({
+                                            date: formatDate(dt),
+                                            name:event
+                                        });
+                                        pos2.date.setDate((pos2.date.getDate()+dt.getDate())/2);
+                                    }
+                                    else
+                                        pos.dates.push({
+                                            date:dt,
+                                            mdate:date,
+                                            type:value,
+                                            img:img,
+                                            color:color,
+                                            list:[{
+                                                date: formatDate(dt),
+                                                name:event
+                                            }]
+                                        });
+                                }
+                                else{
+                                    list.push({
+                                        state: state,
+                                        name: name,
+                                        id:id,
+                                        dates:[{
+                                            date:dt,
+                                            mdate:date,
+                                            type:value,
+                                            img:img,
+                                            color:color,
+                                            list:[{
+                                                date: formatDate(dt),
+                                                name: event
+                                            }]
+                                        }]
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    let addToListMilestone = function(id,date,event,value,note,img,color,name,state){
+                        let dt=new Date(getDate(date));
+                        //let caption = formatDate(dt) + ": " +(!$.isempty(note)? note + " ":"") + name ;
+
+                        if(dt instanceof Date && !isNaN(dt)){
+                            //debugger;
+                            if(
+                                (!(startDate instanceof Date && !isNaN(startDate)) || dt>=startDate)
+                                && (!(endDate instanceof Date && !isNaN(endDate)) || dt<=endDate)
+                            ){
+
+                                date = formatDate(new Date(dt.getFullYear(),dt.getMonth(),15));
+                                let pos = list.find(i => i.name==event);
+                                if(pos){
+                                    let pos2 = pos.dates.find(i => i.mdate == date && i.type==value);
+                                    if(pos2){
+                                        pos2.list.push({
+                                            id:id,
+                                            date: formatDate(dt),
+                                            note: (!$.isempty(note)? note + " ":""),
+                                            name:name
+                                        })
+                                        pos2.date.setDate((pos2.date.getDate()+dt.getDate())/2);
+                                    }
+                                    else
+                                        pos.dates.push({
+                                            date:dt,
+                                            mdate:date,
+                                            type:value,
+                                            img:img,
+                                            color:color,
+                                            list:[{
+                                                id:id,
+                                                date: formatDate(dt),
+                                                note: (!$.isempty(note)? note + " ":""),
+                                                name:name
+                                            }]
+                                        });
+                                }
+                                else{
+                                    list.push({
+                                        state: state,
+                                        name: event,
+                                        dates:[{
+                                            date:dt,
+                                            mdate:date,
+                                            type:event,
+                                            img:img,
+                                            color:color,
+                                            list:[{
+                                                id:id,
+                                                date: formatDate(dt),
+                                                note: (!$.isempty(note)? note + " ":""),
+                                                name:name
+                                            }]
+                                        }]
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    data.resultRows.forEach(item=>{
+                        if($("#cbSystem").prop("checked"))
+                            addToListSystem(item.id,item.date, item.event, item.value, item.note, item.img, item.color, item.name, item.target_state);
+                        else
+                            addToListMilestone(item.id,item.date, item.event, item.value, item.note, item.img, item.color, item.name, item.target_state);
+                    });
+                    list.forEach(item=>{
+                        let tr = $("<tr>");
+                        if($("#cbSystem").prop("checked")){
+                            $(tr).append($("<td>").append(
+                                $("<a>",{href:"system.html?id="+item.id,target:"_blank", text: item.name})/*,
+                                $("<br>"),
+                                $("<span>",{class:"status",text: item.state})*/
+                            ));
+                        }
+                        else{
+                            $(tr).append($("<td>").append(
+                                $("<span>",{text: item.name})/*,
+                                $("<br>"),
+                                $("<span>",{class:"status",text: item.state})*/
+                            ));
+                        }
+                        for(var i=0;i<columns;i++)
+                            $(tr).append($("<td>"));
+                        $(table).append(tr);
+                    });
+                    let legend = $("<div>",{
+                        class:"legend",
+                    });
+                    $(table).append($("<tr>").append($("<td>",{colspan:columns+1}).append(legend)));
+
+                    $.fn.addLegend = function(name,src,color){
+                        var div = $("<div>");
+                        $(div).css({
+                            display:"block",
+                            width:"24px",
+                            height:"24px",
+                            "border-width": "3px",
+                            "border-style": "solid",
+                            "border-color": "transparent",
+                            "border-radius": "50%",
+                        });
+                        let imgstyle = "height:36px;width:auto;background-color:transparent;position:relative;top:-6px;left:-6px"
+                        if(color!=""){
+                            $(div).css({
+                                "border-color": color
+                            });
+                            imgstyle = "height:18px;width:auto;background-color:transparent;position:relative;top:3px;left:3px";
+                        }
+                        $(this).append($(div).append($("<img>",{
+                            src:src,
+                            style: imgstyle
+                        })));
+                        $(this).append($("<span>",{
+                            text:name,
+                            style:"position:relative;top:9px"
+                        }));
+                    }
+
+                    $.ajax({
+                        url: API_HOST + "/roadmap/legend?metric=Статусы событий",
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (data) {
+                            data.forEach(item=>{
+                                $(legend).addLegend(item.name,item.img,item.color);
+                            })
+                        }
+                    });
+
+
+                    $(place).find("tbody").append($("<tr>").append($("<td>").append(table)));
+
+                    $(table).setOrientation();
+
+                    function daysInMonth (date) {
+                        return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                    }                    
+
+                    $.fn.putPoint = function(date, j, src, color, captions){
+                        if(date instanceof Date && !isNaN(date)){
+                            let table = this;
+                            let i = $(month_tr).find("td[data-month='" + date.getMonth() + "'][data-year='" + date.getFullYear() + "']").index();
+                            
+                            var td = $(table).find("tr:nth-child(" + j + ") td:nth-child(" + (i+2) + ")");
+                            $(td).css({
+                                position: "relative"
+                            });
+                            let delta = 12;
+                            let top = 6;
+                            /*let last = $(td).find("div[data-type='caption']").last();
+                            if(last.length>0)
+                                top = getInt($(last).css("top")) + getInt($(last).css("height")) + 8 + delta;
+                            */
+                            //debugger;
+                            //console.log(formatDate(date),getInt(date.getDate()));
+                            let left = (getInt($(td).css("width"))+15)/daysInMonth(date)*(getInt(date.getDate())-1);
+                            let div2 = $("<div>",{"data-type":"caption","data-id":$.newguid()});
+
+                            captions.sort(function(a,b){
+                                    return (a.name<b.name?-1:1)
+                                }).forEach(item=>{
+                                    if($("#cbSystem").prop("checked")){
+                                        $(div2).append($("<span>",{
+                                            text: item.date + ": " + item.name,// + (!$.isempty(note)?" " + note:event);
+                                            style:"white-space:nowrap"}));
+                                        $(div2).append($("<br>"));
+                                    }
+                                    else{
+                                        $(div2).append(
+                                            $("<div>",{style:"white-space:nowrap"}).append(
+                                                $("<span>",{
+                                                        text: item.date + ": " +(!$.isempty(item.note)? item.note :"")
+                                                    }),
+                                                $("<a>",{href:"system.html?id="+item.id,target:"_blank", text: item.name})
+                                            )
+                                        );
+
+                                    }
+                            });
+                            $(div2).css({
+                                display:"block",
+                                width:"auto",
+                                height:"auto",
+                                "background-color": "white",
+                                position:"absolute",
+                                border: "1px solid gray",
+                                padding:"3px 5px 3px 5px",
+                                top: top,//getInt($(div).css("top")) + 5,
+                                left: left + 25, //getInt($(div).css("left")) + 15
+                                "z-index":2
+                            });
+                            $(td).append(div2);
+                            /*let len = getInt($(div2).css("width")) + getInt($(div2).css("height"));
+                            $(div2).css({
+                                width:len/10*9
+                            });*/
+
+                            let res;
+                            do{
+                                //debugger;
+                                res = $(table).findIntersects(div2,38);
+                                if(res){
+                                    $(div2).css({
+                                        top: getInt($(res).css("top")) + getInt($(res).css("height")) + 8 + delta
+                                    });
+                                }
+                            }while(res)
+
+                            /*$(div2).css({
+                                top:getInt($(div2).css("top")) - getInt($(div2).css("height"))/2
+                            });*/
+
+                            let div = $("<div>",{"data-type":"point"});
+                            $(div).css({
+                                display:"block",
+                                width:"24px",
+                                height:"24px",
+                                position:"absolute",
+                                "border-width": "3px",
+                                "border-style": "solid",
+                                "border-color": "transparent",
+                                "border-radius": "50%",
+                                top: -11 + getInt($(div2).css("top")) + getInt($(div2).css("height"))/2, //-3+getInt($(td).css("height"))/2,
+                                left: -11 + left
+                            });
+                            let imgstyle = "height:36px;width:auto;background-color:transparent;position:relative;top:-6px;left:-6px"
+                            if(color!=""){
+                                $(div).css({
+                                    "border-color": color
+                                });
+                                imgstyle = "height:18px;width:auto;background-color:transparent;position:relative;top:3px;left:3px";
+                            }
+                            $(td).append($(div).append($("<img>",{
+                                src:src,
+                                style: imgstyle
+                            })));
+
+                            if(getInt($(td).css("height"))<getInt($(div2).css("top")) + getInt($(div2).css("height")) + delta){
+                                $(td).css({
+                                    height: getInt($(div2).css("top")) + getInt($(div2).css("height")) + delta
+                                });
+                            }
+
+                            //console.log(len,$(div).css("width"));
+                            return {
+                                point: div,
+                                caption: div2
+                            }
+                        }
+                    }
+                    $.fn.findIntersects = function(div, deltaX){
+                        let table = this;
+                        let param = {
+                            x:getFloat($(div).offset().left) - deltaX,
+                            y:getFloat($(div).offset().top),
+                            x1:getFloat($(div).offset().left)+getFloat($(div).css("width")) + deltaX,
+                            y1:getFloat($(div).offset().top)+getFloat($(div).css("height"))
+                        }
+                        let res;
+                        $(table).find("div[data-type='caption']:not([data-id='" + $(div).attr("data-id") + "'])").each(function(i,e){
+                            if(intersects(
+                                param,
+                                {
+                                    x:getFloat($(e).offset().left),
+                                    y:getFloat($(e).offset().top),
+                                    x1:getFloat($(e).offset().left)+getFloat($(e).css("width")),
+                                    y1:getFloat($(e).offset().top)+getFloat($(e).css("height"))
+                                }
+                            )){
+                                res = e;
+                                return false;
+                            }
+                        });
+                        return res;
+                    }
+                    let reverseCaption = function(point, caption){
+                        if(intersects(
+                            {
+                                x:getFloat($(point).offset().left),
+                                y:getFloat($(point).offset().top),
+                                x1:getFloat($(point).offset().left)+getFloat($(point).css("width")),
+                                y1:getFloat($(point).offset().top)+getFloat($(point).css("height"))
+                            },
+                            {
+                                x:getFloat($(caption).offset().left),
+                                y:getFloat($(caption).offset().top),
+                                x1:getFloat($(caption).offset().left)+getFloat($(caption).css("width")),
+                                y1:getFloat($(caption).offset().top)+getFloat($(caption).css("height"))
+                            }
+                        )){
+                            //console.log(caption,getInt($(caption).offset().left), "=>", getInt($(caption).offset().left)-getInt($(caption).css("width"))-15);
+                            $(caption).css({
+                                left:getInt($(caption).css("left"))-getInt($(caption).css("width"))-30
+                            });
+                        }
+                    }
+                    list.forEach((item,j)=>{
+                        item.dates.sort(function(a,b){
+                            return (a.date<b.date?-1:1)
+                        }).forEach(it=>{
+                            $(table).putPoint(it.date,j+3,it.img,it.color, it.list);
+                        });
+                    });
+                    let setToday = function(){
+                        let date = new Date();
+                        let place = $("#tblholder");
+                        $(place).css({
+                            "position":"relative"
+                        });
+
+                        let td = $(month_tr).find("td[data-month='" + date.getMonth() + "'][data-year='" + date.getFullYear() + "']");
+                        if(td.length>0){
+                            let top = 0; 
+                            let left = $(td).offset().left - $(place).offset().left + (getInt($(td).css("width"))+15)/daysInMonth(date)*(getInt(date.getDate())-1);;
+
+                            let heigth = getInt($(place).css("height")) -17;
+                            let div = $("<div>",{title:"Сегодня " + formatDate(date)});
+                            $(div).css({
+                                position: "absolute",
+                                "border-left": "1px solid crimson",
+                                top: top,
+                                left:left,
+                                height:heigth,
+                                width:"3px"
+                            });
+                            $("#tblholder").append(div);
+                        }
+
+                    }
+                    setToday();
+                }
+            });
+        }
+
+        let addCondition=function(options){
+            let entityid=1;
+            let metric = $("<input>",{
+                type:"text",
+                "data-type":"metric",
+                value:(options?.metric??""),
+                style:"width:200px"
+            });
+            let value = $("<input>",{
+                type:"text",
+                "data-type":"value",
+                value:(options?.value??""),
+                style:"width:160px"
+            });
+            let condition=$("<select>",{
+                "data-type":"condition",
+                style:"width:40px; margin:0px 3px 0px 3px"
+            });
+            for(const c in conditions){
+                condition.append($("<option>",{text:conditions[c],value:conditions[c]}));
+            }
+            condition.val((options?.condition)??"=");
+            $(value).autocomplete({
+                source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+(options?.metric??""),
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(value).val(ui.item.name);
+                }
+            });
+            $(metric).autocomplete({
+                source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=name",
+                minLength: 0,
+                delay: 100,
+                select: function (event, ui) {
+                    $(metric).val(ui.item.name);
+                    $(value).autocomplete({
+                        source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+ui.item.name,
+                        minLength: 0,
+                        delay: 100,
+                        select: function (event, ui) {
+                            $(value).val(ui.item.name);
+                        }
+                    });
+                }
+            });
+            $(metric).change(function(){
+                $(value).autocomplete({
+                    source: API_HOST + "/dashboard/a?entityid="+entityid+"&length=20&type=value&metric="+$(this).val(),
+                    minLength: 0,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $(value).val(ui.item.name);
+                    }
+                });
+            })
+            $(metric).click(function (event) {
+                $(metric).autocomplete("search");
+            });
+            $(value).click(function (event) {
+                $(value).autocomplete("search");
+            });
+            let del = $("<a>",{
+                title:"Удалить",
+                style:"position:relative;top:4px;left:2px"
+            }).append($("<img>",{
+                src: "images/delete1.png",
+                style:"left:5px;bottom:auto;width:16px;height:16px"
+            }));
+            $(del).click(function(){
+                $(del).closest("li").remove();
+            });
+            $("#filterList").append($("<li>",{style:"padding:5px 0px 5px 5px"}).append(
+                $(metric),
+                $(condition),
+                $(value),
+                $(del)
+            ));
+    
+        }
+        let editFilter=function(){
+            $("#filterList").empty();
+            for (const phrase of $("#tbFilter").val().split(';')){
+                for(const c of conditions){
+                    if(phrase.trim()!="" && phrase.split(c).length==2){
+                        addCondition({
+                            condition:c,
+                            metric:phrase.split(c)[0].trim(),
+                            value:phrase.split(c)[1].trim()
+                        });
+                    }
+                }
+            }
+            $("#editFilterPopup").showDialog();
+        }
+        let applyFilter=function(){
+            let val="";
+            $("#filterList").find("li").each(function(i,e){
+                val+=$(e).children("input[data-type='metric']").val() 
+                    +$(e).children("select[data-type='condition']").val()
+                    +$(e).children("input[data-type='value']").val()
+                    +";";
+            })
+            $("#tbFilter").val(val);
+            $("#editFilterPopup").showDialog(false);
+        }
+        let clearFilter=function(){
+            $("#tbFilter").val("");
+        }
+
+    </script>
+
+</body>
+</html>

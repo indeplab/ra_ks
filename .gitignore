@@ -1,0 +1,8 @@
+/Web/wwwroot/images/Thumbs.db:encryptable
+*.vsidx
+/.vs
+obj/
+bin/
+/Web/log/
+
+_backup/

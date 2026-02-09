@@ -1,0 +1,69 @@
+<div class="page-header">
+    <table style="width:100%;" >
+        <tr>
+            <td class="header-image" rowspan="3" style="padding-top:10px; padding-left:15px" >
+                <a href="/search.html">
+                    <img src="images/logo.png" style="width: auto; height: 59px;"/>
+                </a>
+            </td>
+            <td class="header-text">
+                Архитектурный портал
+            </td>
+        </tr>
+        <tr>
+            <td class="header-subtext" >
+                <div>
+                    <span id="username"></span>
+                    <a id="logout">
+                        <img src="/images/logout.png"  title="Выйти" />
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="header-menu">
+                <a id="menu-back" style="display: none;"><img src="portal/images/back.png"/><span>Назад</span></a>
+                <a id="menu-main" href="search.html" style="display: none;"><img src="portal/images/home.png"/><span>Главная</span></a>
+                <a id="menu-help" style="display: none;"><img src="portal/images/help.png"/><span>Справка</span></a>
+            </td>
+        </tr>
+    </table>
+    <div id="_waitPanel" style="display:none; z-index:10; border:1px solid silver; background-color:white; text-align:center;vertical-align:middle;width:200px;position: absolute;">
+        <br />
+        <br />
+        <br />
+        <img src="/images/loading3.gif" alt="" />
+        <br />
+        <br />
+        <span class="caption">Обновление данных</span>
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#username").text($.isnull($.currentuser().name,"Гость"));
+        $("#logout").click(function(){
+            $.ajax({
+                async:false,
+                url: API_HOST + "/account/logout",
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                success: function () {
+                    location.reload();
+                },
+                error: function (message) {
+                    console.error(message);
+                }
+            });
+        });
+        $("body").css({
+            height : "auto"
+        });
+        $("body").css({
+            height : "100%"
+        });
+    })
+</script>

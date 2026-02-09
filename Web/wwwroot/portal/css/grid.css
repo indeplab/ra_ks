@@ -1,0 +1,85 @@
+﻿table.grid {
+    border: 0px none #B3B4B6;
+}
+table.grid thead tr {
+    height: 30px;
+    background: #F1F2F4;
+}
+table.grid thead tr th {
+    color: darkblue;
+    font-weight: normal !important;
+    cursor: default;
+    vertical-align: middle;
+    padding:0px 5px;
+    text-align: left;
+}
+table.grid thead tr th.sort {
+    color: darkblue;
+    font-weight: normal!important;
+    cursor: pointer;
+}
+table.grid thead tr th.sortasc {
+    color: #b92d36;
+    font-weight: normal;
+    cursor: pointer;
+    background-position-x: right;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    background-image: url(../images/sort-up.png);
+    background-size:18px;
+}
+table.grid thead tr th.sortdesc {
+    color: #b92d36;
+    font-weight: normal;
+    cursor: pointer;
+    background-position-x: right;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    background-image: url(../images/sort-down.png);
+    background-size:18px;
+}
+table.grid tfoot tr {
+    height: 24px;
+    background: #F1F2F4;
+}
+table.grid tfoot tr td {
+    text-align: center;
+    color: darkblue;
+    vertical-align: middle;
+}
+table .grid tfoot tr td span {
+    font-weight: bold;
+    text-decoration: none;
+}
+table.grid tfoot tr td a {
+    font-weight: normal;
+    text-decoration: none;
+    cursor: pointer;
+}
+table.grid tbody tr.itemmo {
+    background: #F1F2F4;
+}
+table.grid tbody tr td {
+    text-align:left;
+    padding: 3px 0px 0px 3px !important;
+    height:25px;
+}
+table.grid tbody tr td.center {
+    text-align: center;
+}
+table.grid tbody tr td.centerall {
+    text-align: center;
+    vertical-align: middle;
+}
+td.wrapper {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+td.action-delete img{
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+}
+

@@ -1,0 +1,266 @@
+<html>
+<head>
+    <title>Событие</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data" >
+            <tr>
+                <td  class="titlelabel" >Дата:</td>
+                <td colspan="3" >
+                    <input type="hidden" id="hfEventID" value="0" /> 
+                    <input type="text" id="dtDate" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Система:</td>
+                <td style="width:50px;">
+                    <input type="text" id="tbSystemID" class="textbox" style="text-align:Left;width:95%" />
+                </td>
+                <td style="width: 450px;">
+                    <input type="text" id="tbSystemName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+                <td style="width: 20px; text-align: right;">
+                    <a class="action" id="systemlink"><img src="portal/images/link.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td  class="titlelabel" >Тип события:</td>
+                <td colspan="3">
+                    <select id="ddlType" style="width: 100%">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Событие:</td>
+                <td colspan="3">
+                    <input type="text" id="tbName" class="textbox" style="text-align:left;width:100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Статус события:</td>
+                <td colspan="3">
+                    <select id="ddlState" style="width: 100%"></select>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td colspan="3">
+                    <textarea id="tbDescription" class="textarea" style="text-align:Left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var sysid = getInt(param?.sysid);
+            /*var updateEventList = function(){
+                var metric = $("#ddlType").val();
+                $.ajax({
+                    async:false,
+                    url: API_HOST + "/dictionary/a?length=20&type=value&metric=" + metric,
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#ddlEvent").empty();
+                        $.each(data,function(i,e){
+                            $("#ddlEvent").append($('<option>',{
+                                value:e.name,
+                                text:e.name,
+                                title:e.description
+                            })); 
+                        });
+                    }
+                });
+            }*/
+            $(function () {
+                $.ajax({
+                    async:false,
+                    url: API_HOST + "/dictionary/a?length=20&type=value&metric=Типы событий",
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#ddlType").empty();
+                        $.each(data,function(i,e){
+                            $("#ddlType").append($('<option>',{
+                                value:e.name,
+                                text:e.name,
+                                title:e.description
+                            })); 
+                        });
+                    }
+                });
+                $.ajax({
+                    async:false,
+                    url: API_HOST + "/dictionary/a?length=20&type=value&metric=Статусы событий",
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#ddlState").empty();
+                        $.each(data,function(i,e){
+                            $("#ddlState").append($('<option>',{
+                                value:e.name,
+                                text:e.name,
+                                title:e.description
+                            })); 
+                        });
+                    }
+                });
+
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/systemevent',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            id: id
+                        }),
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#form1").closest("table.popup").setCaption(data.value);
+                            $("#dtDate").val(formatDate(new Date(data.date)));
+                            $("#ddlType").val(data.type);
+                            $("#tbName").val(data.name);
+                            //updateEventList();
+                            $("#ddlState").val(data.state);
+                            $("#tbDescription").val(data.description);
+                            $("#tbSystemID").val(data.systemid);
+                            $("#tbSystemName").val(data.system);
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else {
+                    //updateEventList();
+                    if (sysid!=0){
+                        $.ajax({
+                            async:false,
+                            url: API_HOST + '/system',
+                            type: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: {
+                                id: sysid
+                            },
+                            success: function (data) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                $("#tbSystemID").val(data.id);
+                                $("#tbSystemName").val(data.name);
+                            },
+                            error: function (message) {
+                                if (typeof showWaitPanel == "function")
+                                    showWaitPanel(false);
+                                console.error(message);
+                                alert(message.responseText);
+                            }
+                        });
+                    }
+                
+                }
+                if(!$("#dtDate").isdtpicker()){
+                    $("#dtDate").dtpicker({
+                        src:"portal/images/calendar.png"
+                    });
+                }
+                /*$("#ddlType").on("change", function(){
+                    updateEventList();
+                });*/
+                $('#tbSystemName').autocomplete({
+                    source: API_HOST + "/system/a?length=20",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbSystemID').val(ui.item.id);
+                        $('#tbSystemName').val(ui.item.name);
+                    }
+                });
+                $('#tbSystemID').on("change", function () {
+                    $.ajax({
+                        async: true,
+                        url: API_HOST + '/system',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: getInt($('#tbSystemID').val())
+                        },
+                        success: function (result) {
+                            if (result) {
+                                $('#tbSystemName').val(result.name);
+                            }
+                        },
+                        error: function (message) {
+                            console.error(message);
+                        },
+                    });
+                });
+                $("#systemlink").click(function(){
+                    if($('#tbSystemID').val()!="")
+                        window.open("system.html?id=" + $('#tbSystemID').val(),'_blank');
+                })
+            });
+            var systemEventEditSave = function(options){
+                let error = [];
+                if($("#dtDate").val()==""){
+                    error.push("Укажите дату события");
+                }
+                let date;
+                if(($("#dtDate").val()??"")!=""){
+                    date=new Date(getDate($("#dtDate").val()));
+                    if(!(date instanceof Date && !isNaN(date)))
+                        error.push("Неверная дата начала эксплуатации");
+                    //else
+                        //date.setDate(date.getDate() - 1);
+                }
+                //console.log(date);
+                if($("#ddlType").val()==""){
+                    error.push("Укажите тип события");
+                }
+                if($("#ddlEvent").val()==""){
+                    error.push("Укажите событие");
+                }
+                if(error.length>0){
+                    if(options && typeof options.error == "function") options.error(error);
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/systemevent',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        date:date,
+                        type: $("#ddlType").val(),
+                        name: $("#tbName").val(),
+                        state: $("#ddlState").val(),
+                        description: $("#tbDescription").val(),
+                        systemid: $("#tbSystemID").val(),
+                        system:$("#tbSystemName").val()
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

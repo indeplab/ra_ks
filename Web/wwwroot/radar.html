@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <meta name="description" content="Zalando Tech Radar: a tool to visualize technology choices, inspire and support Engineering teams at Zalando to pick the best technologies for new projects">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="expires" content="0" />
+
+  <title>Техрадар</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+  <script src="lib/jquery-1.x-git.min.js"></script>
+  <script src="lib/jquery-ui.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+  <script src="lib/d3.v7.min.js"></script>
+  <script src="portal/js/radar.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="js/adapter.services.js"></script>
+
+  <link rel="stylesheet" href="portal/css/radar.css">
+
+  <script src="js/popup.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+  <script src="js/common.js"></script>
+  <script src="js/user.js"></script>
+
+  <script src="portal/js/page.js"></script>
+  <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+  
+  <script src="portal/js/form.js"></script>
+
+</head>
+
+<body>
+  <style>
+    textarea {
+      border: 1px solid silver;
+      height: 100px;
+      outline: none;
+      resize: vertical;
+    }
+    .buttonset {
+        text-align:right;
+        padding:10px 5px 5px !important;
+    }
+    a.menu-item {
+      color: #3d6b7e;
+      text-decoration: none;
+      cursor: pointer;
+    } 
+    a.menu-item img {
+      height: 16px;
+      width: 16px;
+      margin-bottom: -3px;
+      cursor: pointer;
+    }
+    a.menu-item span {
+      position: relative;
+      color: #3d6b7e;
+      padding: 3px;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 12px;
+      bottom: 0px;
+    }  
+    strong{
+      font-weight: bold;
+    }
+    h3{
+      font-size: 120%;
+      padding-bottom: 7px;
+      font-weight: bold;
+    }
+  </style>
+  
+    <table id="saveAs" class="popup">
+        <thead>
+            <tr>
+                <th id="saveasCaption">Сохранить как</th>
+                <td onclick="$(this).closest('table.popup').showDialog(false)"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError" id="saveaserror"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td  class="titlelabel" >Название:</td>
+                            <td>
+                                <input type="hidden" id="tbID" />
+                                <input type="text" id="tbName"  style="width:450px" maxlength="300" placeholder="Наименование" tabindex="0"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabel">Описание:</td>
+                            <td>
+                                <textarea  id="tbDescription" class="textarea" 
+                                    style="text-align:Left;width:450px" rows="8"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input type="button" class="mainbutton" value="Сохранить" id="saveassuccess"  />
+                    <input type="button" value="Отмена" onclick="$(this).closest('table.popup').showDialog(false)" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <table id="scriptPopup" class="popup" >
+      <thead>
+          <tr>
+              <th>Редактировать данные</th>
+              <td onclick="$('#scriptPopup').showDialog(false);"></td>
+          </tr>
+          <tr>
+              <td colspan="2" class="messageError"></td>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td colspan="2">
+                <textarea id="tbScript" class="textarea" style="text-align:Left;width:800px;height:400px"></textarea>
+              </td>
+          </tr>
+      </tbody>
+      <tfoot>
+          <tr>
+              <td colspan="2" class="buttonset">
+                  <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" id="scripteditsuccess" />
+                  <input type="button" class="button" value="Закрыть" style="width:120px" onclick="$('#scriptPopup').showDialog(false);" />
+              </td>
+          </tr>
+      </tfoot>
+    </table>
+
+      <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+              <table style="width:100%;margin-top:2px;margin-bottom:1px;text-align:left">
+                  <tr>
+                      <td style="padding-left:15px">
+                          <a role-type="Administrator,Operator" class="menu-item" id="btnNew" title="Новый"><img src="portal/images/new.png"/><span>Новый</span></a>
+                        <a role-type="Administrator,Operator" class="menu-item" id="btnEdit"><img src="portal/images/edit.png"/><span>Редактировать</span></a>
+                          <a role-type="Administrator,Operator" class="menu-item" id="btnSave" title="Сохранить"><img src="portal/images/save.png"/><span>Сохранить</span></a>
+                          <a role-type="Administrator,Operator" class="menu-item" id="btnSaveAs" title="Сохранить как"><img src="portal/images/saveas.png"/><span>Сохранить как</span></a>
+                          <a role-type="Administrator,Operator" class="menu-item" id="btnDelete" title="Удалить"><img src="portal/images/delete.png"/><span>Удалить</span></a>
+                      </td>
+                      <td id="searchPlace" class="buttonset">
+                      </td>
+                  </tr>
+              </table>
+            <svg id="radar"></svg>
+            <table class="radar">
+              <tr>
+                <td>
+
+                  <h3>Что такое технический радар?</h3>
+
+                  <p>
+                    Технический радар Zalando - это список технологий, дополненный результатом оценки, называемой <em>круговое
+                      распределение</em>. Мы используем четыре кольца со следующей семантикой:
+                  </p>
+
+                  <ul>
+                    <li><strong>Утвержденные</strong> &mdash; Технологии, в которых мы полностью уверены, служат нашей цели, в том числе в крупных
+                      масштабных проектах. Технологии соотносятся с культурой использования в нашей производственной среде Zalando, обладают низким уровнем риска и рекомендуеются для
+                      широкого применения.</li>
+                    <li><strong>Экспериментальные</strong> &mdash; Технологии, которые, как мы видели, успешно работают в проектной работе для решения
+                      реальной проблемы, есть факт первого серьезного опыта использования, который подтверждает преимущества и может выявить ограничения. Пробные
+                      технологии чуть более рискованные, некоторые инженеры в нашей организации прошли этот путь и готовы поделиться
+                      знаними и опытом.</li>
+                    <li><strong>Рассматриваемые</strong> &mdash; Технологии, которые являются многообещающими и имеют очевидную потенциальную ценность для нас.
+                      Технологии, в которые стоит вложить некоторые усилия по исследованию и созданию прототипов, чтобы увидеть, окажет ли это ожидаемый эффект. Применение рассматриваемых
+                      технологий сопряжено с более высокими рисками; они часто являются совершенно новыми и в высшей степени непроверенными в нашей организации. Вы сможете найти
+                      иннициативных инженеров, которые имеют знания в технологии и продвигают их, и вы можете даже найти команды, которые
+                      вкладывают усилия прототипирования.</li>
+                    <li><strong>Отложенные</strong> &mdash; Технологии, которые не рекомендуется использовать в новых проектах. Технологии, в которые, 
+                      по нашему мнению, (пока) не стоит (далее) инвестировать. Отложенные технологии не следует использовать в новых проектах,
+                      но, как правило, их можно использовать в существующих проектах.</li>
+                  </ul>
+
+                </td>
+                <td>
+
+                  <h3>Какую цель мы преследуем?</h3>
+
+                  <p>
+                    Технический радар - это инструмент, который вдохновляет и поддерживает команды инженеров Zalando в выборе лучших технологий для
+                    новых проектов; это платформа для обмена знаниями и опытом в области технологий, для обсуждения
+                    технологических решений и постоянного развития нашего технологического ландшафта. Основанный на <a
+                      href="https://www.thoughtworks.com/radar">новаторской работе ThoughtWorks</a>, наш Технический радар определяет
+                    изменения в технологиях, которые интересные в разработке программного обеспечения. &mdash; Мы думаем, что нашим
+                    инженерам стоит обратить внимание и использовать их в своих проектах.
+                  </p>
+
+                  <h3>Как мы его поддерживаем?</h3>
+
+                  <p>
+                    Технический радар поддерживается нашими <em>главными инженерами</em>, которые содействуют
+                    обсуждению выбора технологии в инженерном сообществе Zalando и руководят им. Назначение технологии
+                    кольцам является результатом рассмотрения предложений по изменению колец, которые обсуждаются и по которым проводится голосование. Технический радар открыт для
+                    вклада всех инженерных групп в Zalando и зависит от их активного участия в обмене знаниями.
+                    Мы извлекли уроки, выявили подводные камни и внесли свой вклад в передовую практику использования технологий.<br />
+                  </p>
+
+                  <p>
+                    Ознакомьтесь с нашим <a href="https://engineering.zalando.com/tags/tech-radar.html">Инженерным блогом</a> для получения дополнительной информации
+                    о том, как мы подходим к выбору технологий и используем технический радар в Zalando.
+                  </p>
+
+                  <p>
+                    <em>Кстати, если вы хотите создать свой собственный технический радар - у нас есть <a
+                    href="https://github.com/zalando/tech-radar">открытый исходный код</a> для создания Вашей
+                      визуализации.</em>
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+
+  <script>
+    $(function () {
+      $("body").setRolePermission();
+      let id = getInt(getQueryParam("id"));
+      $("#menu-main").show();
+
+      if(id!=0 ){
+          $.ajax({
+              url: API_HOST + '/mapdata',
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              dataType: 'json',
+              data: {
+                  id: id
+              },
+              success: function (result) {
+                  $("title").text(result.name);
+                  $("#tbName").val(result.name),
+                  $("#tbDescription").val(result.description),
+                  $("#tbScript").val(result.data);
+                  radar_visualization(JSON.parse($("#tbScript").val()));
+
+                  if (typeof showWaitPanel == "function")
+                      showWaitPanel(false);
+            },
+              error: function (message) {
+                  if (typeof showWaitPanel == "function")
+                      showWaitPanel(false);
+                  console.error(message);
+                  alert(message.responseText);
+              }
+          });
+      }
+
+
+
+      $("#btnNew").click(function(){
+          location.search="";
+      });
+      $("#btnEdit").click(function(){
+          $("#scriptPopup").showDialog();
+      });
+      $("#scripteditsuccess").click(function(){
+          $("#scriptPopup").showDialog(false);
+
+          radar_visualization(JSON.parse(replaceAll($("#tbScript").val(),"\n","")));
+      });
+
+      $("#btnSave").click(function(){
+          $("#saveasCaption").text("Сохранить");
+          $("#tbID").val(id);
+          $("#tbName").val($("title").text());
+          $("#saveAs").showDialog();
+      });
+      $("#btnSaveAs").click(function(){
+          $("#saveasCaption").text("Сохранить как");
+          $("#tbID").val("0");
+          $("#tbName").val($("title").text());
+          $("#saveAs").showDialog();
+      });
+      $("#saveassuccess").click(function(){
+          let errors=[];
+          $('#saveAs').setError();
+          if($("#tbName").val()==""){
+              errors.push("Укажите назввние");
+          }
+          if(errors.length>0){
+              $('#saveAs').setError(errors);
+              return;
+          }
+          $('#saveAs').setError();
+          showWaitPanel(true);
+          $.ajax({
+              url: API_HOST + '/mapdata',
+              type: 'PUT',
+              contentType: 'application/json; charset=utf-8',
+              dataType: 'json',
+              data: JSON.stringify({
+                  id:$("#tbID").val(),
+                  type:"radar",
+                  name:$("#tbName").val(),
+                  description:$("#tbDescription").val(),
+                  data: $("#tbScript").val()
+              }),
+              success: function (data) {
+                  showWaitPanel(false);
+                  $("#saveAs").showDialog(false);
+                  $("title").text($("#tbName").val());
+                  if(getInt($("#tbID").val())!=data.id)
+                      location.search="id=" + data.id;
+              },
+              error: function (message) {
+                  showWaitPanel(false);
+                  console.error(message);
+                  $("#messageError").text(message);
+              }
+          });
+      });
+      $("#btnDelete").click(function(){
+          if(getInt(id)==0) return;
+          if(!confirm("Удалить карту?"))
+              return;
+          showWaitPanel(true);
+          $.ajax({
+              url: API_HOST + '/mapdata/' + id,
+              type: 'DELETE',
+              success: function (data) {
+                  showWaitPanel(false);
+                  location.search="";
+              },
+              error: function (message) {
+                  showWaitPanel(false);
+                  console.error(message);
+                  alert(message.responseText);
+              }
+          });
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

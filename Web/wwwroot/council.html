@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Протокол Архитектурного совета</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <!--<script src="lib/jquery.fileupload.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.fileupload.css" />-->
+
+    <script src="portal/js/datalist.js"></script>
+    <script src="portal/js/filepicker.js"></script>
+    <script src="portal/js/datepicker.js"></script>
+    <script src="portal/js/jquery.maskedinput.min.js"></script>
+    <script src="portal/js/jquery.mtz.monthpicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+
+<body>
+    <table id="councilSystemPopup" class="popup" >
+        <thead>
+            <tr>
+                <th>Добавить систему</th>
+                <td onclick="$('#councilSystemPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table style="width: auto;">
+                        <tr>
+                            <td  class="titlelabel" >Система:</td>
+                            <td>
+                                <input type="hidden" id="hfSystemID" value=""/>
+                                <input type="text" id="tbSystemID" class="textbox" 
+                                    style="text-align:Left;width:50px" />
+                            </td>
+                            <td>
+                                <input type="text" id="tbSystemName" class="textbox" 
+                                    style="text-align:Left;width:250px" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Добавить" style="width:120px" onclick="insertItem();" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#councilSystemPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content">
+                <div align="center">
+                    <table border="0" style="padding:4px 4px 4px 80px;">
+                        <tr>
+                            <td class="messageError" id="messageError">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="dataPlace" style="width: 900px;">
+                                <table class="caption">
+                                    <tr>
+                                        <th>
+                                            <span id="lbName"></span>
+                                        </th>
+                                    </tr>
+                                </table>
+                                <table class="data" style="width: auto;">
+                                    <tr>
+                                        <td class="titlelabel">Протокол №:</td>
+                                        <td>
+                                            <input id="tbNumber" type="text" style="width: 70px;" />
+                                        </td>
+                                        <td class="titlelabel">от:</td>
+                                        <td>
+                                            <input type="text" id="tbDate" />
+                                        </td>
+                                        <td class="titlelabel">Протокол:</td>
+                                        <td>
+                                            <input type="text" id="fuDecision" style="width: 250px;" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table class="data" style="margin-top:8px;margin-bottom:1px">
+                                    <tr id="buttonSet" runat="server">
+                                        <td style="padding-left:15px;text-align:left">
+                                            <a role-type="Administrator,Operator" class="menu-item" id="mnuAddSystem" title="Добавить систему"><img
+                                                    src="portal/images/add-new.png" /><span>Добавить систему</span></a>
+                                        </td>
+                                        <td class="buttonset">
+                                            <input role-type="Administrator,Operator" type="button" id="btnSave" class="mainbutton" style="width:140px"
+                                                value="Сохранить" />
+                                            <input type="button" id="btnCancel" value="Закрыть" style="width:140px"
+                                                onclick="location.href='councilList.html';return(false);" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table class="data">
+                                    <tr>
+                                        <td>
+                                            <div id="plSystemList" style ="width:100%;height:124px"></div>                                      
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+    <script>
+        let insertItem = function(){
+            $('#councilSystemPopup').find("td.messageError").text("");
+            let id = getInt($('#hfSystemID').val());
+            if(id==0){
+                $('#councilSystemPopup').find("td.messageError").text("Система не найдена");
+                return;
+            }
+            insertListItem({
+                id:id,
+                name:$('#tbSystemName').val()
+            })
+           //$('#councilSystemPopup').showDialog(false);
+        }
+        let insertListItem = function(item){
+            $("#plSystemList").adddatalistitem({
+                id:item.id, 
+                name:item.name,
+                open:function(){
+                    window.open("system.html?id=" + item.id,'_blank');
+                },
+                delete: (isAdmin() || isOperator()? function(d,e){
+                    $(e).remove();
+                }:undefined)
+           });
+        }
+        $(function () {
+            let id = getInt(getQueryParam("id"));
+            $("#menu-main").show();
+            $("#menu-back").show();
+            $("#menu-back").attr({
+                href: "councilList.html"
+            });
+
+            $("#plSystemList").datalist({
+                srcdel: "portal/images/delete.png",
+                titledel: "Удалить систему"
+            });
+            $("#mnuAddSystem").click(function () {
+                $("#hfSystemID").val('');
+                $("#tbSystemID").val('');
+                $("#tbSystemName").val('');
+                $('#councilSystemPopup').showDialog();
+            });
+           $('#tbSystemID').on("change",function(){
+                $('#tbSystemName').val('');
+                if(getInt($('#tbSystemID').val())==0) return;
+                getdata({
+                    acync:false,
+                    url:API_HOST + "/system?id=" + getInt($('#tbSystemID').val()),
+                    success:function(data){
+                        $("#hfSystemID").val(data.id);
+                        $('#tbSystemName').val(data.name);
+                    }
+                });
+            });
+            $('#tbSystemName').autocomplete({
+                source: API_HOST + "/system/a?length=20",
+                minLength: 1,
+                delay: 100,
+                select: function (event, ui) {
+                    $("#hfSystemID").val(ui.item.id);
+                    $('#tbSystemID').val(ui.item.id);
+                    $('#tbSystemName').val(ui.item.name);
+                }
+            });
+            if (id != 0) {
+                $.ajax({
+                    url: API_HOST + '/council',
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        let caption = "Протокол №" + data.number + " от " + formatDate(new Date(data.date));
+                        $("#tbNumber").val(data.number);
+                        $("#lbName").text(caption);
+                        $("#tbDate").val(formatDate(new Date(data.date)));
+                        //$("title").text(caption);
+                        //$("#fuAgenda").val(data.agendaFile);
+                        $("#fuDecision").val(data.decisionFile);
+                        $("#plSystemList").empty();
+                        if (data.systems) {
+                            $.each(data.systems.sort(function (a, b) {
+                                return (a.system < b.system ? -1 : 1);
+                            }), function (i, e) {
+                                insertListItem({
+                                    id:e.systemid,
+                                    name:e.system
+                                });
+                            });
+                        }
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                    },
+                    error: function (message) {
+                        if (typeof showWaitPanel == "function")
+                            showWaitPanel(false);
+                        console.error(message);
+                        alert(message.responseText);
+                    }
+                });
+            }
+            
+            $("#btnSave").click(function () {
+                let data = {
+                    id: id,
+                    number: getInt($("#tbNumber").val()),
+                    decisionFile: $("#fuDecision").val()
+                }
+                let error = [];
+                $("#messageError").setMessageError();
+                if (data.number == 0)
+                    error.push("Укажите номер протокола");
+                if (($("#tbDate").val() ?? "") != "") {
+                    data.date = new Date(getDate($("#tbDate").val()));
+                    if (!(data.date instanceof Date && !isNaN(data.date)))
+                        error.push("Укажите дату заседания");
+                    else
+                        data.date.setDate(data.date.getDate() + 1);
+                }
+                if (error.length > 0) {
+                    $("#messageError").setMessageError(error);
+                    return;
+                }
+                data.systems = $("#plSystemList").getdatalistitem().map(e=>{
+                    return{
+                        systemid:getInt(e.id),
+                        system:e.name
+                    }
+                });
+                /*$.each($("#plSystemList").getdatalistitem(),function(i,e){
+                    data.systems.push({
+                        systemid:e.id,
+                        system:e.name
+                    });
+                })*/
+                showWaitPanel();
+                let xhr = new XMLHttpRequest();
+                xhr.upload.onerror = function () {
+                    console.log("Ошибка " + this.status);
+                };
+                xhr.onloadend = function () {
+                    showWaitPanel(false);
+                    if (xhr.status == 200) {
+                        console.log("Успех");
+                    } else {
+                        console.log("Ошибка " + this.status);
+                    }
+                };
+                xhr.open("POST", API_HOST + '/council');
+                var formData = new FormData();
+                formData.append("council", JSON.stringify(data));
+                let decision = $("#fuDecision").filepickerfile();
+                if (decision.length > 0 && decision[0].files.length > 0)
+                    formData.append("decision", decision[0].files[0]);
+                xhr.send(formData);
+
+                /*$.ajax({
+                    url: API_HOST + '/council',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });*/
+
+            });
+
+            $("#tbDate").dtpicker({
+                src: "portal/images/calendar.png"
+            });
+            $("#fuDecision").filepicker({
+                srcopen: "portal/images/add-new.png",
+                srcdelete: "portal/images/delete.png",
+                open: (isAdmin() || isOperator()?function () {
+                    $("#fuDecision").openFile("council", id, $("#fuDecision").val());
+                }:undefined),
+                load: function (file) {
+                    console.log("load", file);
+                },
+                delete: (isAdmin() || isOperator()?function () {
+                    console.log("delete");
+                }:undefined)
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

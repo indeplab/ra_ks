@@ -1,0 +1,197 @@
+<html>
+<head>
+    <title>Данные</title>
+</head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >Назначение:</td>
+                <td style="width: 450px;" colspan="3">
+                    <select id="ddlEntity">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Название:</td>
+                <td>
+                    <input type="text" id="tbName" style="width: 100%" />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Значение:</td>
+                <td>
+                    <input type="text" id="tbValue" style="width: 100%"  />
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Тип:</td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <select id="dllType" style="width: 80px;">
+                                    <option value="string" selected >Строка</option>
+                                    <!--<option value="date">Дата</option>-->
+                                </select>
+                            </td>
+                            <td class="titlelabel">Цвет:</td>
+                            <td>
+                                <input type="text" id="tbColor" style="width: 60px;" />
+                            </td>
+                            <td class="titlelabel">Порядок:</td>
+                            <td>
+                                <input type="text" id="tbOrder" style="width: 40px;"  />
+                            </td>
+                            <td class="titlelabel">Иконка:</td>
+                            <td style="white-space:nowrap">
+                                <img id="imIco" style="width: 16px; height:16px;position:relative;top:4px"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Псевдоним:</td>
+                <td>
+                    <input type="text" id="tbAlias" style="width: 100%"  />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="cbRequares"/><label for="cbRequares">Обязательный к заполнению</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Описание:</td>
+                <td>
+                    <textarea id="tbDescription" class="textarea" style="text-align:left;width:100%" rows="8"></textarea>
+                </td>
+            </tr>
+    </table>
+    <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            var type = param?.type;
+            var metric = decodeURIComponent((param?.metric+'').replace(/\+/g, '%20'));
+            $(function () {
+                $("#tbColor").minicolors({
+                    format:"hex",
+                    position:'bottom right'
+                });
+                if(!$("#imIco").isimagepicker()){
+                    $("#imIco").imagepicker({
+                        srcopen: "portal/images/add-new.png",
+                        srcdelete: "portal/images/delete.png",
+                        accept:".png,.jpg,.jpeg,.svg,.bmp",
+                        open: (isAdmin() || isOperator()?function () {
+                            console.log("open");
+                        }:undefined),
+                        delete: (isAdmin() || isOperator()?function () {
+                            console.log("delete");
+                        }:undefined)
+                    });
+                }
+
+                getdata({
+                    async:false,
+                    url: API_HOST + "/dictionary/entity",
+                    success:function(ui){
+                        $("#ddlEntity").empty();
+                        $.each(ui,function(i,e){
+                            $("#ddlEntity").append($('<option>',{
+                                value:e.id,
+                                text:e.name,
+                                title:e.description
+                            })); 
+                        })
+                    }
+                });
+                if(id!=0){
+                    $.ajax({
+                        async:false,
+                        url: API_HOST + '/dictionary',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#ddlEntity").val(data.entityid);
+                            $("#form1").closest("table.popup").setCaption(data.name);
+                            $("#tbName").val(data.name);
+                            $("#tbValue").val(data.value);
+                            $("#tbDescription").val(data.description);
+                            $("#tbAlias").val(data.alias);
+                            $("#tbColor").val(data.color);
+                            $("#tbColor").minicolors("value",{color:(data.color??"white")});
+                            $("#cbRequares").prop("checked",data.requared);
+                            $("#tbOrder").val(data.order);
+                            $("#imIco").attr({
+                                src:data.img
+                            });
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+                else{
+                    if(type!=0) $("#ddlEntity").val(type);
+                    if(metric!="") $("#tbName").val(metric);
+                }
+
+                $('#tbName').autocomplete({
+                    source: API_HOST + "/dictionary/a?length=20&type=name",
+                    minLength: 1,
+                    delay: 100,
+                    select: function (event, ui) {
+                        $('#tbName').val(ui.item.name);
+                    }
+                });
+
+            })
+            var dictionaryEditSave = function(options){
+                if($("#tbName").val()==""){
+                    if(options && typeof options.error == "function") options.error("Укажите наименование метрики");
+                    return;
+                }
+                $.ajax({
+                    url: API_HOST + '/dictionary',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        value: $("#tbValue").val(),
+                        description: $("#tbDescription").val(),
+                        alias: $("#tbAlias").val(),
+                        entityid: getInt($("#ddlEntity").val()),
+                        color:$("#tbColor").val(),
+                        requared: $('#cbRequares').is(':checked') ? true : false,
+                        order:getInt($("#tbOrder").val()),
+                        img: $("#imIco").attr("src")
+
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

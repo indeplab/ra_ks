@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <title>Пользователь</title>
+    </head>
+<body>
+    <form id="form1" >
+        <table class="data">
+            <tr>
+                <td  class="titlelabel" >ФИО:</td>
+                <td>
+                    <input type="text" id="tbName"  style="width:450px" maxlength="250" placeholder="ФИО пользователя" tabindex="0"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Логин (электронная почта):</td>
+                <td>
+                    <input type="email" id="tbLogin" style="width:250px" placeholder="name@domain.ru"/>
+                </td>
+            </tr>
+            <tr id="passPlace" style="display: none;">
+                <td class="titlelabel">Новый пароль:</td>
+                <td>
+                    <input type="text" id="tbPwd" style="width:250px"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="titlelabel">Статус:</td>
+                <td>
+                    <select id="ddlState">
+                        <option value="-1">Подтверждение e-mail</option>
+                        <option value="0">Новая заявка</option>
+                        <option value="1">Активный</option>
+                        <option value="2">Заблокирован</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="cbSendUpdate"/><label for="cbSendUpdate">Отправить пользователю уведомнение о смене статуса</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="titlelabelleft">Роли пользователя:</td>
+            </tr>
+            <tr>
+                <td colspan="2" id="cbRole">
+                    <input type="checkbox" id="Administrator" /><label for="Administrator">Администратор</label>
+                    <input type="checkbox" id="Operator" /><label for="Operator">Оператор</label>
+                    <input type="checkbox" id="ReadOnly" /><label for="ReadOnly">Только чтение</label>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var param = $.deparam($("#form1").attr("data-param"));
+            var id = getInt(param?.id);
+            $(function () {
+                if(isAdmin())
+                    $("#passPlace").show();
+                else
+                    $("#passPlace").hide();
+
+                if(id!=0){
+                    $("#cbRole input").prop("checked",false);
+
+                    $.ajax({
+                        url: API_HOST + '/account/id',
+                        type: 'GET',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: {
+                            id: id
+                        },
+                        success: function (data) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            $("#tbName").val(data.name);
+                            $("#form1").closest("table.popup").setCaption(data.name);
+                            $("#tbLogin").val(data.login);
+                            $("#tbPwd").val("");
+                            $("#ddlState").val(data.state_id);
+                            $.each(data.roles, function(i,e){
+                                $("#cbRole #" + e).prop("checked",true);
+                            });
+                        },
+                        error: function (message) {
+                            if (typeof showWaitPanel == "function")
+                                showWaitPanel(false);
+                            console.error(message);
+                            alert(message.responseText);
+                        }
+                    });
+                }
+            });
+            var staffEditSave = function(options){
+                let error = [];
+                if($("#tbName").val()=="")
+                    error.push("ФИО не должно быть пустым");
+                if($("#tbLogin").val()=="")
+                    error.push("Введите логин");
+                if(error.length>0){
+                    if(options && typeof options.error == "function") options.error(error);
+                    return;
+                }
+                if($("#tbPwd").val()!="" && !confirm("Установить новый пароль?")) return;
+                let roles=[];
+                $("#cbRole input:checked").each(function(i,e){
+                    roles.push($(e).attr("id"));
+                });
+                $.ajax({
+                    url: API_HOST + '/account',
+                    type: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        id:id,
+                        name: $("#tbName").val(),
+                        login: $("#tbLogin").val(),
+                        password:$("#tbPwd").val(),
+                        state_id: $("#ddlState").val(),
+                        need2SendMessage: $('#cbSendUpdate').is(':checked') ? true : false,
+                        roles: roles
+                    }),
+                    success: function (data) {
+                        if(options && typeof options.success == "function") options.success(data);
+                    },
+                    error: function (message) {
+                        console.error(message);
+                        if(options && typeof options.error == "function") options.error(message);
+                    }
+                });
+            }
+
+        </script>
+    </form>
+</body>
+</html>

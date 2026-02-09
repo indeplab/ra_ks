@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <meta charset="utf-8" />
+
+    <title>Архитектурный портал</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+
+    <script src="lib/jquery-1.x-git.min.js"></script>
+    <script src="lib/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="css/clear.css" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" />
+
+    <script src="lib/json2.js"></script>
+    <script src="js/common.js"></script>
+
+    <script src="js/adapter.services.js"></script>
+    <script src="js/user.js"></script>
+
+    <script src="js/popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+
+    <script src="portal/js/page.js"></script>
+    <link rel="stylesheet" type="text/css" href="portal/css/page.css" />
+    <script src="portal/js/form.js"></script>
+    <script src="portal/js/filepicker.js"></script>
+
+    <script src="lib/FileSaver.js"></script>
+
+
+</head>
+<body>
+    <table id="contentPopup" class="popup" >
+        <thead>
+            <tr>
+                <th>Редактировать раздел</th>
+                <td onclick="$('#contentPopup').showDialog(false);"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="messageError"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <table style="width: auto;">
+                        <tr>
+                            <td class="titlelabelleft">Тип:</td>
+                        </tr>
+                        <tr>
+                            <td style="white-space:nowrap">
+                                <img id="imType" style="width: 16px; height:16px;position:relative;top:4px"/>
+                                <select id="ddlType" style="width:380px"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabelleft">Название:</td>
+                        </tr>
+                        <tr>
+                            <td style="width:400px">
+                                <input type="text" id="tbName" style="width:100%" placeholder="Введите название"/>
+                                <input type="hidden" id="hfPartID" value=""/>
+                                <input type="hidden" id="hfID" value=""/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabelleft">Описание:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="tbDescription" class="textbox" style="height:60px !important;width:100%"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="titlelabelleft">
+                                <label for="cbFile" style="cursor: pointer;"><input id="cbFile" type="radio" name="grIsLink" checked="checked" /><span style="position: relative;bottom:2px">Файл</span></label> 
+                                <label for="cbLink" style="cursor: pointer;"><input id="cbLink" type="radio" name="grIsLink" /><span style="position: relative;bottom:2px">Ссылка</span></label>
+                            </td>
+                        </tr>
+                        <tr id="plLink">
+                            <td>
+                                <input type="text" id="tbLink" style="width:100%" placeholder="Введите ссылку"/>
+                            </td>
+                        </tr>
+                        <tr id="plFile" style="display: none;">
+                            <td>
+                                <input type="text" id="fuFile" style="width: 350px;" placeholder="Загрузите файл"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  class="titlelabelleft">Порядок:</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" id="tbOrd" class="textbox" style="text-align:Left;width:50px" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="buttonset">
+                    <input role-type="Administrator,Operator" type="button" class="mainbutton" value="Сохранить" style="width:120px" onclick="saveContent();" />
+                    <input type="button" class="button" value="Отмена" style="width:120px" onclick="$('#contentPopup').showDialog(false);" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="maintable">
+        <div id="page-header" style="display: table-row;" src="header.html"></div>
+        <div style="display: table-row;">
+            <div class="page-content"  >
+                <input type="button" value="123" id="test" style="display: none;"/>
+                <div class="search-place"  >
+                    <div class="search">
+                        <a id="dosearch"> <img src="images/search.png" /></a>
+                        <a id="deletesearch" style="position: relative;float: right; margin-right: -10px;"><img src="portal/images/delete.png" /></a>
+                        <input id="search" type="text" placeholder="Поиск по архитектурному порталу" />
+                    </div>
+                    <div class="search-part">
+                        <div><a class="selected">Все</a></div>
+                        <div><a data-id="system">Системы и компоненты</a></div>
+                        <div><a data-id="function">Функции</a></div>
+                        <div><a data-id="interface">Интерфейсы</a></div>
+                        <div><a data-id="data">Сущности</a></div>
+                        <div><a data-id="server">Инфраструктура</a></div>
+                        <div><a data-id="doc">Архитектура</a></div>
+                    </div>
+                </div>
+                <table class="content-table" style="display: none;">
+                    <tr>
+                        <td>
+                            <span class="caption">Архитектурные модели</span>
+                            <a role-type="Administrator,Operator" id="addModel" class="menu-item" title="Добавить карту"><img src="portal/images/add-new.png"/></a>
+                            <div class="addmodel" style="display: none;" >
+                                <a href="dashboard.html" target="_blank"><img src="portal/images/dashboard3.png"/><span>Карта возможностей</span></a>
+                                <a href="roadmap.html" target="_blank"><img src="portal/images/roadmap.png"/><span>Дорожная карта</span></a>
+                                <a href="radar.html" target="_blank"><img src="portal/images/radar.png"/><span>Техрадар</span></a>
+                            </div>
+                            <div id="dashboard"></div>
+                        </td>
+                        <td class="cell-padding"></td>
+                        <td>
+                            <span class="caption">Архитектурные стандарты</span>
+                            <a role-type="Administrator,Operator" id="standartsadd" onclick="addContent(0)" class="menu-item" title="Добавить стандарт"><img src="portal/images/add-new.png"/></a>
+                            <a role-type="Administrator,Operator" id="standartsmode" data-mode="0" class="menu-item" title="Войти в режим редактирования"><img src="portal/images/edit.png"/></a>
+                            <div id="standarts" wizard-id="0">
+                                <!--<div>
+                                    <a class="caption"><img src="portal/images/process.png"/><span>Функциональная архитектура</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                                <div>
+                                    <a ><img src="portal/images/share.png"/><span>Информационная архитектура</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                                <div>
+                                    <a ><img src="portal/images/application.png"/><span>Архитектура приложений</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                                <div>
+                                    <a href="portal/docs/standart-integration.pdf" target="_blank" ><img src="portal/images/network2.png"/><span>Интеграционная архитектура</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                                <div>
+                                    <a href="portal/docs/album-tech.pdf" target="_blank"><img src="portal/images/server.png"/><span>Техническая архитектура</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                                <div>
+                                    <a href="radar.html" target="_blank"><img src="portal/images/radar.png"/><span>Технологический радар</span> </a>
+                                    <a data-role="edit"><img src="portal/images/edit.png"/></a>
+                                    <a data-role="edit"><img src="portal/images/delete.png"/></a>
+                                </div>
+                            -->
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="cell-padding"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="caption">Текущая архитектура</span>
+                            <div>
+                                <a href="systemList.html" ><img src="portal/images/apps.png"/><span>Информационные системы</span> </a>
+                                <a href="functionList.html"><img src="portal/images/module.png"/><span>Информационные функции</span> </a>
+                                <a href="interfaceList.html"><img src="portal/images/api.png"/><span>Интеграционные интерфейсы</span> </a>
+                                <a href="dataList.html"><img src="portal/images/database.png"/><span>Информационные сущности</span> </a>
+                                <a href="netzoneList.html" ><img src="portal/images/netzone.png"/><span>Зоны сетевого размещения</span> </a>
+                                <a href="netobjectList.html" ><img src="portal/images/server.png"/><span>Объекты инфраструктуры</span> </a>
+                                <a href="dictionaryList.html" style="display: none;"><img src="portal/images/connecting.png"/><span>Матрица сетевого взаимодействия</span> </a>
+                            </div>
+                        </td>
+                        <td class="cell-padding"></td>
+                        <td>
+                            <span class="caption">Проектная деятельность</span>
+                            <div>
+                                <a href="portal/docs/arch-control.jpg" target="_blank" ><img src="portal/images/process2.png"/><span>Процесс управления архитектурой</span> </a>
+                                <a href="portal/docs/manual.pdf" target="_blank"><img src="portal/images/important-book.png"/><span>Правила проектирования архитектурной документации</span> </a>
+                                <a href="councilList.html" ><img src="portal/images/counsil.png"/><span>Протоколы Архитектурного совета</span> </a>
+                                <a href="index.html" target="_blank"><img src="portal/images/compass.png"/><span>Инструмент проектирования</span> </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="cell-padding"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="caption">Администрирование</span>
+                            <div>
+                                <a role-type="Administrator" href="staffList.html" ><img src="portal/images/users.png"/><span>Управление пользователями</span> </a>
+                                <a href="dictionaryList.html" ><img src="portal/images/book.png"/><span>Архитектурные метрики</span> </a>
+                            </div>
+                        </td>
+                        <td class="cell-padding" colspan="2"></td>
+                    </tr>
+
+                </table>
+                <table id="_search" class="search-table" style="display: none;">
+                    <tr>
+                        <td>
+                            <div class="search-filter">
+                                <div>
+                                    <div class="caption">Система</div>
+                                    <input type="text" id="sys_name"/>
+                                </div>
+                                <div>
+                                    <div class="caption">Интеграционная роль</div>
+                                    <table class="cbtable">
+                                        <tr>
+                                            <td>
+                                                <input id="sys_consumer" type="checkbox" name="sys_role" /><label for="sys_consumer" style="position: relative;bottom:2px">Потребитель</label>
+                                            </td>
+                                            <td>
+                                                <input id="sys_supply" type="checkbox" name="sys_role" /><label for="sys_supply" style="position: relative;bottom:2px">Поставщик</label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="search-filter">
+                                <div>
+                                    <div class="caption">Функция</div>
+                                    <input type="text" id="fn_name"/>
+                                </div>
+                                <div>
+                                    <div class="caption">Предоставляет сервис</div>
+                                    <input type="text" id="fn_service"/>
+                                </div>
+                            </div>
+                            <div class="search-filter">
+                                <div>
+                                    <div class="caption">Информационная сущность</div>
+                                    <input type="text" id="dt_name"/>
+                                </div>
+                                <table class="cbtable" style="padding-top: 3px;">
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="dt_master" /><label for="dt_master" style="position: relative;bottom:2px">Мастер-система</label>
+                                        </td>
+                                        <td>
+                                            <input  type="checkbox" id="dt_transfer"/><label for="dt_transfer" style="position: relative;bottom:2px">Передается</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <input type="checkbox" id="dt_copy"/><label for="dt_copy" style="position: relative;bottom:2px">Копия данных</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="search-filter">
+                                <div>
+                                    <div class="caption">Инфраструктурная единица</div>
+                                    <input type="text" id="srv_name"/>
+                                </div>
+                            </div>
+                            <div class="search-filter">
+                                <div>
+                                    <div class="caption">Документ</div>
+                                    <input type="text" id="doc_name"/>
+                                </div>
+                                <table class="cbtable">
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="doc_design"/><label for="doc_design" style="position: relative;bottom:2px">Архитектурное решение</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input  type="checkbox" id="doc_concept"/><label for="doc_concept" style="position: relative;bottom:2px">Концептуальный дизайн</label>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div>
+                                    <div class="caption">Установлен статус</div>
+                                    <table class="cbtable">
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" id="doc_state_develop"/><label for="doc_state_develop" style="position: relative;bottom:2px">Разработка</label>
+                                            </td>
+                                            <td>
+                                                <input  type="checkbox" id="doc_state_accept"/><label for="doc_state_accept" style="position: relative;bottom:2px">Утвержден</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" id="doc_state_process"/><label for="doc_state_process" style="position: relative;bottom:2px">Согласование</label>
+                                            </td>
+                                            <td>
+                                                <input  type="checkbox" id="doc_state_reject"/><label for="doc_state_reject" style="position: relative;bottom:2px">Не согласован</label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <ul id="search_result"></ul>
+                            <div id="search_pager"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="page-footer" style="display: table-row;" src="footer.html"></div>
+    </div>
+
+    <style>
+        div.addmodel{
+
+            position: absolute;
+            background-color: white;
+            height: auto !important;
+            width: 170px !important;
+            opacity:0.95 !important;
+            text-align: left;
+            border: 1px solid silver;
+            padding: 3px 0px 3px 0px !important;
+            margin: 0px 0px 0px 200px !important;
+        }
+        div.addmodel a{
+            width: 100% !important;
+            margin: 3px 0px 0px 0px !important;
+        }
+        div.addmodel a img{
+            width: 18px !important;
+            height: auto !important;
+        }
+        div.page-content{
+            display: flex;
+            align-items: start;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            flex-direction: column;
+            align-content: center;
+            align-items: center;
+        }        
+        table.content-table{
+            padding: 30px;
+            width: 1010px;
+        }
+        table.content-table tr td{
+            width: 500px;
+            border: 1px solid silver;
+            border-radius: 10px;
+            padding: 15px 10px 15px 10px;
+        }
+        table.content-table tr td.cell-padding{
+            border: none;
+            width: 10px;
+            height: 10px;
+        }
+        table.content-table tr td span{
+            padding-left: 5px;
+        }
+        table.content-table tr td>div{
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 5px;
+            height: 100%;
+            width: 100%;
+        }
+        table.content-table tr td>div>div {
+            width: 50%;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        table.content-table tr td>div>a, table.content-table tr td>div>div {
+            width: 50%;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        table.content-table tr td>div>div>a{
+            display: inline-flex;
+            align-items: center;
+        }
+        table.content-table tr td>div>div>a:first-child{
+            width: 100%;
+        }
+        table.content-table tr td>div>a>img, table.content-table tr td>div>div>a>img{
+            width: 24px;            
+            height: 24px;
+        }
+        table.content-table tr td>div>div>a[data-role]>img{
+            width: 16px;            
+            height: 16px;
+        }
+        table.content-table tr td>div>a>span, table.content-table tr td>div>div>a>span{
+            padding-left: 5px;
+            padding-right: 3px;
+        }
+
+        table.search-table{
+            padding-top: 0px;
+            width: 1200px;
+        }
+        table.search-table tr td{
+            padding: 5px 20px 0px 20px;
+        }
+        table.search-table tr td:first-child{
+            width: 25%;
+        }
+        table.search-table tr td div.search-filter{
+            border: 1px solid silver;
+            border-radius: 5px;
+            padding: 0px 12px 7px 7px;
+            margin-top: 10px;
+        }
+        table.search-table tr td div.search-filter:first-child{
+            margin-top: 0px;
+        }
+
+        table.search-table tr td div.search-filter>div {
+            padding-top: 10px;
+        }
+        div.caption{
+            font-size: 13px;
+            color:rgb(34, 76, 142);
+            padding-bottom: 4px;
+        }
+
+        table.cbtable{
+            width: 100%;
+        }
+        table.cbtable tr td{
+            padding: 1px;
+            width: auto !important;
+            white-space: nowrap;
+        }
+
+        div.search-place{
+            padding-top: 30px;
+            width: 800px;
+            z-index: 2;
+        }
+        div.search a img{
+            height: 17px;
+            width: 17px;
+            margin-left: -25px;
+            margin-top: 3px;
+            position: relative;
+            float: left;
+        }
+        div.search input{
+            border: none;
+            display: inline-block;
+            background-color: transparent;
+        }
+        div.search{
+            padding: 10px 17px 7px 35px;
+            border: 1px solid silver;
+            border-radius: 20px;
+        }
+        div.search-part{
+            padding: 10px 25px 0px 25px;
+            text-align: justify;
+        }
+        div.search-part:after{
+            display: inline-block;
+            width: 100%;
+            height: auto;
+            vertical-align: top;
+            content: '';
+        }
+        div.search-part div{
+            display: inline-block;
+        }
+        div.search-part div a{
+            text-decoration: none;
+            color: gray;
+        }
+        div.search-part div a.selected{
+            color: #3d6b7e;
+            border-bottom: 1px solid crimson;
+        }
+        ::placeholder{
+            color:rgb(192, 192, 192);
+            font-size: 110%;
+        }
+        img.item_img{
+            height: 16px;
+            width: auto;
+            position: relative;
+            top:4px;
+        }
+        a.item_link span.item_name{
+            color: black;
+        }
+        span.item_name, span.item_name_finded{
+            color: black;
+        }
+        span.item_description, span.item_description_finded{
+            color: gray;
+            font-size: 85%;
+        }
+        span.item_divider{
+            padding: 0 3px 0 3px;
+        }
+        div.item_container{
+            padding-left: 23px;
+        }
+        span.item_name_finded, span.item_description_finded{
+            /*color: red;*/
+            /*font-weight: bold;*/
+            text-decoration: underline;
+        }
+        a.item_link{
+            padding-left: 7px;
+            text-decoration: none;
+        }
+ 
+        #search_result{
+            padding-left: 10px;
+        }
+        #search_result li{
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        #search_pager{
+            padding-left: 45px;
+            position: relative;
+            top: 15px;
+            font-size: 105%;
+        }
+        #search_pager span, #search_pager a{
+            padding-right: 10px;
+        }
+
+        a.search_link{
+            text-decoration :none;
+        }
+        img.search_img{
+            height: 25px;
+            width: auto;
+            float: left;
+        }
+        span.search_name_group{
+            font-size: 110%;
+            position: relative;
+            top: 3px;
+            left :10px;
+            line-height: 18px;
+        }
+        span.search_name_finded{
+            border-bottom: 1px solid crimson;
+        }
+ 
+        div.search_description{
+            padding-left: 35px;
+            color: gray;
+            padding-top: 3px;
+        }
+        span.search_description_finded{
+            border-bottom: 1px solid crimson;
+        }
+
+        a.menu-item{
+            padding-left: 5px;
+        }
+
+ 
+    </style>
+    <script>
+        let currentPage = 0;
+        let maxPage = 0;
+        $(function () {
+            $("div.search-part div a").click(function () {
+                var type = $(this).attr("data-id");
+                $("div.search-part div a").removeClass("selected");
+                $(this).addClass("selected");
+                updateList();
+            });
+
+            $("#dosearch").click(function(){
+                updateList();
+            });
+            $.widget("my.customAutocomplete", $.ui.autocomplete, {
+                _renderItem: function (ul, item) {
+
+                    var controlList = [];
+
+                    var txtlist = [];
+                    var inName = false;
+                    var re = new RegExp(getRegExp(item.term), "ig");
+                    var it = parseItem(item);
+                    while (result = re.exec(it.name)) {
+                        txtlist.push({
+                            text: result[0],
+                            index: result.index
+                        });
+                        inName = true;
+                    }
+                    var s = 0;
+                    $.each(txtlist, function (i, e) {
+                        controlList.push($("<span>", { class: "item_name", text: it.name.substring(s, e.index), title: it.pref }));
+                        controlList.push($("<span>", { class: "item_name_finded", text: e.text, title: it.pref }));
+                        s = e.index + e.text.length;
+                    });
+                    if (s < it.name.length)
+                        controlList.push($("<span>", { class: "item_name", text: it.name.substring(s), title: it.pref }));
+
+                    if (item.description != undefined && item.description.length > 0 && item.type != "presentation" && item.type != "template" && item.type != "standart") {
+                        re = new RegExp(getRegExp(item.term), "ig");
+                        txtlist = [];
+                        while (result = re.exec(item.description)) {
+                            txtlist.push({
+                                text: result[0],
+                                index: result.index
+                            });
+                        }
+                        s = 0;
+                        var clist = [];
+                        $.each(txtlist, function (i, e) {
+                            clist.push($("<span>", { class: "item_description", text: item.description.substring(s, e.index) }));
+                            clist.push($("<span>", { class: "item_description_finded", text: e.text }));
+                            s = e.index + e.text.length;
+                        });
+                        if (s < item.description.length)
+                            clist.push($("<span>", { class: "item_description", text: item.description.substring(s) }));
+
+                        if (item.type == "search") {
+                            controlList.push($("<span>", { class: "item_divider", text: "-" }));
+                            controlList = controlList.concat(clist);
+                        }
+                        else
+                            controlList.push($("<div>", { class: "item_container" }).append(clist));
+                    }
+                    let link = $("<a>", { class: "item_link" });
+                    if(it.link != ""){
+                        $(link).attr({
+                            "onclick":it.link
+                        });
+                    }
+                    else
+                    {
+                        if((it.page??"")==""){
+                            $(link).click(function(){
+                                $("#search").val(it.term);
+                                updateList();
+                            });
+                        }
+                        else{
+                            $(link).attr({
+                                href:it.page, 
+                                target:it.target
+                            })
+                        }
+                    }
+                    var div = $("<div>", { class: "item_wrapper" }).append(
+                        $("<img>", { class: "item_img", src: it.icon, title: it.pref }),
+                        $(link).append(controlList)
+                    );
+                    return $($("<li>").append(div)).appendTo(ul);
+                }
+            });
+            $("#search").customAutocomplete({
+                source: function (d, f) {
+                    var type = $("div.search-part div a.selected").attr("data-id");
+                    searchItems({
+                        term: d.term,
+                        page: 0,
+                        length: 10,
+                        type: type,
+                        filter: $("#_search").getPlaceParam(),
+                        success: function (result) {
+                            result.unshift({
+                                id: 0,
+                                name: d.term,
+                                title: d.term,
+                                description: "Поиск по порталу",
+                                term: d.term,
+                                type: "search"
+                            });
+                            if (typeof f == "function") f(result);
+                        }
+                    });
+                },
+                minLength: 2,
+                delay: 100,
+                autoFocus: true,
+                select: function (event, ui) {
+                    //var val = ui.item.name + (ui.item.description!=undefined && ui.item.description.length>0 && ui.item.type!="search" && ui.item.type!="presentation" && ui.item.type!="template" && ui.item.type!="standart" ?" - " + ui.item.description:"");
+                    $("#search").val(ui.item.name);
+                    updateList();
+                    return false;
+                },
+                focus: function (event, ui) {
+                    return false;
+                }
+            });
+            
+            $("#search").keyup(function (event) {
+                if(event.keyCode==13){
+                    updateList();
+                }
+            });
+            
+            $("#deletesearch").click(function(){
+                location.href="search.html";
+            });
+
+            $("#_search").find("input[type='text']").keyup(function (event) {
+                if(event.keyCode==13){
+                    updateList();
+                }
+            });
+            $("#_search").find("input[type='checkbox'], input[type='radio'], select").change(function (event) {
+                updateList();
+            });
+
+            if($("#search").val()==""){
+                $.ajax({
+                    url: API_HOST + '/mapdata/list',
+                    async:false,
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        showWaitPanel(false);
+                        $("#dashboard").empty();
+                        $.each(data.sort(function(a,b){
+                            return a.name<b.name?-1:1;
+                        }),function(i,e){
+                            let link=e.type + ".html";
+                            let img="";
+                            switch(e.type){
+                                case "dashboard":
+                                    img = "portal/images/dashboard3.png";
+                                break;
+                                case "roadmap":
+                                    img = "portal/images/roadmap.png";
+                                break;
+                                case "radar":
+                                    img = "portal/images/radar.png";
+                                break;
+                            }
+                            $("#dashboard").append(
+                                $("<a>",{href:link + "?id="+e.id,title:e.description}).append(
+                                    $("<img>",{src:img}),
+                                    $("<span>",{text:e.name})
+                                )
+                            );
+                        });
+                    },
+                    error: function (message) {
+                        showWaitPanel(false);
+                        console.error(message);
+                        $("#messageError").text(message);
+                    }
+                });
+                $("#standarts").getContentList();
+            }
+       
+            setVisibility();
+            setMode();
+
+            $("#standartsmode").click(function(){
+                let mode = getInt($(this).attr("data-mode"));
+                mode = mode ^ 1;
+                $(this).attr("data-mode", mode);
+                setMode();
+            });
+
+            $("#cbFile, #cbLink").change(function(){
+                setContentMode();
+            });
+            $("#ddlType").change(function(){
+                setTypeImage();
+            });
+
+            $("#addModel").click(function(event){
+                $("div.addmodel").toggle();
+            });
+            $("div.addmodel").click(function(){
+                $("div.addmodel").hide();
+            });
+                
+            $.ajax({
+                url: API_HOST + '/content/typelist',
+                async:false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    /*$("#ddlType").append($('<option>',{
+                        value:0,
+                        text:''
+                    })); */
+                    $.each(data,function(i,e){
+                        $("#ddlType").append($('<option>',{
+                            value:e.id,
+                            text:e.name,
+                            "data-image":e.image
+                        })); 
+                    });
+                    setTypeImage();
+                },
+                error: function (message) {
+                    showWaitPanel(false);
+                    console.error(message);
+                    $("#messageError").text(message);
+                }
+            });
+
+            $("#fuFile").filepicker({
+                srcopen: "portal/images/add-new.png",
+                srcdelete: "portal/images/delete.png",
+                open: (isAdmin() || isOperator()?function () {
+                    $("#fuFile").openFile("content", "", $("#fuFile").val());
+                }:undefined),
+                load: function (file) {
+                    console.log("load", file);
+                },
+                delete: (isAdmin() || isOperator()?function () {
+                    console.log("delete");
+                }:undefined)
+            });
+        });
+        $.fn.getContentList = function(){
+            var place = this;
+            showWaitPanel();
+            let partid = getInt($(place).attr("wizard-id"));
+            $.ajax({
+                url: API_HOST + '/content/list?partid=' + partid,
+                async:false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    showWaitPanel(false);
+                    $(place).empty();
+                    $.each(data,function(i,e){
+                        let content = $("<a>",{
+                                "data-id":e.id,
+                                class:"caption", 
+                                href:e.islink && e.src!=""?e.src:undefined,
+                                target:"_blank",
+                                title: e.description
+                            }).append(
+                                $("<img>",{src:e.image}),
+                                $("<span>",{text:e.name}),
+                            );
+                        if(!e.islink && e.src!=""){
+                            $(content).on("click",function(){
+                                openFile("content","",e.src)
+                            });
+                        }
+                        let edit = $("<a>",{"data-role":"edit", title: "Редактировать"}).append(
+                                        $("<img>",{src:"portal/images/edit.png"}),
+                                    );
+                        $(edit).on("click", function(){
+                            editContent(e.id);
+                        });
+                        let del = $("<a>",{"data-role":"edit", title: "Удалить"}).append(
+                                        $("<img>",{src:"portal/images/delete.png"}),
+                                    );
+                        $(del).on("click", function(){
+                            if(!confirm("Удалить '" + e.name + "'?")) return(false);
+                                $(place).deleteContent(e.id);
+                        });
+                        $(place).append(
+                            $("<div>").append(
+                                    content,
+                                    edit,
+                                    del
+                                )
+                        );
+                    });
+                },
+                error: function (message) {
+                    showWaitPanel(false);
+                    console.error(message);
+                    $("#messageError").text(message);
+                }
+            });
+        }
+        var addContent = function(partid){
+            $("#contentPopup").setPlaceParam();
+            $("#hfID").val(0);
+            $("#hfPartID").val(partid);
+            $("#cbFile").prop("checked", true);
+            setContentMode();
+            $('#contentPopup').showDialog();      
+        }
+        var editContent = function(id){
+            showWaitPanel();
+            $.ajax({
+                url: API_HOST + '/content?id=' + id,
+                async:false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    $("#hfID").val(data.id);
+                    $("#hfPartID").val(data.partid);
+                    $("#cbFile").prop("checked", !data.islink);
+                    $("#cbLink").prop("checked", data.islink);
+                    $("#tbName").val(data.name);
+                    $("#tbDescription").val(data.description);
+                    $("#tbOrd").val(data.ord);
+                    if(data.islink)
+                        $("#tbLink").val(data.src);
+                    else
+                        $("#fuFile").val(data.src);
+                    $("#ddlType").val(data.typeid);
+                    setTypeImage();
+
+                    setContentMode();
+                    showWaitPanel(false);
+                    $('#contentPopup').showDialog();      
+                },
+                error: function (message) {
+                    showWaitPanel(false);
+                    console.error(message);
+                    $("#messageError").text(message);
+                }
+            });
+        }
+        var saveContent = function(){
+            let data = {
+                id: getInt($("#hfID").val()),
+                partid: getInt($("#hfPartID").val()),
+                name: $("#tbName").val(),
+                description: $("#tbDescription").val(),
+                ord: getInt($("#tbOrd").val()),
+                typeid: getInt($("#ddlType").val()),
+                src: $("#cbLink").prop("checked")? $("#tbLink").val() : $("#fuFile").val(),
+                islink: $("#cbLink").prop("checked")
+            }
+            let error = [];
+            $("#messageError").setMessageError();
+            if (data.name == "")
+                error.push("Укажите наименование");
+            if (error.length > 0) {
+                $("#messageError").setMessageError(error);
+                return;
+            }
+            showWaitPanel();
+            let xhr = new XMLHttpRequest();
+            xhr.upload.onerror = function () {
+                console.log("Ошибка " + this.status);
+            };
+            xhr.onloadend = function () {
+                showWaitPanel(false);
+                if (xhr.status == 200) {
+                    console.log("Успех");
+                    $("#contentPopup").showDialog(false);
+                    $("div[wizard-id=" + data.partid + "]").getContentList();
+                } else {
+                    error = ["Ошибка сохранения файла"];
+                    $("#messageError").setMessageError(error);
+                    console.log("Ошибка " + this.status);
+                }
+            };
+            xhr.open("POST", API_HOST + '/content');
+            var formData = new FormData();
+            formData.append("content", JSON.stringify(data));
+            if(!data.islink){
+                let file = $("#fuFile").filepickerfile();
+                if (file.length > 0 && file[0].files.length > 0)
+                    formData.append("file", file[0].files[0]);
+            }
+            xhr.send(formData);
+        }
+        $.fn.deleteContent = function(id){
+            let place = this;
+            $.ajax({
+                url: API_HOST + '/content/' + id,
+                async:false,
+                type: 'DELETE',
+                success: function () {
+                    $(place).getContentList();
+                },
+                error: function (message) {
+                    showWaitPanel(false);
+                    console.error(message);
+                    $("#messageError").text(message);
+                }
+            });
+        }
+        var setContentMode = function(){
+            let islink = $("#cbLink").prop("checked");
+            if(islink){
+                $("#plLink").show();
+                $("#plFile").hide();
+            }
+            else{
+                $("#plLink").hide();
+                $("#plFile").show();
+            }
+        }
+        var setTypeImage = function(){
+            var optionSelected = $("#ddlType").find("option:selected");
+            $("#imType").attr({
+                src:($(optionSelected).attr("data-image"))
+            });
+        }
+        var setMode = function(){
+            let mode = getInt($("#standartsmode").attr("data-mode"));
+            $("#standartsmode").find("img").attr({
+                src:(mode==0?"/portal/images/edit.png":"/portal/images/cancel.png"),
+                title:(mode==0?"Войти в режим редактирования":"Выйти из режима редактирования")
+            });
+            if(mode==0){
+                $("#standarts").find("a[data-role='edit']").hide();
+                $("#standartsadd").hide();
+            }
+            else{
+                $("#standarts").find("a[data-role='edit']").show();
+                $("#standartsadd").show();
+            }
+        }
+        var setVisibility = function(){
+            if ($("#search").val() != "") {
+                $("table.content-table").hide();
+                $("table.search-table").show();
+
+                $("div.search-place").css({ "padding-top": "0px" });
+                $("div.menu-cover").show();
+                $("#deletesearch").show();
+            }
+            else {
+                $("table.content-table").show();
+                $("table.search-table").hide();
+
+                //$("div.search-place").css({ top: "40%" });
+                $("div.menu-cover").hide();
+                $("#deletesearch").hide();
+
+                $("#search").focus();
+            }
+        }
+        var getType = function(){
+            return ($("div.search-part div a.selected").attr("data-id")??"");
+        }
+        var createPager = function(options){
+            let pager = $("#search_pager");
+            $(pager).empty();
+            if(currentPage>maxPage) maxPage=currentPage;
+            for(let i=0; i<=(maxPage + (maxPage==currentPage && options.data.length>=options.length?1:0));i++){
+                if(i==currentPage){
+                    $(pager).append($("<span>",{text:(i+1).toString()}));
+                }
+                else{
+                    let link = $("<a>",{text:(i>maxPage?">":(i+1).toString()),"data-value":i});     
+                    $(link).click(function(){
+                        currentPage=getInt($(this).attr("data-value"));
+                        //console.log("set: " + currentPage.toString());
+                        updateList();
+                    });
+                    $(pager).append(link);
+                }
+            }
+        }
+        var updateList = function(){
+            //console.log("update: " + currentPage.toString());
+            setVisibility();
+            if ($("#search").val() != "")
+            {
+                let pagelen = 20;
+                searchItems({
+                    term: $("#search").val(),
+                    page: (currentPage??0),
+                    length: pagelen,
+                    type: getType(),
+                    filter: $("#_search").getPlaceParam(),
+                    success:function(result){
+                        $("#search_result").empty();
+                        createPager({
+                            length: pagelen,
+                            data: result
+                        });
+                        $.each(result,function(i,e){
+                            var it = parseItem(e);
+                            var item=e;
+                            var txtlist=[];
+                            var clist=[];
+                            if( item.description!=undefined && item.description.length>0 && item.term && item.term.length>0){
+                                var re = new RegExp(getRegExp(item.term), "ig");
+                                if (result = re.exec(item.description)) {
+                                    txtlist.push({
+                                        text:result[0],
+                                        index:result.index
+                                    });
+                                }    
+                                s=0;
+                                $.each(txtlist,function(i,e){
+                                    clist.push($("<span>",{class:"search_description",text:item.description.substring(s,e.index)}));
+                                    clist.push($("<span>",{class:"search_description_finded",text:e.text}));
+                                    s=e.index+e.text.length;
+                                });                  
+                                if(s<item.description.length)
+                                    clist.push($("<span>",{class:"search_description",text:item.description.substring(s)}));
+
+                            }
+                            
+                            var nlist=[];
+                            txtlist=[];
+                            if(it.name!=undefined && it.name.length>0 && item.term && item.term.length>0){
+                                var re = new RegExp(getRegExp(item.term), "ig");
+                                if (result = re.exec(it.name)) {
+                                    txtlist.push({
+                                        text:result[0],
+                                        index:result.index
+                                    });
+                                }    
+                                s=0;
+                                $.each(txtlist,function(i,e){
+                                    nlist.push($("<span>",{class:"search_name",text:it.name.substring(s,e.index)}));
+                                    nlist.push($("<span>",{class:"search_name_finded",text:e.text}));
+                                    s=e.index+e.text.length;
+                                });                  
+                                if(s<it.name.length)
+                                    nlist.push($("<span>",{class:"search_name",text:it.name.substring(s)}));
+                            }
+
+                            let link = $("<a>", {class:"search_link"});
+                            if(it.link != ""){
+                                $(link).attr({
+                                    "onclick":it.link
+                                });
+                            }
+                            else
+                            {
+                                if((it.page??"")==""){
+                                    $(link).click(function(){
+                                        $("#search").val(it.term);
+                                        updateList();
+                                    });
+                                }
+                                else{
+                                    $(link).attr({
+                                        href:it.page, 
+                                        target:it.target
+                                    });
+                                }
+                            }
+                            $("#search_result").append(
+                                $("<li>").append(
+                                    $(link).append(
+                                        $("<img>",{class:"search_img", src:it.icon, title:it.pref}),
+                                        $("<span>",{class:"search_name_group", title:it.pref}).append(nlist)
+                                    ),
+                                    $("<div>", {class:"search_description"}).append(clist)
+                                )
+                            );
+                        });
+                    }
+                });
+            }
+        }
+        var searchItems = function (options) {
+            var result = [];
+            $.ajax({
+                async: options.async != undefined ? options.async : true,
+                url: API_HOST + '/search',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify({
+                    type: options.type,
+                    term : options.term,
+                    length: options.length,
+                    page: options.page,
+                    filter: options.filter??{}
+                }),
+                success: function (data) {
+                    $.each(data, function (i, e) {
+                        result.push({
+                            id:e.id,
+                            name: e.name,
+                            description:e.description,
+                            term:options.term,
+                            type:e.type,
+                            img:e.img,
+                            link:e.link,
+                            subtype:e.subtype
+                        });
+                    });
+                    if (options && typeof options.success == "function") options.success(result);
+                },
+                error: function (message) {
+                    console.error(message);
+                    if (options && typeof options.error == "function") options.error(message);
+                }
+            });
+            return result;
+        }
+        var parseItem = function (item) {
+            var pref = item.type;
+            var page = item.type + ".html?id=" + item.id;
+            var icon = "images/s_" + item.type + ".png";
+            var name = item.name;
+            var target = "";
+            var link = "";
+            switch (item.type.toLowerCase()) {
+                case "system":
+                    pref = "Автоматизированная система";
+                    break;
+                case "function":
+                    pref = "Функция";
+                    break;
+                case "data":
+                    pref = "Данные";
+                    break;
+                case "interface":
+                    pref = "Интерфейс";
+                    break;
+                case "council":
+                    pref = "Протокол Архсовета";
+                    break;
+                case "document":
+                    icon = item.img;
+                    if(item.subtype=="")
+                        page = item.link;
+                    else{
+                        page = "";
+                        link = "openFile('" + item.subtype + "','','" + item.link+"');";
+                    }
+                    target = "_blank";
+                    pref = "";
+                    break;
+                case "search":
+                    pref = "";
+                    page = "";
+                    //page = location.origin + location.pathname + "?s=" + item.name + (type != undefined && type != "" ? "&t=" + type : "");
+                    break;
+                case "кд":
+                    icon = "images/s_webotar.png";
+                    page = "index.html?id=" + item.id + "&s=" + item.term;
+                    target = "_blank";
+                    name = item.type + ". " + name;
+                    break;
+                case "ар":
+                    icon = "images/s_webotar.png";
+                    page = "index.html?id=" + item.id+ "&s=" + item.term;
+                    target = "_blank";
+                    name = item.type + ". " + name;
+                    break;
+                default:
+                    if(item.subtype=="server"){
+                        pref = "";
+                        page = "netobject.html?id=" + item.id; //page = "";
+                        icon = item.img;
+                        name = item.type + " " + name;
+                    }
+                    else{
+                        icon = (item.id!=""?"images/s_webotar.png":"images/s_doc.png");
+                        target = "_blank";
+                        page = (item.id!=""?"index.html?id=" + item.id+ "&s=" + item.term:item.link);
+                        name = item.type + " " + name;
+                    }
+                    break;
+            }
+            return {
+                icon: icon,
+                page: page,
+                pref: pref,
+                name: name,
+                target: target,
+                term: item.term,
+                link:link
+            };
+        }
+    </script>
+
+</body>
+</html>

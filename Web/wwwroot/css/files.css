@@ -1,0 +1,109 @@
+﻿.files {
+    width: 660px;
+    overflow: auto;
+    min-height: 0px;
+    /*border:1px solid silver;*/
+}
+    .files table tr td {
+        padding-right: 10px;
+        text-wrap: none;
+        white-space: nowrap;
+    }
+    .files table tr td input {
+        margin-bottom:-2px;
+    }
+    .files table tr td a {
+    }
+.checkbox {
+    display: none;
+}
+
+div.file {
+    overflow: hidden;
+    height: 28px !important;
+    width: 28px !important;
+    display: inline-block;
+    position: relative;
+    top: 9px;
+    /*border: 1px solid crimson;
+    border-radius: 50%;*/
+    background-image: url(../images/attach.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px;
+    cursor: pointer;
+}
+    div.file.exists {
+        background-image: url(../images/text.png);
+    }
+    div.file.error {
+        background-image: url(../images/delete.png);
+    }
+    @-webkit-keyframes load {
+        0% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes load {
+        0% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+div .file svg {
+    width: 28px;
+    height: 28px;
+}
+
+div.file svg defs linearGradient stop {
+    stop-color: crimson;
+}
+div.file svg:nth-child(2) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+a.unactive{
+    cursor:default;
+    color:black;
+}
+a.unactive:hover {
+    cursor: default;
+    color: black;
+}
+a.unactive {
+    cursor: default;
+    color: black;
+}
+a.delete {
+    background-image: url(../images/delete1.png);
+    background-repeat: no-repeat;
+    position:relative;
+    margin-left: 2px;
+    top: 0px;
+    height: 24px;
+    width: 24px;
+    font-size:18px;
+}
+div.file svg:nth-child(2) path {
+    fill: none;
+    stroke-width: 10;
+    stroke-dasharray: 629;
+    stroke: lightgrey;
+    opacity: 1;
+    /*-webkit-animation: load 4s;
+    animation: load 4s;*/
+}
+
+    div.file input[type=file] {
+        border: solid 1px red;
+        position: relative;
+        float: right;
+        top: -24px;
+        cursor: pointer;
+        opacity: 0;
+        -ms-filter: 'alpha(opacity=0)';
+    }
