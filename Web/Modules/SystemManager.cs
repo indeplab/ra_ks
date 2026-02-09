@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Web.Models;
 using Web.UI;
@@ -106,14 +108,51 @@ namespace Web.Modules
             return result;
         }
 
-        public class valueEntity
+        public class vEntity
         {
-            public string title {get;set;}
+            public string data {get;set;}
         }
-        public class valueEntityList
+        public class indicatorsUuidEntity
         {
-            public valueEntity[] values {get;set;} =  Array.Empty<valueEntity>();
+            public vEntity v {get;set;}
         }
+        public class dEntity
+        {
+            public indicatorsUuidEntity[] indicatorsUuids {get;set;} = Array.Empty<indicatorsUuidEntity>();
+        }
+        public class dataEntity
+        {
+            public dEntity d {get;set;}
+        }
+        public class resultSystemList
+        {
+            public dataEntity[] data {get;set;} = Array.Empty<dataEntity>();
+        }
+        /*public class CustomConverter<T> : JsonConverter
+        {
+            private Dictionary<string,string> dict = new Dictionary<string, string>();
+            public CustomConverter(Dictionary<string,string> dict)
+            {
+                this.dict = dict;
+            }
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                JObject jsonObject = JObject.Load(reader);
+                MyModel result = new MyModel();
+                result.NewPropertyName = (string)jsonObject["oldPropertyName"];
+                return result;
+            }
+
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(MyModel);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }     */   
         public static async Task<List<SystemEntity>> Get(DictionaryRequest request)
         {
             var headers = new Dictionary<string, string>()
@@ -123,23 +162,47 @@ namespace Web.Modules
 
             var req = new
             {
-                indicator="01f0fcf8-550d-4f23-93fa-00b15c0c4000",
-                sessionUuid="974fb4fc-5287-4c0b-a3b1-fa71549ae3a9",
-                pagination = new
-                    {
-                        page = 1,
-                        perPage = request.Length
-                    },
-                term = request.Term
+                datasetsUuids = new string[] {
+                    "01f0fcf8-552f-e941-93fa-00b15c0c4000" 
+                },
+                indicatorsUuids = new string[] {
+                    "01f0fcf8-550d-4f23-93fa-00b15c0c4000"
+                },
+                Filters = new object[]
+                {
+                    new {
+                        IndicatorUuid = "01f0fcf8-550d-4f23-93fa-00b15c0c4000",
+                        Indicatorvalue = new {
+                            data = request.Term,
+                            type = "string"
+                        },
+                        compareOperation = "==",
+                    }
+                },
+                withEntityName = true,
+                page = 0,
+                perPage = 1
             };                
             List<SystemEntity> result = new List<SystemEntity>();
-            valueEntityList res = await Post<valueEntityList>("/api/built-data-tables/get-filter-values", req, headers);
-            foreach(valueEntity val in res.values)
+
+            /*public static JsonSerializerOptions CyrilicOptions = new JsonSerializerOptions
             {
-                result.Add(new SystemEntity()
-                {
-                   name = val.title 
-                });
+                    Converters = { new CustomConverter() }
+            };        */
+
+
+            string resstr = await Post("api/data/get-list-min", req, headers);
+            resstr = resstr.Replace("01f0fcf8-550d-4f23-93fa-00b15c0c4000","indicatorsUuids");
+            resultSystemList res = JsonSerializer.Deserialize<resultSystemList>(resstr);
+
+            foreach(var data in res.data)
+            {
+                foreach(var d in data.d.indicatorsUuids){
+                    result.Add(new SystemEntity()
+                    {
+                        name = d.v.data
+                    });
+                }
             }
             /*string selectSQL = "";
             if (!string.IsNullOrEmpty(request.Name))

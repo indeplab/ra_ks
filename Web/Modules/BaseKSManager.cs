@@ -63,10 +63,11 @@ namespace Web.Modules
             return responce.StatusCode;
         }
 
-        public static async Task<T> Post<T>(string url, object request, Dictionary<string, string> headers = null, bool isSecond = false)
+        public static async Task<string> Post(string url, object request, Dictionary<string, string> headers = null, bool isSecond = false)
         {
-            T result = default(T);
+            string result = string.Empty;
             var content = JsonContent.Create(request);
+            var json = JsonSerializer.Serialize(request).ToString();
             var responce = await postData(new Uri(BaseURL, url), content, headers);
             switch (responce.StatusCode)
             {
@@ -75,12 +76,11 @@ namespace Web.Modules
                     {
                         var loginResultCode = await Login();
                         if (loginResultCode == HttpStatusCode.OK)
-                            result = await Post<T>(url, request, headers, true);
+                            result = await Post(url, request, headers, true);
                     }
                     break;
                 case HttpStatusCode.OK:
-                    string r = await responce.Content.ReadAsStringAsync();
-                    result = JsonSerializer.Deserialize<T>(r);
+                    result = await responce.Content.ReadAsStringAsync();
                     break;
                 default:
                     ApplicationInstance.Logger.LogError(string.Format("Ошибка вызоыв сервиса '{0}'. IN:{1}, OUT:{2})", url, JsonSerializer.Serialize(request, ApplicationInstance.CyrilicOptions), JsonSerializer.Serialize(responce, ApplicationInstance.CyrilicOptions)));

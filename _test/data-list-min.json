@@ -1,0 +1,21 @@
+{
+    "datasetsUuids": [
+        "01f0fcf8-552f-e941-93fa-00b15c0c4000"
+    ],
+    "indicatorsUuids": [
+        "01f0fcf8-550d-4f23-93fa-00b15c0c4000"
+    ],
+    "Filters": [
+        {
+            "IndicatorUuid": "01f0fcf8-550d-4f23-93fa-00b15c0c4000",
+            "Indicatorvalue": {
+                "data": "\u043D\u043E\u0432\u0430\u044F \u0441\u0438\u0441\u0442\u0435\u043C\u0430",
+                "type": "string"
+            },
+            "compareOperation": "=="
+        }
+    ],
+    "withEntityName": true,
+    "page": 0,
+    "perPage": 1
+}
