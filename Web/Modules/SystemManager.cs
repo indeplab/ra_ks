@@ -12,8 +12,29 @@ namespace Web.Modules
 {
     public class SystemManager : BaseKSManager
     {
-        public static SystemEntity Get(string id)
+        public static async Task<SystemEntity> Get(string id)
         {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = SystemClassUUID, // класс АС
+                UUIDs = new string[]{ id },
+                withRelations = false
+            };
+            SystemEntity result = new SystemEntity();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if (res.data.Length > 0)
+            {
+                result = GetEntity(res.data[0]);
+            }
+        /*
             string selectSQL = string.Format(@"
                 select system.*, parent.name as parent, target.name as target from 
                     system 
@@ -31,7 +52,8 @@ namespace Web.Modules
             {
                 var row = data.Rows[0];
                 result = GetEntity(row);
-            }
+            }*/
+
             return result;
         }
         public static List<DictionaryEntity> GetParentListtBy(int id = 0, string type = "", int length = 20)
@@ -156,13 +178,7 @@ namespace Web.Modules
 
             for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
             {
-                result.Add(new SystemEntity()
-                {
-                    id = res.data[i].uuid,
-                    name = res.data[i].name,
-                    description = res.data[i].description,
-                    alias = res.data[i].shortName
-                });
+                result.Add(GetEntity(res.data[i]));
             }
 
             /*
@@ -309,6 +325,18 @@ namespace Web.Modules
             return result;
 
         }
+        private static SystemEntity GetEntity(dataEntity entity)
+        {
+            SystemEntity result = new SystemEntity()
+            {
+                id = entity.uuid,
+                name = entity.name,
+                description = entity.description,
+                alias = entity.shortName
+            };
+            return result;
+        }
+        /*
         private static SystemEntity GetEntity(DataRow row)
         {
             SystemEntity result = new SystemEntity()
@@ -332,7 +360,6 @@ namespace Web.Modules
             result.target = data.Columns.Contains("target") ? ValueManager.GetString(row["target"]) : string.Empty;
             return result;
         }
-        /*
         public static SystemEntity Save(SystemEntity entity)
         {
             string insertSQL = @"insert into system 
