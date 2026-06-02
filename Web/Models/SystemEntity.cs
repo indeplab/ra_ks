@@ -5,7 +5,7 @@ namespace Web.Models
 {
     public class SystemEntity
     {
-        public long id { get; set; }
+        public string id { get; set; }
         public long parentid { get; set; }
         public string parent { get; set; }
         public string name { get; set; }

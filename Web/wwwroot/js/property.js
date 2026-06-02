@@ -3174,8 +3174,8 @@ $.fn.property = function(){
                 }
             });
         },
-        minLength: 1,
-        delay: 100,
+        minLength: 3,
+        delay: 300,
         autoFocus: false,
         select: function (event, ui) {
             elementUpdate(ui.item);
@@ -3690,7 +3690,7 @@ $.fn.property = function(){
             });
         },
         minLength: 0,
-        delay: 100,
+        delay: 300,
         autoFocus: false,
         select: function (event, ui) {
             var sl = $.getfirstofselected();
@@ -5023,7 +5023,7 @@ $.fn.dictionary = function(options){
             }
         },
         minLength: 0,
-        delay: 100,
+        delay: 300,
         autoFocus: false,
         select: function (event, ui) {
             $(this).val(ui.item.value);

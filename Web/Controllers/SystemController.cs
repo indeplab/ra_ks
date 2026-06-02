@@ -22,15 +22,15 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<object> Get(int id)
+        public ActionResult<object> Get(string id)
         {
             return SystemManager.Get(id);
         }
-        [HttpGet("parent")]
+        /*[HttpGet("parent")]
         public ActionResult<object> GetParentListtBy(int id = 0, string type = "", int length = 20)
         {
             return SystemManager.GetParentListtBy(id, type, length);
-        }
+        }*/
         [HttpGet("a")]
         public ActionResult<object> GetA(string type, string term, int length)
         {
@@ -49,6 +49,7 @@ namespace Web.Controllers
             return Ok(result);
         }
         // PUT api/<SystemController>
+        /*
         [HttpPut]
         public ActionResult<object> Put([FromBody] SystemEntity value)
         {
@@ -69,5 +70,6 @@ namespace Web.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        */
     }
 }

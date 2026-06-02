@@ -1,7 +1,4 @@
 ﻿using DA;
-using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,7 +12,7 @@ namespace Web.Modules
 {
     public class SystemManager : BaseKSManager
     {
-        public static SystemEntity Get(long id)
+        public static SystemEntity Get(string id)
         {
             string selectSQL = string.Format(@"
                 select system.*, parent.name as parent, target.name as target from 
@@ -30,31 +27,34 @@ namespace Web.Modules
             {
                 data = manager.GetDataTable(selectSQL);
             }
-            if (data != null && data.Rows.Count>0)
+            if (data != null && data.Rows.Count > 0)
             {
                 var row = data.Rows[0];
                 result = GetEntity(row);
             }
             return result;
         }
-        public static List<DictionaryEntity> GetParentListtBy(int id = 0, string type = "", int length = 20){
+        public static List<DictionaryEntity> GetParentListtBy(int id = 0, string type = "", int length = 20)
+        {
             var list = new FilterParameterCollection();
             var and = new QueryAndCollection();
 
-            if (id!=0){
+            if (id != 0)
+            {
                 and.Parameters.Add("system.id = @id");
-                list.Add("id",id);
+                list.Add("id", id);
             }
             string value = "_none";
-            if(string.IsNullOrEmpty(type)) type=string.Empty;
-            switch(type.Trim()){
+            if (string.IsNullOrEmpty(type)) type = string.Empty;
+            switch (type.Trim())
+            {
                 case "Функциональный модуль":
                 case "Подсистема":
                     value = "Автоматизированная система";
-                break;
+                    break;
                 case "Автоматизированная система":
                     value = "Платформа";
-                break;
+                    break;
             }
             and.Parameters.Add("system.id in (select system_id from system_metric where name='Тип АС' and value=@sys_type)");
             list.Add("sys_type", value);
@@ -65,13 +65,14 @@ namespace Web.Modules
 
             List<DictionaryEntity> result = new List<DictionaryEntity>();
             DataTable data = null;
-            using(DataManager manager = new DataManager())
+            using (DataManager manager = new DataManager())
             {
                 data = manager.GetDataTable(selectSQL, list.ToDataParameterArray());
             }
             if (data != null)
             {
-                foreach(DataRow row in data.Rows){
+                foreach (DataRow row in data.Rows)
+                {
                     result.Add(new DictionaryEntity()
                     {
                         id = ValueManager.GetInt(row["id"]),
@@ -100,7 +101,7 @@ namespace Web.Modules
                 foreach (DataRow row in data.Rows)
                     result.Add(new SystemEntity()
                     {
-                        id = ValueManager.GetInt(row["id"]),
+                        id = ValueManager.GetString(row["id"]),
                         name = ValueManager.GetString(row["name"]),
                         state = ValueManager.GetString(row["state"])
                     });
@@ -108,26 +109,6 @@ namespace Web.Modules
             return result;
         }
 
-        public class vEntity
-        {
-            public string data {get;set;}
-        }
-        public class indicatorsUuidEntity
-        {
-            public vEntity v {get;set;}
-        }
-        public class dEntity
-        {
-            public indicatorsUuidEntity[] indicatorsUuids {get;set;} = Array.Empty<indicatorsUuidEntity>();
-        }
-        public class dataEntity
-        {
-            public dEntity d {get;set;}
-        }
-        public class resultSystemList
-        {
-            public dataEntity[] data {get;set;} = Array.Empty<dataEntity>();
-        }
         /*public class CustomConverter<T> : JsonConverter
         {
             private Dictionary<string,string> dict = new Dictionary<string, string>();
@@ -152,14 +133,39 @@ namespace Web.Modules
             {
                 throw new NotImplementedException();
             }
-        }     */   
+        }     */
         public static async Task<List<SystemEntity>> Get(DictionaryRequest request)
         {
             var headers = new Dictionary<string, string>()
             {
-                {"X-Project-Uuid","01f0bfa2-2571-f229-a4ba-00b15c0c4000"}
+                {"X-Project-Uuid", ProjectUUID}
             };
 
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = SystemClassUUID, // класс АС
+                Name = request.Term,
+                withRelations = false
+            };
+            List<SystemEntity> result = new List<SystemEntity>();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+
+            for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
+            {
+                result.Add(new SystemEntity()
+                {
+                    id = res.data[i].uuid,
+                    name = res.data[i].name,
+                    description = res.data[i].description,
+                    alias = res.data[i].shortName
+                });
+            }
+
+            /*
             var req = new
             {
                 datasetsUuids = new string[] {
@@ -185,12 +191,6 @@ namespace Web.Modules
             };                
             List<SystemEntity> result = new List<SystemEntity>();
 
-            /*public static JsonSerializerOptions CyrilicOptions = new JsonSerializerOptions
-            {
-                    Converters = { new CustomConverter() }
-            };        */
-
-
             string resstr = await Post("api/data/get-list-min", req, headers);
             resstr = resstr.Replace("01f0fcf8-550d-4f23-93fa-00b15c0c4000","indicatorsUuids");
             resultSystemList res = JsonSerializer.Deserialize<resultSystemList>(resstr);
@@ -204,6 +204,13 @@ namespace Web.Modules
                     });
                 }
             }
+            */
+            /*public static JsonSerializerOptions CyrilicOptions = new JsonSerializerOptions
+            {
+                    Converters = { new CustomConverter() }
+            };        */
+
+
             /*string selectSQL = "";
             if (!string.IsNullOrEmpty(request.Name))
             {
@@ -229,7 +236,8 @@ namespace Web.Modules
             }*/
             return result;
         }
-        public static List<DictionaryEntity> GetA(string type, string term, int length){
+        public static List<DictionaryEntity> GetA(string type, string term, int length)
+        {
             if (length == 0) length = 100;
 
             string selectSQL = string.Empty;
@@ -305,7 +313,7 @@ namespace Web.Modules
         {
             SystemEntity result = new SystemEntity()
             {
-                id = ValueManager.GetInt(row["id"]),
+                id = ValueManager.GetString(row["id"]),
                 parentid = ValueManager.GetInt(row["parent_id"]),
                 name = ValueManager.GetString(row["name"]),
                 type = ValueManager.GetString(row["type"]),
@@ -320,10 +328,11 @@ namespace Web.Modules
                 alias = ValueManager.GetString(row["alias"])
             };
             DataTable data = row.Table;
-            result.parent=data.Columns.Contains("parent")?ValueManager.GetString(row["parent"]):string.Empty;
-            result.target=data.Columns.Contains("target")?ValueManager.GetString(row["target"]):string.Empty;
+            result.parent = data.Columns.Contains("parent") ? ValueManager.GetString(row["parent"]) : string.Empty;
+            result.target = data.Columns.Contains("target") ? ValueManager.GetString(row["target"]) : string.Empty;
             return result;
         }
+        /*
         public static SystemEntity Save(SystemEntity entity)
         {
             string insertSQL = @"insert into system 
@@ -346,7 +355,7 @@ namespace Web.Modules
                             techdebt=@techdebt
                 where id=@id
             ";
-            using (DataManager manager=new DataManager())
+            using (DataManager manager = new DataManager())
             {
                 DataParameter[] p = new DataParameter[]
                 {
@@ -364,31 +373,34 @@ namespace Web.Modules
                     new DataParameter("techdebt", ValueManager.GetValueOrDBNull(entity.techdebt)),
                     new DataParameter("vendor", ValueManager.GetValueOrDBNull(entity.vendor))
                 };
-                if (entity.id == 0)
-                    entity.id = ValueManager.GetLong(manager.ExecuteScalar(insertSQL,p));
+                if (entity.id == "")
+                    entity.id = ValueManager.GetString(manager.ExecuteScalar(insertSQL, p));
                 else
-                    manager.ExecuteNonQuery(updateSQL,p);
-                if(entity.functions!=null){
+                    manager.ExecuteNonQuery(updateSQL, p);
+                if (entity.functions != null)
+                {
                     for (int i = 0; i < entity.functions.Count; i++)
                     {
                         entity.functions[i].refid = entity.id;
                         entity.functions[i] = FunctionManager.Save(entity.functions[i]);
                     }
                 }
-                if(entity.data!=null){
+                if (entity.data != null)
+                {
                     for (int i = 0; i < entity.data.Count; i++)
                     {
                         entity.data[i].refid = entity.id;
                         entity.data[i] = ADataManager.Save(entity.data[i]);
                     }
                 }
-                if (entity.components!=null && entity.components.Count>0)
+                if (entity.components != null && entity.components.Count > 0)
                     entity.components = SystemPlatformManager.Save(entity.id, entity.components);
-                if (entity.metrics!=null)
+                if (entity.metrics != null)
                     SystemMetricManager.Save(entity.id, entity.metrics);
             }
             return entity;
         }
+
         public static void Delete(long id)
         {
             string checkSQL = @"
@@ -407,14 +419,15 @@ namespace Web.Modules
             {
                 if (manager.ExecuteScalar(checkSQL, new DataParameter("id", id)) != null)
                     throw new Exception("Невозможно удалить систему - существует данные/ функции/ интерфейсы/ сервера/ файлы");
-                else{
-                    FileManager.DeleteDir("system",id.ToString());
+                else
+                {
+                    FileManager.DeleteDir("system", id.ToString());
                     manager.ExecuteNonQuery("DELETE FROM system_platform WHERE system_id = @id", new DataParameter("id", id));
                     manager.ExecuteNonQuery("DELETE FROM system_metric WHERE system_id = @id", new DataParameter("id", id));
                     manager.ExecuteNonQuery("DELETE FROM System WHERE ID = @id", new DataParameter("id", id));
                 }
             }
         }
-
+*/
     }
 }

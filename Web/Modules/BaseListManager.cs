@@ -6,7 +6,7 @@ using Web.UI;
 
 namespace Web.Modules
 {
-    public class BaseListManager
+    public class BaseListManager : BaseKSManager
     {
         public static DataTable MapColumn(DataTable data, Dictionary<string, string> tomap, string[] todelete)
         {

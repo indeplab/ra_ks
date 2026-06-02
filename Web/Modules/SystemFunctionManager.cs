@@ -2,16 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Text.Json;
+using System.Threading.Tasks;
 using DA;
 using Web.Models;
 using Web.UI;
 
 namespace Web.Modules
 {
-    public class SystemFunctionManager : BaseListManager{
+    public class SystemFunctionManager : BaseListManager
+    {
 
-        public SystemFunctionManager(FilterEntity filter):base(filter){
-            filter.currentSort=string.IsNullOrEmpty(filter.currentSort)?"Name":filter.currentSort;
+        public SystemFunctionManager(FilterEntity filter) : base(filter)
+        {
+            filter.currentSort = string.IsNullOrEmpty(filter.currentSort) ? "Name" : filter.currentSort;
         }
         protected override object OnFormatValue(DataColumn column, DataRow row)
         {
@@ -39,7 +43,7 @@ namespace Web.Modules
                 return (query);
             }
         }
-        public static SystemFunctionEntity Get(long id)
+        public static SystemFunctionEntity Get(string id)
         {
             string selectSQL = string.Format(@"
                 select 
@@ -63,13 +67,14 @@ namespace Web.Modules
             {
                 data = manager.GetDataTable(selectSQL);
             }
-            if (data != null && data.Rows.Count>0)
+            if (data != null && data.Rows.Count > 0)
             {
-                result = new SystemFunctionEntity() { 
-                    id=id,
-                    systemid = ValueManager.GetInt(data.Rows[0]["systemid"]),
+                result = new SystemFunctionEntity()
+                {
+                    id = id,
+                    systemid = ValueManager.GetString(data.Rows[0]["systemid"]),
                     system = ValueManager.GetString(data.Rows[0]["system"]),
-                    functionid = ValueManager.GetInt(data.Rows[0]["functionid"]),
+                    functionid = ValueManager.GetString(data.Rows[0]["functionid"]),
                     function = ValueManager.GetString(data.Rows[0]["function"]),
                     method = ValueManager.GetString(data.Rows[0]["method"]),
                     functiondescription = ValueManager.GetString(data.Rows[0]["description"]),
@@ -78,8 +83,46 @@ namespace Web.Modules
             }
             return result;
         }
-        public static List<SystemFunctionEntity> GetA(long sysid, string term, int length){
-            if (length == 0) length = 100;
+        public static async Task<List<SystemFunctionEntity>> GetA(string sysid, string term, int length)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ClassPairs = new object[]
+                {
+                    new
+                    {
+                        StartClassUUID = SystemClassUUID, // класс АС
+                        EndClassUUID = FunctionClassUUID
+                    }
+                },
+                FullChain = false,
+                ModelUUID = ModelUUID, // Основная модель
+                SelfRelationReverseDirection = true,
+                StartObjectsUUIDs = new string[]{ sysid },
+                withRelations = false
+            };
+            List<SystemFunctionEntity> result = new List<SystemFunctionEntity>();
+
+            string resstr = await Post("api/objects/get-chain", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+            for (int i = 0; i < res.data.Length && result.Count <= (length == 0?100:length); i++)
+            {
+                if(string.IsNullOrEmpty(term) || res.data[i].name.IndexOf(term)>-1){
+                    result.Add(new SystemFunctionEntity()
+                    {
+                        functionid = res.data[i].uuid,
+                        function = res.data[i].name,
+                        functiondescription = res.data[i].description
+                    });
+                }
+            }
+            /*
             string selectSQL = string.Format(@"
                 select 
                     system_function.id,
@@ -98,7 +141,7 @@ namespace Web.Modules
                     system_function.system_id={0}
                     and function.name ilike '%{1}%'
                         limit {2}
-                ",sysid, term, length);
+                ", sysid, term, length);
 
             DataTable data = null;
             List<SystemFunctionEntity> result = new List<SystemFunctionEntity>();
@@ -109,7 +152,7 @@ namespace Web.Modules
                 foreach (DataRow row in data.Rows)
                     result.Add(new SystemFunctionEntity()
                     {
-                        id=ValueManager.GetInt(row["id"]),
+                        id = ValueManager.GetInt(row["id"]),
                         systemid = ValueManager.GetInt(row["systemid"]),
                         system = ValueManager.GetString(row["system"]),
                         functionid = ValueManager.GetInt(row["functionid"]),
@@ -118,16 +161,17 @@ namespace Web.Modules
                         functiondescription = ValueManager.GetString(row["description"]),
                         state = ValueManager.GetString(row["state"])
                     });
-            }
+            }*/
             return result;
 
         }
-
-        public static SystemFunctionEntity Save(SystemFunctionEntity entity){
+        /*
+        public static SystemFunctionEntity Save(SystemFunctionEntity entity)
+        {
 
             FunctionEntity fn = FunctionManager.Get(entity.functionid);
-            fn.name=entity.function;
-            fn.description=entity.functiondescription;
+            fn.name = entity.function;
+            fn.description = entity.functiondescription;
             fn = FunctionManager.Save(fn);
 
             string insertSQL = @"insert into system_function 
@@ -142,7 +186,7 @@ namespace Web.Modules
                             state=@state
                 where id=@id
             ";
-            using (DataManager manager=new DataManager())
+            using (DataManager manager = new DataManager())
             {
                 DataParameter[] p = new DataParameter[]
                 {
@@ -153,9 +197,9 @@ namespace Web.Modules
                     new DataParameter("state", (string.IsNullOrEmpty(entity.state)?"exist":entity.state))
                 };
                 if (entity.id == 0)
-                    entity.id = ValueManager.GetLong(manager.ExecuteScalar(insertSQL,p));
+                    entity.id = ValueManager.GetLong(manager.ExecuteScalar(insertSQL, p));
                 else
-                    manager.ExecuteNonQuery(updateSQL,p);
+                    manager.ExecuteNonQuery(updateSQL, p);
             }
             return entity;
 
@@ -170,6 +214,6 @@ namespace Web.Modules
                 manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
-        
+*/
     }
 }
