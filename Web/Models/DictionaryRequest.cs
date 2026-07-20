@@ -10,4 +10,14 @@
         public int Length { get; set; }
         public bool IsRecursion { get; set; }
     }
+    public class DictionaryRequest2
+    {
+        public string ID { get; set; }
+        public string ID2 { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public string Term { get; set; }
+        public int Length { get; set; }
+        public bool IsRecursion { get; set; }
+    }
 }

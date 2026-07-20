@@ -7,10 +7,10 @@ namespace Web.Modules
 {
     public class InterfaceDataManager
     {
-        public static List<DataEntity> Get(int id, string term, int length)
+        public static List<DataEntity> Get(string id, string term, int length)
         {
             string selectSQL = string.Empty;
-            if (id!=0)
+            if (id!="")
                 selectSQL = string.Format(@"
                     select data.*,interface_data.state from interface_data inner join data on interface_data.data_id=data.id where interface_data.interface_id = {0} 
                 ", id);
@@ -30,7 +30,7 @@ namespace Web.Modules
                 foreach(DataRow row in data.Rows)
                 {
                     result.Add(new DataEntity() { 
-                        id= ValueManager.GetInt(row["id"]),
+                        id= ValueManager.GetString(row["id"]),
                         name = ValueManager.GetString(row["name"]),
                         refid = id,
                         state = ValueManager.GetString(row["state"])
@@ -39,7 +39,7 @@ namespace Web.Modules
             }
             return result;
         }
-        public static DataEntity Save(DataEntity entity)
+        /*public static DataEntity Save(DataEntity entity)
         {
             string selectSQL = @"select id from interface_data where data_id=@did and interface_id=@sid";
             string selectNameSQL = @"select id from data where name=@name";
@@ -68,8 +68,8 @@ namespace Web.Modules
                     manager.ExecuteNonQuery(updateSQL, p);
             }
             return entity;
-        }
-        public static List<DataEntity> Save(long interid, List<DataEntity> dataList = null)
+        }*/
+        /*public static List<DataEntity> Save(long interid, List<DataEntity> dataList = null)
         {
             string selectSQL = @"
                 select * from interface_data where interface_id=@id
@@ -120,5 +120,6 @@ namespace Web.Modules
                 manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
+        */
     }
 }

@@ -38,7 +38,7 @@ namespace Web.Controllers
         [HttpPut]
         public ActionResult<object> Put([FromBody] SystemEntity value)
         {
-            SystemMetricManager.Save(value.id, value.metrics, value.metricEntityid);
+            //SystemMetricManager.Save(value.id, value.metrics, value.metricEntityid);
             return Ok(new { });
         }
     }

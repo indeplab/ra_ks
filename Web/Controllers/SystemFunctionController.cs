@@ -33,7 +33,7 @@ namespace Web.Controllers
             return Ok(filter.search);
         }
         [HttpGet("a")]
-        public ActionResult<object> GetA(long sysid, string term, int length)
+        public ActionResult<object> GetA(string sysid, string term, int length)
         {
             return SystemFunctionManager.GetA(sysid, term, length);
         }
@@ -46,15 +46,15 @@ namespace Web.Controllers
         [HttpPut]
         public ActionResult<object> Put([FromBody] SystemFunctionEntity value)
         {
-            SystemFunctionEntity entity = SystemFunctionManager.Save(value);
-            return Ok(entity);
+            //SystemFunctionEntity entity = SystemFunctionManager.Save(value);
+            return Ok();//(entity);
         }
         [HttpDelete("{id}")]
         public ActionResult<object> Delete(int id)
         {
             try
             {
-                SystemFunctionManager.Delete(id);
+                //SystemFunctionManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)

@@ -3,15 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 
 namespace Web.Modules
 {
-    public class FunctionManager
+    public class FunctionManager: BaseKSManager
     {
-        public static FunctionEntity Get(long id)
+        public static async Task<FunctionEntity> Get(string id)
         {
-            string selectSQL = string.Format(@"
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = FunctionClassUUID, // класс АС
+                UUIDs = new string[]{ id },
+                withRelations = false
+            };
+            FunctionEntity result = new FunctionEntity();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if (res.data.Length > 0)
+            {
+                result = GetEntity(res.data[0]);
+            }
+            /*string selectSQL = string.Format(@"
                 select function.*,parent.name as parent  
                 from 
                     function 
@@ -28,7 +50,7 @@ namespace Web.Modules
             {
                 var row = data.Rows[0];
                 result = GetEntity(row);
-            }
+            }*/
             return result;
         }
         public static List<object> GetA(string type, string term, int length)
@@ -84,9 +106,69 @@ namespace Web.Modules
 
         }
 
-        public static List<FunctionEntity> Get(DictionaryRequest request)
+        public static async Task<List<FunctionEntity>> Get(DictionaryRequest2 request)
         {
-            string selectSQL = string.Empty;
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            object req=new {};
+            var withRelations = false;
+
+            if (!string.IsNullOrEmpty(request.Name))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = FunctionClassUUID, // класс АС
+                        Name = request.Name,
+                        withRelations
+                    };                
+            else if (!string.IsNullOrEmpty(request.Term))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = FunctionClassUUID, // класс АС
+                        Name = request.Term,
+                        withRelations
+                    };
+            else
+            {
+                    withRelations = true;
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = SystemClassUUID, // класс АС
+                        UUIDs = new string[]{ request.ID },
+                        withRelations
+                    };
+                
+            }
+
+            List<FunctionEntity> result = new List<FunctionEntity>();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+
+            if(withRelations && res.data.Length > 0)
+            {
+                if (res.data[0].relations != null)
+                {
+                    for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                    {
+                        if(res.data[0].relations[i].classUuid==SystemFunctionClassUUID)
+                            result.Add(GetEntity(res.data[0].relations[i]));
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(GetEntity(res.data[i]));
+                }
+            }
+            /*string selectSQL = string.Empty;
             if (!string.IsNullOrEmpty(request.Name))
                 selectSQL = string.Format(@"
                     select *, 'new' as state from function where name ilike '{0}' limit {1}
@@ -114,10 +196,20 @@ namespace Web.Modules
                     fn.refid = request.ID;
                     result.Add(fn);
                 }
-            }
+            }*/
             return result;
         }
-        private static FunctionEntity GetEntity(DataRow row)
+        private static FunctionEntity GetEntity(dataEntity entity)
+        {
+            FunctionEntity result = new FunctionEntity()
+            {
+                id = entity.uuid,
+                name = entity.name,
+                description = entity.description
+            };
+            return result;
+        }
+        /*private static FunctionEntity GetEntity(DataRow row)
         {
             FunctionEntity result = new FunctionEntity()
             {
@@ -131,7 +223,7 @@ namespace Web.Modules
             result.method = data.Columns.Contains("method") ? ValueManager.GetString(row["method"]) : string.Empty;
             result.state = data.Columns.Contains("state") ? ValueManager.GetString(row["state"]) : string.Empty;
             return result;
-        }
+        }*/
         public static void ChangeParent(FunctionEntity[] children)
         {
             using (DataManager manager = new DataManager())
@@ -149,7 +241,7 @@ namespace Web.Modules
                 }
             }
         }
-        public static FunctionEntity Save(FunctionEntity entity)
+        /*public static FunctionEntity Save(FunctionEntity entity)
         {
             string selectNameSQL = @"select id from function where name=@name";
             string insertFunctionSQL = @"insert into function (name, parent_id, description) values(@name, @parentid, @description) returning id";
@@ -215,5 +307,6 @@ namespace Web.Modules
                     manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
+        */
     }
 }

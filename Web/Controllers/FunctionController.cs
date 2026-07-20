@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 using Web.Modules;
@@ -19,7 +20,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<object> Get(int id)
+        public ActionResult<object> Get(string id)
         {
             return FunctionManager.Get(id);
         }
@@ -29,22 +30,22 @@ namespace Web.Controllers
             return FunctionManager.GetA(type, term, length);
         }
         [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest request)
+        public ActionResult<object> GetList(DictionaryRequest2 request)
         {
             return Post(request);
         }
         // POST api/<FunctionController>
         [HttpPost]
-        public ActionResult<object> Post([FromBody] DictionaryRequest request)
+        public async Task<object> Post([FromBody] DictionaryRequest2 request)
         {
-            List<FunctionEntity> result = FunctionManager.Get(request);
+            List<FunctionEntity> result = await FunctionManager.Get(request);
             return Ok(result);
         }
         [HttpPut]
         public ActionResult<object> Put([FromBody] FunctionEntity value)
         {
-            FunctionEntity entity = FunctionManager.Save(value);
-            return Ok(entity);
+            //FunctionEntity entity = FunctionManager.Save(value);
+            return Ok();//(entity);
         }
         [HttpPut("changeparent")]
         public ActionResult<object> PutParentList([FromBody] FunctionEntity[] children)
@@ -64,7 +65,7 @@ namespace Web.Controllers
         {
             try
             {
-                SystemFunctionManager.Delete(id);
+                //SystemFunctionManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)
@@ -73,7 +74,7 @@ namespace Web.Controllers
             }
         }
         [HttpDelete("supply/{id}")]
-        public ActionResult<object> DeleteAsSupply(int id)
+        public ActionResult<object> DeleteAsSupply(string id)
         {
             InterfaceEntity _int = InterfaceManager.Get(id);
             _int.supplyfunctionid = 0;
@@ -82,10 +83,10 @@ namespace Web.Controllers
             return Ok();
         }
         [HttpDelete("consumer/{id}")]
-        public ActionResult<object> DeleteAsConsumer(int id)
+        public ActionResult<object> DeleteAsConsumer(string id)
         {
             InterfaceEntity _int = InterfaceManager.Get(id);
-            _int.consumerfunctionid = 0;
+            _int.consumerfunctionid = "0";
             _int.consumerfunctionname = string.Empty;
             InterfaceManager.Save(_int);
             return Ok();
@@ -95,7 +96,7 @@ namespace Web.Controllers
         {
             try
             {
-                FunctionManager.Delete(id);
+                //FunctionManager.Delete(id);
                 return Ok(new{});
             }
             catch (Exception ex)

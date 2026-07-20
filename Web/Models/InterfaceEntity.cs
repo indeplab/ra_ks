@@ -4,11 +4,11 @@ namespace Web.Models
 {
     public class InterfaceEntity
     {
-        public long id { get; set; }
+        public string id { get; set; }
         public string name { get; set; }
         public string state { get; set; }
-        public long consumerid { get; set; }
-        public long supplyid { get; set; }
+        public string consumerid { get; set; }
+        public string supplyid { get; set; }
         public string consumername { get; set; }
         public string supplyname { get; set; }
         public string consumerdescription { get; set; }
@@ -17,7 +17,7 @@ namespace Web.Models
         public string supplyint { get; set; }
         public string consumerint { get; set; }
         public string interactionplatform { get; set; }
-        public long consumerfunctionid { get; set; }
+        public string consumerfunctionid { get; set; }
         public string supplyfunctionname { get; set; }
         public string consumerfunctionname { get; set; }
         public long supplyfunctionid { get; set; }

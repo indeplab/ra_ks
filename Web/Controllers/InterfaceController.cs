@@ -23,7 +23,7 @@ namespace Web.Controllers
             return Ok(info);
         }
         [HttpGet]
-        public ActionResult<object> Get(int id)
+        public ActionResult<object> Get(string id)
         {
             return InterfaceManager.Get(id);
         }

@@ -14,7 +14,7 @@ namespace Web.Modules
     public class InterfaceManager
     {
 
-        public static InterfaceEntity Get(long id)
+        public static InterfaceEntity Get(string id)
         {
             string selectSQL = string.Format(@"
                 select 
@@ -62,7 +62,7 @@ namespace Web.Modules
                 {
                     entity.data.Add(new DataEntity()
                     {
-                        id = ValueManager.GetInt(row["dataid"]),
+                        id = ValueManager.GetString(row["dataid"]),
                         name = ValueManager.GetString(row["name"]),
                         state = ValueManager.GetString(row["state"])
                     });
@@ -158,7 +158,7 @@ namespace Web.Modules
                 {
                     entity.data.Add(new DataEntity()
                     {
-                        id = ValueManager.GetInt(row["dataid"]),
+                        id = ValueManager.GetString(row["dataid"]),
                         name = ValueManager.GetString(row["name"]),
                         state = ValueManager.GetString(row["state"])
                     });
@@ -183,14 +183,14 @@ namespace Web.Modules
         {
             var inter = new InterfaceEntity()
             {
-                id = ValueManager.GetInt(row["id"]),
+                id = ValueManager.GetString(row["id"]),
                 name = ValueManager.GetString(row["name"]),
-                consumerid = ValueManager.GetInt(row["consumer_id"]),
-                supplyid = ValueManager.GetInt(row["supply_id"]),
+                consumerid = ValueManager.GetString(row["consumer_id"]),
+                supplyid = ValueManager.GetString(row["supply_id"]),
                 interaction = ValueManager.GetString(row["interaction_type"]),
                 interactionplatform = ValueManager.GetString(row["interaction_platform"]),
                 state = ValueManager.GetString(row["state"]),
-                consumerfunctionid = ValueManager.GetInt(row["consumer_function_id"]),
+                consumerfunctionid = ValueManager.GetString(row["consumer_function_id"]),
                 supplyfunctionid = ValueManager.GetInt(row["supply_function_id"]),
                 consumermethod = ValueManager.GetString(row["consumer_method"]),
                 consumerint = ValueManager.GetString(row["consumer_connection"]),
@@ -251,13 +251,13 @@ namespace Web.Modules
                     new DataParameter("description",ValueManager.GetValueOrDBNull(entity.description)),
                     new DataParameter("issupplyreсeive",ValueManager.GetBoolean(entity.issupplyreсeive))
                 };
-                if (entity.id == 0)
-                    entity.id = ValueManager.GetLong(manager.ExecuteScalar(insertSQL, p));
+                if (entity.id == "")
+                    entity.id = ValueManager.GetString(manager.ExecuteScalar(insertSQL, p));
                 else
                     manager.ExecuteNonQuery(updateSQL, p);
                 if (entity.data != null)
                 {
-                    entity.data = InterfaceDataManager.Save(entity.id, entity.data);
+                    //entity.data = InterfaceDataManager.Save(entity.id, entity.data);
                 }
             }
             return entity;

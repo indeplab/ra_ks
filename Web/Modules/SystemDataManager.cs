@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.UI;
 
@@ -38,7 +40,7 @@ namespace Web.Modules
                 return (query);
             }
         }
-        public static SystemDataEntity Get(long id)
+        public static SystemDataEntity Get(string id)
         {
             string selectSQL = string.Format(@"
                 select 
@@ -66,9 +68,9 @@ namespace Web.Modules
             {
                 result = new SystemDataEntity() { 
                     id=id,
-                    systemid = ValueManager.GetInt(data.Rows[0]["systemid"]),
+                    systemid = ValueManager.GetString(data.Rows[0]["systemid"]),
                     system = ValueManager.GetString(data.Rows[0]["system"]),
-                    dataid = ValueManager.GetInt(data.Rows[0]["dataid"]),
+                    dataid = ValueManager.GetString(data.Rows[0]["dataid"]),
                     data = ValueManager.GetString(data.Rows[0]["data"]),
                     flowtype = ValueManager.GetString(data.Rows[0]["flowtype"]),
                     datadescription = ValueManager.GetString(data.Rows[0]["description"]),
@@ -78,9 +80,70 @@ namespace Web.Modules
             return result;
         }
 
-        public static List<DataEntity> Get(DictionaryRequest request)
+        public static async Task<List<DataEntity>> Get(DictionaryRequest2 request)
         {
-            string selectSQL = string.Empty;
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            object req=new {};
+            var withRelations = false;
+
+            if (!string.IsNullOrEmpty(request.Name))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = EntityClassUUID, // класс АС
+                        Name = request.Name,
+                        withRelations
+                    };                
+            else if (!string.IsNullOrEmpty(request.Term))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = EntityClassUUID, // класс АС
+                        Name = request.Term,
+                        withRelations
+                    };
+            else
+            {
+                    withRelations = true;
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = SystemClassUUID, // класс АС
+                        UUIDs = new string[]{ request.ID },
+                        withRelations
+                    };
+                
+            }
+
+            List<DataEntity> result = new List<DataEntity>();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+
+            if(withRelations && res.data.Length > 0)
+            {
+                if (res.data[0].relations != null)
+                {
+                    for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                    {
+                        if(res.data[0].relations[i].classUuid==SystemEntityClassUUID)
+                            result.Add(GetEntity(res.data[0].relations[i]));
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(GetEntity(res.data[i]));
+                }
+            }
+
+            /*string selectSQL = string.Empty;
             if(!string.IsNullOrEmpty(request.Name))
                 selectSQL = string.Format(@"
                         select *, 'new' as state,'master' as flowtype from data where name ilike '{0}' limit {1}
@@ -112,18 +175,28 @@ namespace Web.Modules
                     dt.refid = request.ID;
                     result.Add(dt);
                 }
-            }
+            }*/
             return result;
         }
-        private static DataEntity GetEntity(DataRow row)
+        private static DataEntity GetEntity(dataEntity entity)
+        {
+            DataEntity result = new DataEntity()
+            {
+                id = entity.uuid,
+                name = entity.name,
+                description = entity.description
+            };
+            return result;
+        }
+        /*private static DataEntity GetEntity(DataRow row)
         {
             return new DataEntity()
             {
                 id = ValueManager.GetInt(row["id"]),
                 name = ValueManager.GetString(row["name"])
             };
-        }
-        public static SystemDataEntity Save(SystemDataEntity entity){
+        }*/
+        /*public static SystemDataEntity Save(SystemDataEntity entity){
 
             DataEntity dt = ADataManager.Get(entity.dataid);
             dt.name=entity.data;
@@ -170,6 +243,6 @@ namespace Web.Modules
                 manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
-
+*/
     }
 }

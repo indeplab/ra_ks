@@ -2,15 +2,37 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 
 namespace Web.Modules
 {
-    public class ADataManager
+    public class ADataManager: BaseKSManager
     {
-        public static DataEntity Get(long id)
+        public static async Task<DataEntity> Get(string id)
         {
-            string selectSQL = string.Format(@"
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = EntityClassUUID, // класс АС
+                UUIDs = new string[]{ id },
+                withRelations = false
+            };
+            DataEntity result = new DataEntity();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if (res.data.Length > 0)
+            {
+                result = GetEntity(res.data[0]);
+            }
+            /*string selectSQL = string.Format(@"
                 select data.*,'' as flowtype from data where id = {0}
             ", id);
             DataEntity result = new DataEntity();
@@ -23,7 +45,7 @@ namespace Web.Modules
             {
                 var row = data.Rows[0];
                 result = GetEntity(row);
-            }
+            }*/
             return result;
         }
         public static List<DictionaryEntity> GetA(string type, string term, int length){
@@ -74,9 +96,69 @@ namespace Web.Modules
 
         }
 
-        public static List<DataEntity> Get(DictionaryRequest request)
+        public static async Task<List<DataEntity>> Get(DictionaryRequest2 request)
         {
-            string selectSQL = string.Empty;
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            object req=new {};
+            var withRelations = false;
+
+            if (!string.IsNullOrEmpty(request.Name))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = EntityClassUUID, // класс АС
+                        Name = request.Name,
+                        withRelations
+                    };                
+            else if (!string.IsNullOrEmpty(request.Term))
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = EntityClassUUID, // класс АС
+                        Name = request.Term,
+                        withRelations
+                    };
+            else
+            {
+                    withRelations = true;
+                    req = new
+                    {
+                        ModelUUID, // Основная модель
+                        ClassUUID = SystemClassUUID, // класс АС
+                        UUIDs = new string[]{ request.ID },
+                        withRelations
+                    };
+                
+            }
+
+            List<DataEntity> result = new List<DataEntity>();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+
+            if(withRelations && res.data.Length > 0)
+            {
+                if (res.data[0].relations != null)
+                {
+                    for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                    {
+                        if(res.data[0].relations[i].classUuid==SystemEntityClassUUID)
+                            result.Add(GetEntity(res.data[0].relations[i]));
+                    }
+                }
+            }
+            else{
+                for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(GetEntity(res.data[i]));
+                }
+            }
+            /*string selectSQL = string.Empty;
             if (!string.IsNullOrEmpty(request.Name))
                 selectSQL = string.Format(@"
                     select *, 'new' as state,'' as flowtype from data where name ilike '{0}' limit {1}
@@ -105,10 +187,20 @@ namespace Web.Modules
                     fn.refid = request.ID;
                     result.Add(fn);
                 }
-            }
+            }*/
             return result;
         }
-        private static DataEntity GetEntity(DataRow row)
+        private static DataEntity GetEntity(dataEntity entity)
+        {
+            DataEntity result = new DataEntity()
+            {
+                id = entity.uuid,
+                name = entity.name,
+                description = entity.description
+            };
+            return result;
+        }
+        /*private static DataEntity GetEntity(DataRow row)
         {
             return new DataEntity()
             {
@@ -180,6 +272,6 @@ namespace Web.Modules
                     manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
-
+*/
    }
 }

@@ -53,6 +53,20 @@ namespace Web.Modules
                 return Startup.Configuration["KS:SystemClassUUID"];
             }
         }
+        protected static string SystemFunctionClassUUID
+        {
+            get
+            {
+                return Startup.Configuration["KS:SystemFunctionClassUUID"];
+            }
+        }
+        protected static string SystemEntityClassUUID
+        {
+            get
+            {
+                return Startup.Configuration["KS:SystemEntityClassUUID"];
+            }
+        }
         protected static string FunctionClassUUID
         {
             get

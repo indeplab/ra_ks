@@ -2,9 +2,9 @@
 {
     public class SystemDataEntity
     {
-        public long id { get; set; }
-        public long systemid { get; set; }
-        public long dataid { get; set; }
+        public string id { get; set; }
+        public string systemid { get; set; }
+        public string dataid { get; set; }
         public string system { get; set; }
         public string data { get; set; }
         public string state { get; set; }

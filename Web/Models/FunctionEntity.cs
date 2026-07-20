@@ -2,10 +2,10 @@
 {
     public class FunctionEntity
     {
-        public long id { get; set; }
-        public long parentid { get; set; }
+        public string id { get; set; }
+        public string parentid { get; set; }
         public string parent { get; set; }       
-        public long refid { get; set; }
+        public string refid { get; set; }
         public string name { get; set; }
         public string method { get; set; }
         public string state { get; set; }

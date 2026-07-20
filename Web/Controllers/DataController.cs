@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
@@ -20,7 +21,7 @@ namespace Web.Controllers
             return Ok(info);
         }
         [HttpGet]
-        public ActionResult<object> Get(int id)
+        public ActionResult<object> Get(string id)
         {
             return ADataManager.Get(id);
         }
@@ -30,29 +31,29 @@ namespace Web.Controllers
             return ADataManager.GetA(type, term, length);
         }
         [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest request)
+        public ActionResult<object> GetList(DictionaryRequest2 request)
         {
             return Post(request);
         }
         // POST api/<DataController>
         [HttpPost]
-        public ActionResult<object> Post([FromBody] DictionaryRequest request)
+        public async Task<object> Post([FromBody] DictionaryRequest2 request)
         {
-            List<DataEntity> result = ADataManager.Get(request);
+            List<DataEntity> result = await ADataManager.Get(request);
             return Ok(result);
         }
         [HttpPut]
         public ActionResult<object> Put([FromBody] DataEntity value)
         {
-            DataEntity entity = ADataManager.Save(value);
-            return Ok(entity);
+            //DataEntity entity = ADataManager.Save(value);
+            return Ok();//(entity);
         }
         [HttpDelete("{id}")]
         public ActionResult<object> Delete(int id)
         {
             try
             {
-                ADataManager.Delete(id);
+                //ADataManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)
@@ -65,7 +66,7 @@ namespace Web.Controllers
         {
             try
             {
-                SystemDataManager.Delete(id);
+                //SystemDataManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)
@@ -78,7 +79,7 @@ namespace Web.Controllers
         {
             try
             {
-                InterfaceDataManager.Delete(id);
+                //InterfaceDataManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)

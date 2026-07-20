@@ -41,15 +41,15 @@ namespace Web.Controllers
         [HttpPut]
         public ActionResult<object> Put([FromBody] SystemDataEntity value)
         {
-            SystemDataEntity entity = SystemDataManager.Save(value);
-            return Ok(entity);
+            //SystemDataEntity entity = SystemDataManager.Save(value);
+            return Ok();//(entity);
         }
         [HttpDelete("{id}")]
         public ActionResult<object> Delete(int id)
         {
             try
             {
-                SystemDataManager.Delete(id);
+                //SystemDataManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)
