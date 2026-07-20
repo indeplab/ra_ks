@@ -101,7 +101,7 @@ namespace Web.Modules
                     }
                 },
                 FullChain = false,
-                ModelUUID = ModelUUID, // Основная модель
+                ModelUUID, // Основная модель
                 SelfRelationReverseDirection = true,
                 StartObjectsUUIDs = new string[]{ sysid },
                 withRelations = false

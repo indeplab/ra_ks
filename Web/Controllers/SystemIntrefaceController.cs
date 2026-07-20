@@ -41,15 +41,15 @@ namespace Web.Controllers
         [HttpPut]
         public ActionResult<object> Put([FromBody] InterfaceEntity value)
         {
-            InterfaceEntity entity = InterfaceManager.Save(value);
-            return Ok(entity);
+            //InterfaceEntity entity = InterfaceManager.Save(value);
+            return Ok();//entity);
         }
         [HttpDelete("{id}")]
         public ActionResult<object> Delete(int id)
         {
             try
             {
-                InterfaceManager.Delete(id);
+                //InterfaceManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)

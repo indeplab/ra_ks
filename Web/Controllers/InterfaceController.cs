@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Threading.Tasks;
 using ExcelTool;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,11 +30,11 @@ namespace Web.Controllers
         }
 
         [HttpGet("a")]
-        public ActionResult<string> Get(string cid, string sid, string did)
+        public async Task<object> Get(string cid, string sid, string did)
         {
             if (!string.IsNullOrEmpty(did))
-                return Ok(InterfaceManager.GetByData(did));
-            return Ok(InterfaceManager.GetA(cid, sid));
+                return Ok();//InterfaceManager.GetByData(did));
+            return Ok(await InterfaceManager.GetA(cid, sid));
         }
         /*[HttpGet]
         public ActionResult<object> Get(int? intid, int cid, int sid, string term, int length)
@@ -51,35 +52,35 @@ namespace Web.Controllers
             );
         }*/
         [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest request)
+        public ActionResult<object> GetList(DictionaryRequest2 request)
         {
             return Post(request);
         }
         [HttpPost]
-        public ActionResult<object> Post([FromBody] DictionaryRequest request)
+        public async Task<object> Post([FromBody] DictionaryRequest2 request)
         {
-            List<InterfaceEntity> result = InterfaceManager.Get(request.ID, request.ID2, request.Term, request.Length);
+            List<InterfaceEntity> result = await InterfaceManager.Get(request.ID, request.ID2, request.Term, request.Length);
             return Ok(result);
         }
         // PUT api/<InterfaceController>
         [HttpPut]
         public ActionResult<object> Put([FromBody] InterfaceEntity value)
         {
-            return Ok(InterfaceManager.Save(value));
+            return Ok();//InterfaceManager.Save(value));
         }
         [HttpPut("uploadlist")]
         public ActionResult<object> Post([FromForm] IFormFile file)
         {
             DataTable data = null;
             string res = null;
-            var errors = InterfaceManager.SaveFromFile(file, out data);
-            if (data != null && data.Rows.Count > 0)
+            string errors = null;//InterfaceManager.SaveFromFile(file, out data);
+            /*if (data != null && data.Rows.Count > 0)
             {
                 ExcelDocument excel = new ExcelDocument(data);
                 res = excel.ToString();
                 //res = File(new MemoryStream(excel.GetBytes()), "application/octet-stream");
                 //return File(Excel.GetStreamFromDataTable(data), "application/octet-stream");
-            }
+            }*/
             return Ok(new
             {
                 messages = errors,
@@ -91,7 +92,7 @@ namespace Web.Controllers
         {
             try
             {
-                InterfaceManager.Delete(id);
+                //InterfaceManager.Delete(id);
                 return Ok();
             }
             catch (Exception ex)

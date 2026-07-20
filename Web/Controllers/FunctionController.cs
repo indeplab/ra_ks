@@ -76,19 +76,19 @@ namespace Web.Controllers
         [HttpDelete("supply/{id}")]
         public ActionResult<object> DeleteAsSupply(string id)
         {
-            InterfaceEntity _int = InterfaceManager.Get(id);
+            /*InterfaceEntity _int = InterfaceManager.Get(id);
             _int.supplyfunctionid = 0;
             _int.supplyfunctionname = string.Empty;
-            InterfaceManager.Save(_int);
+            InterfaceManager.Save(_int);*/
             return Ok();
         }
         [HttpDelete("consumer/{id}")]
         public ActionResult<object> DeleteAsConsumer(string id)
         {
-            InterfaceEntity _int = InterfaceManager.Get(id);
+            /*InterfaceEntity _int = InterfaceManager.Get(id);
             _int.consumerfunctionid = "0";
             _int.consumerfunctionname = string.Empty;
-            InterfaceManager.Save(_int);
+            InterfaceManager.Save(_int);*/
             return Ok();
         }
         [HttpDelete("{id}")]

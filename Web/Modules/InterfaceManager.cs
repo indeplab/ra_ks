@@ -7,15 +7,38 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 
 namespace Web.Modules
 {
-    public class InterfaceManager
+    public class InterfaceManager : BaseKSManager
     {
 
-        public static InterfaceEntity Get(string id)
+        public static async Task<InterfaceEntity> Get(string id)
         {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = InterfaceClassUUID, // класс АС
+                UUIDs = new string[]{ id },
+                withRelations = true
+            };
+            InterfaceEntity result = new InterfaceEntity();
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if (res.data.Length > 0)
+            {
+                result = GetEntity(res.data[0]);
+            }
+            /*
             string selectSQL = string.Format(@"
                 select 
                     interface.*, 
@@ -68,10 +91,10 @@ namespace Web.Modules
                     });
                 }
 
-            }
-            return entity;
+            }*/
+            return result;
         }
-        public static List<InterfaceEntity> GetByData(string id)
+        /*public static List<InterfaceEntity> GetByData(string id)
         {
             string selectSQL = string.Format(@"
                 select 
@@ -94,22 +117,90 @@ namespace Web.Modules
                 data = manager.GetDataTable(selectSQL);
             }
             return getList(data);
-        }
-        public static List<InterfaceEntity> Get(int consumerId, int supplyId, string term, int length)
+        }*/
+        public static async Task<List<InterfaceEntity>> Get(string consumerId, string supplyId, string term, int length)
         {
-            string selectSQL = string.Format(@"
+            List<InterfaceEntity> result = new List<InterfaceEntity>();
+            if(string.IsNullOrEmpty(consumerId) && string.IsNullOrEmpty(supplyId))
+                return result;
+
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID = ModelUUID, // Основная модель
+                ClassUUID = SystemClassUUID, // класс АС
+                UUIDs = new string[]{ (!string.IsNullOrEmpty(consumerId)?consumerId:supplyId) },
+                withRelations = true
+            };
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+            if (res.data.Length > 0 && res.data[0].relations != null)
+            {
+                for (int i = 0; i < res.data[0].relations.Length && result.Count <= (length == 0?100:length); i++)
+                {
+                    var d = res.data[0].relations[i];
+                    if (
+                        d.classUuid == InterfaceClassUUID
+                        && (!string.IsNullOrEmpty(consumerId) && (string.IsNullOrEmpty(supplyId) || supplyId == d.relatedDestinationUuid)
+                            || !string.IsNullOrEmpty(supplyId) && (string.IsNullOrEmpty(consumerId) || consumerId == d.relatedDestinationUuid)
+                            )
+                        )
+                            result.Add(GetEntity(d));
+                }
+            }
+            /*string selectSQL = string.Format(@"
                 select * from interface where (consumer_id = {0} or {0}=-1) and (supply_id = {1} or {1}=-1) and name ilike '%{2}%' limit {3}
             ", consumerId, supplyId, term, length);
             DataTable data = null;
             using (DataManager manager = new DataManager())
             {
                 data = manager.GetDataTable(selectSQL);
-            }
-            return getList(data);
+            }*/
+            return result;
         }
-        public static List<InterfaceEntity> GetA(string consumerId, string supplyId)
+        public static async Task<List<InterfaceEntity>> GetA(string consumerId, string supplyId)
         {
-            string selectSQL = @"
+            List<InterfaceEntity> result = new List<InterfaceEntity>();
+            if(string.IsNullOrEmpty(consumerId) && string.IsNullOrEmpty(supplyId))
+                return result;
+
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            var req = new
+            {
+                ModelUUID, // Основная модель
+                ClassUUID = SystemClassUUID, // класс АС
+                UUIDs = new string[]{ (!string.IsNullOrEmpty(consumerId)?consumerId:supplyId) },
+                withRelations = true
+            };
+
+            string resstr = await Post("api/objects/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+            if (res.data.Length > 0 && res.data[0].relations != null)
+            {
+                for (int i = 0; i < res.data[0].relations.Length; i++)
+                {
+                    var d = res.data[0].relations[i];
+                    if (
+                        d.classUuid == InterfaceClassUUID
+                        && (!string.IsNullOrEmpty(consumerId) && (string.IsNullOrEmpty(supplyId) || supplyId == d.relatedDestinationUuid)
+                            || !string.IsNullOrEmpty(supplyId) && (string.IsNullOrEmpty(consumerId) || consumerId == d.relatedDestinationUuid)
+                            )
+                        )
+                            result.Add(GetEntity(d));
+                }
+            }
+            /*string selectSQL = @"
                 select 
                     interface.*, 
                     c.name as consumer_name,
@@ -164,10 +255,10 @@ namespace Web.Modules
                     });
                 }
 
-            }
+            }*/
             return result;
         }
-        private static List<InterfaceEntity> getList(DataTable data)
+        /*private static List<InterfaceEntity> getList(DataTable data)
         {
             List<InterfaceEntity> result = new List<InterfaceEntity>();
             if (data != null)
@@ -178,8 +269,18 @@ namespace Web.Modules
                 }
             }
             return result;
+        }*/
+        private static InterfaceEntity GetEntity(dataEntity entity)
+        {
+            InterfaceEntity result = new InterfaceEntity()
+            {
+                id = entity.uuid,
+                name = entity.name??"",
+                description = entity.description
+            };
+            return result;
         }
-        private static InterfaceEntity GetEntity(DataRow row)
+        /*private static InterfaceEntity GetEntity(DataRow row)
         {
             var inter = new InterfaceEntity()
             {
@@ -356,6 +457,6 @@ namespace Web.Modules
                 manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
         }
-
+*/
     }
 }
