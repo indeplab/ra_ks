@@ -367,7 +367,7 @@ $.fn.logicset = async function(params){
             let a = $(container).children("a");
             if(!$.isempty(params.sysid)){
                 $(a).attr({
-                    href:"index.html?id=" + (getInt(params.filesysid)!=0?params.filesysid:$.currentdocumentget().sysid) + "&v=" + params.sysid,
+                    href:"index.html?id=" + (!$.isempty(params.filesysid)?params.filesysid:$.currentdocumentget().sysid) + "&v=" + params.sysid,
                     target:"_blank"
                 });
             }
@@ -1212,7 +1212,7 @@ $.fn.logic = function(params, noupdatechildren, nosetposition){
                 let a = $(container).svg("a");
                 if(!$.isempty(params.sysid)){
                     $(a).attr({
-                        href:"index.html?id=" + (getInt(params.fileid)!=0?params.fileid:$.currentdocumentget().sysid) + "&v=" + params.sysid,
+                        href:"index.html?id=" + (!$.isempty(params.fileid)?params.fileid:$.currentdocumentget().sysid) + "&v=" + params.sysid,
                         target:"_blank"
                     });
                 }

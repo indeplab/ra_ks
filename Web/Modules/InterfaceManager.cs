@@ -71,7 +71,7 @@ namespace Web.Modules
             }
             return entity;
         }
-        public static List<InterfaceEntity> GetByData(int id)
+        public static List<InterfaceEntity> GetByData(string id)
         {
             string selectSQL = string.Format(@"
                 select 
@@ -107,7 +107,7 @@ namespace Web.Modules
             }
             return getList(data);
         }
-        public static List<InterfaceEntity> GetA(int? consumerId, int? supplyId)
+        public static List<InterfaceEntity> GetA(string consumerId, string supplyId)
         {
             string selectSQL = @"
                 select 
@@ -140,9 +140,9 @@ namespace Web.Modules
             if (consumerId == null && supplyId == null)
                 query = "1=0";
             if (consumerId != null)
-                query += (query.Length > 0 ? " and " : "") + "interface.consumer_id=" + consumerId.GetValueOrDefault().ToString();
+                query += (query.Length > 0 ? " and " : "") + "interface.consumer_id=" + consumerId;
             if (supplyId != null)
-                query += (query.Length > 0 ? " and " : "") + "interface.supply_id=" + supplyId.GetValueOrDefault().ToString();
+                query += (query.Length > 0 ? " and " : "") + "interface.supply_id=" + supplyId;
             DataTable data = null;
             DataTable d = null;
             using (DataManager manager = new DataManager())

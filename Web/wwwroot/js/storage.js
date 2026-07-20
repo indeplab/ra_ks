@@ -271,7 +271,7 @@ $.storeget = function(id){
             if(!params.components)
                 params.components=[];
 
-            let id=((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid);
+            let id=($.isempty(params.sysid)?params.id:params.sysid);
             //if(params.components.length==1 && params.components[0].id!=id) params.components[0].id=id;
             /*if(params.components.length==0)
             {
@@ -361,7 +361,7 @@ $.storeget = function(id){
             if (!params.metrics) {
                 getSystemMetricList({
                     async: false,
-                    systemid: getInt(params.sysid),
+                    systemid: params.sysid,
                     length: 1000000,
                     success: function (result) {
                         params.metrics = result.map(a => ({ ...a }));

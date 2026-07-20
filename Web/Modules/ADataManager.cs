@@ -12,6 +12,10 @@ namespace Web.Modules
     {
         public static async Task<DataEntity> Get(string id)
         {
+            DataEntity result = new DataEntity();
+            if(string.IsNullOrEmpty(id))
+                return result;
+
             var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
@@ -24,7 +28,6 @@ namespace Web.Modules
                 UUIDs = new string[]{ id },
                 withRelations = false
             };
-            DataEntity result = new DataEntity();
 
             string resstr = await Post("api/objects/get", req, headers);
             var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
@@ -103,7 +106,7 @@ namespace Web.Modules
                 {"X-Project-Uuid", ProjectUUID}
             };
 
-            object req=new {};
+            object req = null;
             var withRelations = false;
 
             if (!string.IsNullOrEmpty(request.Name))
@@ -124,6 +127,7 @@ namespace Web.Modules
                     };
             else
             {
+                if(!string.IsNullOrEmpty(request.ID)){
                     withRelations = true;
                     req = new
                     {
@@ -132,30 +136,33 @@ namespace Web.Modules
                         UUIDs = new string[]{ request.ID },
                         withRelations
                     };
-                
+                }
             }
 
             List<DataEntity> result = new List<DataEntity>();
 
-            string resstr = await Post("api/objects/get", req, headers);
-            var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if(req!=null){
+
+                string resstr = await Post("api/objects/get", req, headers);
+                var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
 
 
-            if(withRelations && res.data.Length > 0)
-            {
-                if (res.data[0].relations != null)
+                if(withRelations && res.data.Length > 0)
                 {
-                    for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                    if (res.data[0].relations != null)
                     {
-                        if(res.data[0].relations[i].classUuid==SystemEntityClassUUID)
-                            result.Add(GetEntity(res.data[0].relations[i]));
+                        for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                        {
+                            if(res.data[0].relations[i].classUuid==SystemEntityClassUUID)
+                                result.Add(GetEntity(res.data[0].relations[i]));
+                        }
                     }
                 }
-            }
-            else{
-                for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
-                {
-                    result.Add(GetEntity(res.data[i]));
+                else{
+                    for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
+                    {
+                        result.Add(GetEntity(res.data[i]));
+                    }
                 }
             }
             /*string selectSQL = string.Empty;

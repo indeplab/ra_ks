@@ -29,10 +29,10 @@ namespace Web.Controllers
         }
 
         [HttpGet("a")]
-        public ActionResult<string> Get(int? cid, int? sid, int? did)
+        public ActionResult<string> Get(string cid, string sid, string did)
         {
-            if (did != null)
-                return Ok(InterfaceManager.GetByData(did.GetValueOrDefault(0)));
+            if (!string.IsNullOrEmpty(did))
+                return Ok(InterfaceManager.GetByData(did));
             return Ok(InterfaceManager.GetA(cid, sid));
         }
         /*[HttpGet]

@@ -102,7 +102,7 @@ var getNumber = function(val,def){
     return res;
 }
 var getValue = function(val,def){
-    if(!def) def=0;
+    if(!def) def="";
     return (!val?def:val);
 }
 var getString = function(val){

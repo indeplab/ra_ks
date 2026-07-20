@@ -630,7 +630,7 @@ $.propertyset = function(params, reload){
                         }
                     });
                     var link;
-                    if(e.sysid && getInt(e.sysid)!=0){
+                    if(!$.isempty(e.sysid)){
                         link = $("<a>",{
                             title:"Открыть карточку системы",
                             target:"_blank",
@@ -670,10 +670,10 @@ $.propertyset = function(params, reload){
             if(params==undefined)
                 params = $(selected).logicget();
                 //console.log("get: ",params.name, ">", params.description, "=", $("#zonePurpose").val());
-            //if(params.id!=$("#zoneName").attr("data-id") || params.sysid!=$("#zoneName").attr("data-sysid") || !params.sysid || reload){
+            //if(params.id!=$("#zoneName").attr("data-id") || params.sysid!=$("#zoneName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#zoneName").attr({
                     "data-id":params.id,
-                    "data-sysid":getInt(params.sysid)
+                    "data-sysid":params.sysid
                 });
                 $("#zoneName").val(params.name);
                 $("#zonePurpose").val(params.description);
@@ -689,7 +689,7 @@ $.propertyset = function(params, reload){
                 params = $(selected).logicget();
                 $("#datacenterName").attr({
                     "data-id":params.id,
-                    "data-sysid":getInt(params.sysid)
+                    "data-sysid":params.sysid
                 });
                 $("#datacenterName").val(params.name);
                 $("#datacenterPurpose").val(params.description);
@@ -701,10 +701,10 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#pictureName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).storeget();
-            if(params.id!=$("#pictureName").attr("data-id") || params.sysid!=$("#pictureName").attr("data-sysid") || !params.sysid){
+            if(params.id!=$("#pictureName").attr("data-id") || params.sysid!=$("#pictureName").attr("data-sysid") || !$.isempty(params.sysid)){
                 $("#pictureName").attr({
                     "data-id":params.id,
-                    "data-sysid":getInt(params.sysid)
+                    "data-sysid":params.sysid
                 });
                 $("#pictureName").val(params.name);
                 $("#pictureSrc").val(params.src);
@@ -717,15 +717,15 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#functionName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#functionName").attr("data-id") || params.sysid!=$("#functionName").attr("data-sysid") || params.state!=$("#functionName").attr("data-state") || !params.sysid || reload){
+            if(params && params.id!=$("#functionName").attr("data-id") || params.sysid!=$("#functionName").attr("data-sysid") || params.state!=$("#functionName").attr("data-state") || $.isempty(params.sysid) || reload){
                 //console.log(params);
                 $("#functionName").attr({
                     "data-id":params.id,
-                    "data-sysid":getInt(params.sysid),
+                    "data-sysid":params.sysid,
                     "data-state":params.state,
                     "container-id":params.container
                 });
-                if(params.sysid && getInt(params.sysid)!=0){
+                if(params.sysid && !$.isempty(params.sysid)){
                     $("#functionLink").attr({
                         href:"function.html?id="+params.sysid
                     });
@@ -877,7 +877,7 @@ $.propertyset = function(params, reload){
             if(params==undefined){
                 params = $(selected).storeget();
             }
-            if(params.id!=$("#elementName").attr("data-id") || params.sysid!=$("#elementName").attr("data-sysid") || params.state!=$("#elementName").attr("data-state") || !params.sysid || reload){
+            if(params.id!=$("#elementName").attr("data-id") || params.sysid!=$("#elementName").attr("data-sysid") || params.state!=$("#elementName").attr("data-state") || $.isempty(params.sysid) || reload){
                 $("#elementFunction").empty();
                 $("#elementData").empty();
                 $("#elementSupply").empty();
@@ -889,10 +889,10 @@ $.propertyset = function(params, reload){
 
                 $("#elementName").attr({
                     "data-id":params.id,
-                    "data-sysid":getInt(params.sysid),
+                    "data-sysid":params.sysid,
                     "data-state":params.state
                 });
-                if(params.sysid && params.sysid!=0){
+                if(params.sysid && !$.isempty(params.sysid)){
                     $("#elementLink").attr({
                         href:"system.html?id="+params.sysid
                     });
@@ -1288,13 +1288,13 @@ $.propertyset = function(params, reload){
                                         }));
                                     });
                                 }
-                                let pl=result?.find(item => (item.id==params.sysid || (!params.sysid || getInt(params.sysid)==0) && item.id==params.id));
+                                let pl=result?.find(item => (item.id==params.sysid || $.isempty(params.sysid) && item.id==params.id));
                                 if(!pl){
                                     $("#ownElementComponent").propertyadditem({
                                         visible:true,
                                         editable:false,
                                         class:"highlight",
-                                        id:((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid),
+                                        id:($.isempty(params.sysid)?params.id:params.sysid),
                                         state:params.state,
                                         name:params.name,
                                         parent:"",
@@ -1319,7 +1319,7 @@ $.propertyset = function(params, reload){
                                             if(!platform.split('/').find(item=>item.trim()==e.values[e1]?.value))
                                                 platform=splitNames(platform,e.values[e1]?.value);
                                         });
-                                        if(e.id==((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid)){
+                                        if(e.id==($.isempty(params.sysid)?params.id:params.sysid)){
                                             $("#ownElementComponent").propertyadditem($.extend({},e,{
                                                 visible:visible,
                                                 parent:"",
@@ -1553,7 +1553,7 @@ $.propertyset = function(params, reload){
                 "data-state": params.state
             });
             $("#lineName").val(params.name);
-            if(params.sysid && params.sysid!=0){
+            if(params.sysid && !$.isempty(params.sysid)){
                 $("#lineLink").attr({
                     href:"interface.html?id="+params.sysid
                 });
@@ -1812,7 +1812,7 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#linedataName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#linedataName").attr("data-id") || params.sysid!=$("#linedataName").attr("data-sysid") || !params.sysid || reload){
+            if(params && params.id!=$("#linedataName").attr("data-id") || params.sysid!=$("#linedataName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#linedataName").attr({
                     "data-id":params.id
                 });
@@ -1850,7 +1850,7 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#logicName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#logicName").attr("data-id") || params.sysid!=$("#logicName").attr("data-sysid") || !params.sysid || reload){
+            if(params && params.id!=$("#logicName").attr("data-id") || params.sysid!=$("#logicName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#logicName").attr({
                     "data-id":params.id
                 });
@@ -1862,7 +1862,7 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#subprocessName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#subprocessName").attr("data-id") || params.sysid!=$("#subprocessName").attr("data-sysid") || !params.sysid || reload){
+            if(params && params.id!=$("#subprocessName").attr("data-id") || params.sysid!=$("#subprocessName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#subprocessName").attr({
                     "data-id":params.id,
                     "data-sysid":params.sysid,
@@ -1886,7 +1886,7 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#clusterName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#clusterName").attr("data-id") || params.sysid!=$("#clusterName").attr("data-sysid") || !params.sysid || reload){
+            if(params && params.id!=$("#clusterName").attr("data-id") || params.sysid!=$("#clusterName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#clusterName").attr({
                     "data-id":params.id,
                     "data-sysid":params.sysid,
@@ -1908,7 +1908,7 @@ $.propertyset = function(params, reload){
             $("input.propertyName:not(#serverName)").attr("data-sysid","");
             if(params==undefined)
                 params = $(selected).logicget();
-            if(params && params.id!=$("#serverName").attr("data-id") || params.sysid!=$("#serverName").attr("data-sysid") || !params.sysid || reload){
+            if(params && params.id!=$("#serverName").attr("data-id") || params.sysid!=$("#serverName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                 $("#serverName").attr({
                     "data-id":params.id,
                     "data-sysid":params.sysid,
@@ -2033,7 +2033,7 @@ $.propertyset = function(params, reload){
                 $("input.propertyName:not(#commentName)").attr("data-sysid","");
                 if(params==undefined)
                     params = $(selected).logicget();
-                if(params && params.id!=$("#commentName").attr("data-id") || params.sysid!=$("#commentName").attr("data-sysid") || !params.sysid || reload){
+                if(params && params.id!=$("#commentName").attr("data-id") || params.sysid!=$("#commentName").attr("data-sysid") || $.isempty(params.sysid) || reload){
                     $("#commentName").attr({
                         "data-id":params.id,
                         "data-sysid":params.sysid
@@ -2468,7 +2468,7 @@ $.fn.propertyadditem = function(e){
                 target:"_blank",
                 href:"system.html?id=" + e.sysid,
                 class:"entity2link",
-                style: "visibility:" + (parseInt(e.sysid) != 0 && hasPortal() ?"visible":"hidden")
+                style: "visibility:" + (!$.isempty(e.sysid) && hasPortal() ?"visible":"hidden")
             }).append($("<img>",{
                 src: "images/extlink.png"
             }));
@@ -2480,7 +2480,7 @@ $.fn.propertyadditem = function(e){
                 target:"_blank",
                 href:"interface.html?id=" + e.sysid,
                 class:"entity2link",
-                style: "visibility:" + (parseInt(e.sysid) != 0 && hasPortal() ?"visible":"hidden")
+                style: "visibility:" + (!$.isempty(e.sysid) && hasPortal() ?"visible":"hidden")
             }).append($("<img>",{
                 src: "images/extlink.png"
             }));
@@ -2664,7 +2664,7 @@ $.fn.componentUpdate = function (value, action) {
     let params = $(this).storeget();
     let pl = params.components?.find(item => (item.id==value.id));
     let item={
-        id:(!pl || value.name.toLowerCase().trim()!=pl.name.toLowerCase().trim())?$.newguid():value.id,//(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid):value.id??$.newguid()),
+        id:(!pl || value.name.toLowerCase().trim()!=pl.name.toLowerCase().trim())?$.newguid():value.id,//(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?(($.isempty(params.sysid) || getInt(params.sysid)==0)?params.id:params.sysid):value.id??$.newguid()),
         typename:"component",
         name:value.name,
         values:{},
@@ -2699,7 +2699,7 @@ $.fn.componentUpdate = function (value, action) {
             break;
     }*/
     //if(value.name.toLowerCase().trim()==params.name.toLowerCase().trim())
-        //pl=params.components?.find(item => (item.id==params.sysid || (!params.sysid || getInt(params.sysid)==0) && item.id==params.id));
+        //pl=params.components?.find(item => (item.id==params.sysid || ($.isempty(params.sysid) || getInt(params.sysid)==0) && item.id==params.id));
     if(!pl){
         var checkbox=$("#ownElementComponent li, #elementComponent li").find("input[type='checkbox'][data-name='" + value.name + "']");
         if(checkbox.length!=0){
@@ -2739,7 +2739,7 @@ $.fn.componentUpdate = function (value, action) {
         }
         if(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()){
             $("#ownElementComponent").propertyadditem($.extend({},item,{
-                id:(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid):value.id??$.newguid()),
+                id:(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?($.isempty(params.sysid)?params.id:params.sysid):value.id??$.newguid()),
                 checked:true,
                 editable:false,
                 parent:"",
@@ -2750,7 +2750,7 @@ $.fn.componentUpdate = function (value, action) {
         }
         else{
             $("#elementComponent").propertyadditem($.extend({},item,{
-                id:(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?((!params.sysid || getInt(params.sysid)==0)?params.id:params.sysid):value.id??$.newguid()),
+                id:(value.name.toLowerCase().trim()==params.name.toLowerCase().trim()?($.isempty(params.sysid)?params.id:params.sysid):value.id??$.newguid()),
                 checked:true,
                 parent:params.name,
                 editable:false,
@@ -2812,12 +2812,12 @@ $.fn.property = function(){
                 var name = value.name.trim().toLowerCase();
                 $.each($.storekeys(),function(i,id){
                     var param = $.storeget(id);
-                    if(param.datatype=="element" && (value.sysid && getInt(value.sysid!=0) && param.sysid==value.sysid || param.name.trim().toLowerCase()==name)){
+                    if(param.datatype=="element" && (!$.isempty(value.sysid) && param.sysid==value.sysid || param.name.trim().toLowerCase()==name)){
                         p=param;
                     }
                 });
                 if(!p){
-                    if(value.sysid && getInt(value.sysid!=0))
+                    if(!$.isempty(value.sysid))
                         p=$.storeget(value.sysid);
                     else
                         p=$.extend(value,{
@@ -3245,9 +3245,9 @@ $.fn.property = function(){
             let templateFile = $("#subprocessTemplate").find("[data-id=templateFile]");
             
             var params = $("svg[data-type='document']").documentget();
-            if(getInt($(templateFile).attr("data-sysid"))!=0){
+            if(!$.isempty($(templateFile).attr("data-sysid"))){
                 $.getdocument({
-                    id:getInt($(templateFile).attr("data-sysid")),
+                    id:$(templateFile).attr("data-sysid"),
                     success: function(document){
                         $.each(document.data,function(i,e){
                             let p=JSON.parse(e);
@@ -3870,7 +3870,7 @@ $.fn.property = function(){
             return false;
         var canvas = $("svg[data-type='document']");
         var prop = $(canvas).documentget();
-        if (prop.sysid != 0) {
+        if (!$.isempty(prop.sysid)) {
             $.storeRemoveAttachment({
                 id: prop.sysid,
                 url: $("#doc_schema_action").attr("data-link")
@@ -3887,7 +3887,7 @@ $.fn.property = function(){
         //save file
         var canvas = $("svg[data-type='document']");
         var prop = $(canvas).documentget();
-        if (prop.sysid == 0) {
+        if ($.isempty(prop.sysid)) {
             $.storesave({
                 login: $.currentuser().login           
             });
@@ -3917,7 +3917,7 @@ $.fn.property = function(){
         $.schemahide();
         var canvas = $("svg[data-type='document']");
         var prop = $(canvas).documentget();
-        if (prop.sysid != 0) {
+        if (!$.isempty(prop.sysid)) {
             $.getschemaname({
                 id: prop.sysid,
                 type: $.pagemenu(),
@@ -4427,7 +4427,7 @@ let updateElementPart = function(){
 function subprocessUpdate(){
     let subprocessFile = $("#subprocessTemplate").find("[data-id=templateFile]");
     let templateLinkPlace=$("#subprocessTemplate").find("[data-id='templateLinkPlace']");
-    if(getInt($(subprocessFile).attr("data-sysid"))!=0){
+    if(!$.isempty($(subprocessFile).attr("data-sysid"))){
         $(templateLinkPlace).show();                    
         let templateLink=$("#subprocessTemplate").find("[data-id='templateLink']");
         $(templateLink).attr({
@@ -4443,7 +4443,7 @@ function elementUpdate(data){
     if(sl){
         let params = $(sl).logicget();
         if(params.components){
-            let platform=params.components?.find(item => (item.id==params.sysid || (!params.sysid || getInt(params.sysid)==0) && item.id==params.id));
+            let platform=params.components?.find(item => (item.id==params.sysid || $.isempty(params.sysid) && item.id==params.id));
             if(platform && platform.name != data.name) {
                 platform.name = data.name;
                 storedirectlyset(params.id,params);
@@ -4506,9 +4506,9 @@ function elementUpdate(data){
                 });
             }
             else{
-                let platform=params.components?.find(item => (item.id==params.sysid || (!params.sysid || getInt(params.sysid)==0) && item.id==params.id));
+                let platform=params.components?.find(item => (item.id==params.sysid || $.isempty(params.sysid) && item.id==params.id));
                 if(!platform) platform=params.components?.find(item => (item.name.trim().toLowerCase()==params.name.trim().toLowerCase()));
-                if(platform) platform.id=((!data.sysid || getInt(data.sysid)==0)?params.id:data.sysid);
+                if(platform) platform.id=((!data.sysid || $.isempty(data.sysid))?params.id:data.sysid);
             }
             params = $.extend(params, data);
             storedirectlyset(params.id,params);

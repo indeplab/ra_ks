@@ -82,7 +82,7 @@ $.storesave = function(options){
     };
     $.each($.storekeys(),function(i,id){
         var param = $.storeget(id);
-        if (param.sysid && getInt(param.sysid) != 0)
+        if (param.sysid && !$.isempty(param.sysid) != 0)
             tags  = tags.concat(getTags(param));
         list.push($.storegetstr(id));
     });
@@ -176,7 +176,7 @@ var getTags = function (param) {
         case "line":
             // интерфейс
             //tags += "#i:" + param.sysid + "#i:" + param.name + "#";
-            if (param.supplyfunction && isInt(param.supplyfunction.id)) {
+            if (param.supplyfunction && !$.isempty(param.supplyfunction.id)) {
                 //tags += "#f:" + e.id + "#f:" + e.name + "#";
                 tags.push({
                     type: "function",
@@ -184,7 +184,7 @@ var getTags = function (param) {
                     name: param.supplyfunction.name
                 });
             }
-            if (param.consumerfunction && isInt(param.consumerfunction.id)) {
+            if (param.consumerfunction && !$.isempty(param.consumerfunction.id)) {
                 //tags += "#f:" + e.id + "#f:" + e.name + "#";
                 tags.push({
                     type: "function",
