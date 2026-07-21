@@ -2,15 +2,67 @@
 using Microsoft.Extensions.ObjectPool;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 
 namespace Web.Modules
 {
-    public class SystemMetricManager
+    public class SystemMetricManager : BaseKSManager
     {
-        public static List<MetricEntity> GetList(DictionaryRequest request)
+        public static async Task<List<MetricEntity>> GetList(DictionaryRequest2 request)
         {
-            string selectSQL = string.Empty;
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+
+            object req = new
+            {
+                ClassUUIDs = new string[]{ SystemClassUUID } // класс АС
+            };
+            Dictionary<string, string> indicators = new Dictionary<string, string>();
+            string resstr = await Post("api/indicators/get", req, headers);
+            var res = JsonSerializer.Deserialize<resultIndicatorList>(resstr);
+            if (res.data!= null)
+            {
+                foreach(var d in res.data)
+                {
+                    indicators.Add(d.uuid,d.name);
+                }
+            }
+
+            req = new
+            {
+                objectsUuids = new string[]{ request.ID },
+                classUuid = SystemClassUUID, // класс АС
+                indicatorsUuids = indicators.Select(kv => kv.Key).ToArray()
+            };
+
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            resstr = await Post("api/data/get-list", req, headers);
+            var resv = JsonSerializer.Deserialize<resultIndicatorValueList>(resstr);
+            if (resv.data!= null)
+            {
+                foreach(var d in resv.data)
+                {
+                    values.Add(d.i, ((d.v?.data)??"").ToString());
+                }
+            }
+
+            List<MetricEntity> result = new List<MetricEntity>();
+            foreach(var ind in indicators)
+            {
+                result.Add(new MetricEntity()
+                    {
+                        name = ind.Value,
+                        value = values.ContainsKey(ind.Key)?values[ind.Key]:""
+                    }
+                );
+            }
+            /*string selectSQL = string.Empty;
             int entityID=request.ID2==0?1:request.ID2;
             if (request.IsRecursion)
                 selectSQL = string.Format(@"
@@ -51,9 +103,10 @@ namespace Web.Modules
                 {
                     result.Add(GetEntity(row));
                 }
-            }
+            }*/
             return result;
         }
+
 
         public static List<object> GetCheckList(DictionaryRequest request)
         {
@@ -84,6 +137,7 @@ namespace Web.Modules
             }
             return result;
         }
+        /*
         public static MetricEntity GetEntity(DataRow row)
         {
             return new MetricEntity()
@@ -94,8 +148,8 @@ namespace Web.Modules
                 requared = ValueManager.GetBoolean(row["requared"]),
                 order = ValueManager.GetInt(row["ord"])
             };
-        }
-        public static void Save(long sysid, List<SystemMetricEntity> metricList, int entityID = 1)
+        }*/
+        /*public static void Save(long sysid, List<SystemMetricEntity> metricList, int entityID = 1)
         {
             string selectSQL = string.Format(@"
                 select * from system_metric where system_id=@id and name in (select name from dictionary where entity_id={0})
@@ -133,6 +187,7 @@ namespace Web.Modules
                 }
             }
         }
+        */
 
     }
 }

@@ -1,26 +1,220 @@
 {
     "data": [
         {
-            "uuid": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
-            "classUuid": "01f0fcf8-550d-ffbb-93fa-00b15c0c4000",
-            "name": "Тест 18",
-            "shortName": "",
-            "description": "",
-            "relatedSourceUuid": null,
-            "relatedDestinationUuid": null,
-            "classesRelationUuid": null,
-            "modelUuids": [
-                "01f0fcf8-54f5-6a96-93fa-00b15c0c4000"
-            ],
-            "autoCreated": false,
-            "descriptionStatus": "empty",
-            "isRelation": false,
-            "accessLevel": "delete",
-            "backupEntityCategory": "prod",
-            "createdBy": "01eb27da-1d81-1ec5-ff30-00b15c0c4000",
-            "updatedBy": "00000000-0000-0000-0000-000000000000",
-            "createdAt": "2026-01-16T11:59:03.827068+03:00",
-            "updatedAt": "2026-01-16T11:59:03.827068+03:00"
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-7bac-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": 2,
+                "type": "number"
+            },
+            "uuid": "01f0fcf8-6e75-2551-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-dfb8-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Федотов Алексей Станиславович",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-6e71-19f4-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-f530-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": 23,
+                "type": "number"
+            },
+            "uuid": "01f0fcf8-6e70-6dbf-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-16T11:59:47.279858+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-0a17-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Приём заявок с веб-интерфейса и мобильного приложения",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-6e61-58c6-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-49a2-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": false,
+                "type": "boolean"
+            },
+            "uuid": "01f0fcf8-6e72-1877-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-20T17:33:29.553863+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-7bd4-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Тест 18",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-6e71-1068-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-16T11:59:38.662484+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-8cbf-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Проектирование и разработка, АС DataStream [0829]",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-6e2a-06f1-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-b35a-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "да",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-6e25-3de9-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-16T11:59:05.51216+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-d79e-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+                "type": "object"
+            },
+            "uuid": "01f0fcf8-6e48-2ac2-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-19T14:09:20.34074+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-4f23-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Тест 18",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-7876-9d03-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-16T11:59:05.51216+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-50cf-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Проектирование и разработка",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-788c-db2a-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550d-e17c-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "АС DataStream",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-78bf-2233-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-16T11:59:05.51216+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-4eb4-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "MC",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-78b1-6398-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-a0cd-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "Федотов Алексей Станиславович",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-78b7-4a21-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "autoCreated": true,
+            "updatedAt": "2026-01-16T11:59:38.573082+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-3c90-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "/#/publications/6d8a9cb2d23c9ff9c092a33b1229e134431db273/01f0fcf8-54fa-f6fb-93fa-00b15c0c4000?projectUuid=01f0fcf8-54ec-ee8f-93fa-00b15c0c4000\u0026getObject%20%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82_%D0%B3%D0%B8%D0%BF=01f0fcf8-5525-dd1e-93fa-00b15c0c4000\u0026viewMode=true",
+                "type": "link"
+            },
+            "uuid": "01f0fcf8-6e1e-812c-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-29T12:54:35.513048+03:00"
+        },
+        {
+            "o": "01f0fcf8-5525-dd1e-93fa-00b15c0c4000",
+            "i": "01f0fcf8-550e-33b7-93fa-00b15c0c4000",
+            "d": "01f0fcf8-552f-e941-93fa-00b15c0c4000",
+            "m": {},
+            "v": {
+                "data": "https://main.ks.works//#/publications/6d8a9cb2d23c9ff9c092a33b1229e134431db273/01f0fcf8-54fa-f6fb-93fa-00b15c0c4000?projectUuid=01f0fcf8-54ec-ee8f-93fa-00b15c0c4000\u0026getObject%20%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82_%D0%B3%D0%B8%D0%BF=01f0fcf8-5525-dd1e-93fa-00b15c0c4000\u0026viewMode=true",
+                "type": "string"
+            },
+            "uuid": "01f0fcf8-78a8-68a6-befd-00b15c0c4000",
+            "modelUuid": "01f0fcf8-54f5-6a96-93fa-00b15c0c4000",
+            "updatedAt": "2026-01-29T12:54:36.905408+03:00"
         }
-    ]
+    ],
+    "discussions": null
 }

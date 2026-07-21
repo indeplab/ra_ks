@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Web.Modules
 
             var req = new
             {
-                ModelUUID = ModelUUID, // Основная модель
+                ModelUUID, // Основная модель
                 ClassUUID = SystemClassUUID, // класс АС
                 UUIDs = new string[]{ id },
                 withRelations = false
@@ -32,7 +33,7 @@ namespace Web.Modules
             var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
             if (res.data.Length > 0)
             {
-                result = GetEntity(res.data[0]);
+                result = await GetEntity(res.data[0]);
             }
         /*
             string selectSQL = string.Format(@"
@@ -165,7 +166,7 @@ namespace Web.Modules
 
             var req = new
             {
-                ModelUUID = ModelUUID, // Основная модель
+                ModelUUID, // Основная модель
                 ClassUUID = SystemClassUUID, // класс АС
                 Name = request.Term,
                 withRelations = false
@@ -178,7 +179,7 @@ namespace Web.Modules
 
             for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
             {
-                result.Add(GetEntity(res.data[i]));
+                result.Add(await GetEntity(res.data[i]));
             }
 
             /*
@@ -325,7 +326,7 @@ namespace Web.Modules
             return result;
 
         }
-        private static SystemEntity GetEntity(dataEntity entity)
+        private static async Task<SystemEntity> GetEntity(dataEntity entity)
         {
             SystemEntity result = new SystemEntity()
             {
