@@ -8,7 +8,7 @@
         public string system { get; set; }
         public string server { get; set; }
         public string ip { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public string serverdescription { get; set; }
 
     }

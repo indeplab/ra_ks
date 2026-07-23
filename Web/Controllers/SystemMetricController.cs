@@ -19,22 +19,11 @@ namespace Web.Controllers
             return Ok(info);
         }
 
-        [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest2 request)
-        {
-            return Post(request);
-        }
         [HttpPost]
         public async Task<ActionResult<object>> Post([FromBody] DictionaryRequest2 request)
         {
             List<MetricEntity> result = await SystemMetricManager.GetList(request);
             return Ok(result);
-        }
-        [HttpPost("checklist")]
-        public ActionResult<object> GetCheckList(DictionaryRequest2 request)
-        {
-            //List<object> result = SystemMetricManager.GetCheckList(request);
-            return Post(request);//Ok(result);
         }
         [HttpPut]
         public ActionResult<object> Put([FromBody] SystemEntity value)

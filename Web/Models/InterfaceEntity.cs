@@ -6,7 +6,7 @@ namespace Web.Models
     {
         public string id { get; set; }
         public string name { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public string consumerid { get; set; }
         public string supplyid { get; set; }
         public string consumername { get; set; }

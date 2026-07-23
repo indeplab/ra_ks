@@ -57,106 +57,7 @@ namespace Web.Modules
 
             return result;
         }
-        public static List<DictionaryEntity> GetParentListtBy(int id = 0, string type = "", int length = 20)
-        {
-            var list = new FilterParameterCollection();
-            var and = new QueryAndCollection();
 
-            if (id != 0)
-            {
-                and.Parameters.Add("system.id = @id");
-                list.Add("id", id);
-            }
-            string value = "_none";
-            if (string.IsNullOrEmpty(type)) type = string.Empty;
-            switch (type.Trim())
-            {
-                case "Функциональный модуль":
-                case "Подсистема":
-                    value = "Автоматизированная система";
-                    break;
-                case "Автоматизированная система":
-                    value = "Платформа";
-                    break;
-            }
-            and.Parameters.Add("system.id in (select system_id from system_metric where name='Тип АС' and value=@sys_type)");
-            list.Add("sys_type", value);
-
-            string selectSQL = string.Format(@"
-                select * from system {0} limit {1}
-            ", and.ToStringWhere(), length);
-
-            List<DictionaryEntity> result = new List<DictionaryEntity>();
-            DataTable data = null;
-            using (DataManager manager = new DataManager())
-            {
-                data = manager.GetDataTable(selectSQL, list.ToDataParameterArray());
-            }
-            if (data != null)
-            {
-                foreach (DataRow row in data.Rows)
-                {
-                    result.Add(new DictionaryEntity()
-                    {
-                        id = ValueManager.GetInt(row["id"]),
-                        value = ValueManager.GetString(row["name"]),
-                        name = ValueManager.GetString(row["name"]),
-                        description = ValueManager.GetString(row["description"])
-                    });
-
-                }
-            }
-            return result;
-        }
-        public static List<SystemEntity> GetByInterface(int id)
-        {
-            string selectSQL = string.Format(@"
-                select system.* from interface inner join system on interface.supply_id=system.id where interface.id={0}
-            ", id);
-            List<SystemEntity> result = new List<SystemEntity>();
-            DataTable data = null;
-            using (DataManager manager = new DataManager())
-            {
-                data = manager.GetDataTable(selectSQL);
-            }
-            if (data != null)
-            {
-                foreach (DataRow row in data.Rows)
-                    result.Add(new SystemEntity()
-                    {
-                        id = ValueManager.GetString(row["id"]),
-                        name = ValueManager.GetString(row["name"]),
-                        state = ValueManager.GetString(row["state"])
-                    });
-            }
-            return result;
-        }
-
-        /*public class CustomConverter<T> : JsonConverter
-        {
-            private Dictionary<string,string> dict = new Dictionary<string, string>();
-            public CustomConverter(Dictionary<string,string> dict)
-            {
-                this.dict = dict;
-            }
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                JObject jsonObject = JObject.Load(reader);
-                MyModel result = new MyModel();
-                result.NewPropertyName = (string)jsonObject["oldPropertyName"];
-                return result;
-            }
-
-            public override bool CanConvert(Type objectType)
-            {
-                return objectType == typeof(MyModel);
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                throw new NotImplementedException();
-            }
-        }     */
         public static async Task<List<SystemEntity>> Get(DictionaryRequest request)
         {
             var headers = new Dictionary<string, string>()
@@ -333,7 +234,7 @@ namespace Web.Modules
                 id = entity.uuid,
                 name = entity.name,
                 description = entity.description,
-                alias = entity.shortName
+                alias = entity.shortName,
             };
             return result;
         }

@@ -47,30 +47,6 @@ namespace Web.Modules
             return result;
         }
 
-        public static List<DictionaryEntity> GetA(int typeid, string term, int length)
-        {
-            string selectSQL = string.Format(@"
-                    select * from netzone where name ilike '%{0}%' and netzone_type_id={2} limit {1}
-                ", term, length, typeid);
-            List<DictionaryEntity> result = new List<DictionaryEntity>();
-            DataTable data = null;
-            using (DataManager manager = new DataManager())
-            {
-                data = manager.GetDataTable(selectSQL);
-            }
-            if (data != null)
-            {
-                foreach (DataRow row in data.Rows)
-                    result.Add(new DictionaryEntity()
-                    {
-                        id = ValueManager.GetInt(row["id"]),
-                        value = ValueManager.GetString(row["name"]),
-                        name = ValueManager.GetString(row["name"]),
-                        description = ValueManager.GetString(row["description"])
-                    });
-            }
-            return result;
-        }
         public static List<NetzoneEntity> Get(DictionaryRequest request)
         {
             string selectSQL = "";

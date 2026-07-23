@@ -19,7 +19,7 @@
             "serverReadyAction": {
                 "action": "debugWithChrome",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "uriFormat": "%s/search.html"
+                "uriFormat": "%s/index.html"
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"

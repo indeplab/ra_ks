@@ -6,7 +6,7 @@
         public long interfaceid { get; set; }
         public long dataid { get; set; }
         public string data { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public string datadescription { get; set; }
 
     }

@@ -51,11 +51,6 @@ namespace Web.Controllers
                 }
             );
         }*/
-        [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest2 request)
-        {
-            return Post(request);
-        }
         [HttpPost]
         public async Task<object> Post([FromBody] DictionaryRequest2 request)
         {

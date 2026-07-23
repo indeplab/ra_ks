@@ -8,7 +8,7 @@
         public string system { get; set; }
         public string function { get; set; }
         public string method { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public string functiondescription { get; set; }
 
     }

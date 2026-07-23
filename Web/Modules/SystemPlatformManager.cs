@@ -2,75 +2,55 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.UI;
 
 namespace Web.Modules
 {
-    public class SystemPlatformManager : BaseListManager
+    public class SystemPlatformManager : BaseKSManager
     {
-        public SystemPlatformManager(FilterEntity filter):base(filter){
-            filter.currentSort=string.IsNullOrEmpty(filter.currentSort)?"Name":filter.currentSort;
-        }
-        protected override object OnFormatValue(DataColumn column, DataRow row)
+        public static async Task<List<SystemPlatformEntity>> GetList(DictionaryRequest2 request)
         {
-            if (column.Caption.Equals("Name", StringComparison.OrdinalIgnoreCase) && String.IsNullOrEmpty(row[column].ToString()))
-                return "<нет>";
-            return base.OnFormatValue(column, row);
-        }
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
 
-        protected override GridQuery Query
-        {
-            get
-            {
-                GridQuery query = new GridQuery();
-                if (!string.IsNullOrEmpty(Filter["id"]))
-                    query.Parameters.Add("id", ValueManager.GetInt(Filter["id"]), "system_platform.system_id = @id");
-
-                return (query);
-            }
-        }
-        public static SystemPlatformEntity Get(long id)
-        {
-            string selectSQL = string.Format(@"
-                select 
-                    system.id as systemid, 
-                    system.name as system, 
-                    system_platform.type,
-                    system_platform.name,
-                    system_platform.value,
-                    system_platform.description,
-                    system_platform.state
-                from 
-                    system_platform 
-                    inner join system on system_platform.system_id=system.id 
-                where 
-                    system_platform.id={0}
-            ", id);
-            SystemPlatformEntity result = new SystemPlatformEntity();
-            DataTable data = null;
-            using (DataManager manager = new DataManager())
-            {
-                data = manager.GetDataTable(selectSQL);
-            }
-            if (data != null && data.Rows.Count > 0)
-            {
-                result = new SystemPlatformEntity() { 
-                    id=id,
-                    systemid = ValueManager.GetInt(data.Rows[0]["systemid"]),
-                    system = ValueManager.GetString(data.Rows[0]["system"]),
-                    type = ValueManager.GetString(data.Rows[0]["type"]),
-                    typename = ValueManager.GetString(data.Rows[0]["name"]),
-                    value = ValueManager.GetString(data.Rows[0]["value"]),
-                    desc = ValueManager.GetString(data.Rows[0]["description"]),
-                    state = ValueManager.GetString(data.Rows[0]["state"])
+            object req = new
+                {
+                    ModelUUID, // Основная модель
+                    ClassUUID = SystemClassUUID, // класс АС
+                    UUIDs = new string[]{ request.ID },
+                    withRelations = true
                 };
+
+            List<SystemPlatformEntity> result = new List<SystemPlatformEntity>();
+
+            if(req!=null){
+
+                string resstr = await Post("api/objects/get", req, headers);
+                var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
+
+
+                if(res.data.Length > 0 && res.data[0].relations != null)
+                {
+                    for (int i = 0; i < res.data[0].relations.Length && i < (request.Length == 0?100:request.Length); i++)
+                    {
+                        if(res.data[0].relations[i].classUuid==SystemPlatformClassUUID)
+                            result.Add(new SystemPlatformEntity()
+                                {
+                                    id = res.data[i].uuid,
+                                    systemid = request.ID,
+                                    typename = res.data[0].relations[i].name,
+                                    desc = res.data[0].relations[i].description                                    
+                                }
+                            );
+                    }
+                }
             }
-            return result;
-        }
-        public static List<SystemPlatformEntity> GetList(DictionaryRequest request)
-        {
-            string selectSQL = "";
+            /*string selectSQL = "";
             if (request.IsRecursion)
                 selectSQL = string.Format(@"
                     select system_platform.*, system.name as system from system_platform left join system on system_platform.system_id=system.id from system_platform where system_platform.system_id = {0} or system_platform.system_id in (select id from system where parent_id={0}) 
@@ -91,9 +71,10 @@ namespace Web.Modules
                 {
                     result.Add(GetEntity(row));
                 }
-            }
+            }*/
             return result;
         }
+        /*
         private static SystemPlatformEntity GetEntity(DataRow row)
         {
             var result = new SystemPlatformEntity()
@@ -194,6 +175,6 @@ namespace Web.Modules
             {
                 manager.ExecuteNonQuery(deleteSQL, new DataParameter("id", id));
             }
-        }
+        }*/
     }
 }

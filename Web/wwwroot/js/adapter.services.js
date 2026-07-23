@@ -987,7 +987,7 @@ var getSystemComponentList = function (options) {
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         data: JSON.stringify({
-            id: getInt(options.systemid),
+            id: options.systemid,
             IsRecursion: false,//!options.systemonly,
             length: options.length
         }),

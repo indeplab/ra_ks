@@ -24,16 +24,6 @@ namespace Web.Controllers
         {
             return FunctionManager.Get(id);
         }
-        [HttpGet("a")]
-        public ActionResult<object> GetA(string type, string term, int length)
-        {
-            return FunctionManager.GetA(type, term, length);
-        }
-        [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest2 request)
-        {
-            return Post(request);
-        }
         // POST api/<FunctionController>
         [HttpPost]
         public async Task<object> Post([FromBody] DictionaryRequest2 request)

@@ -51,54 +51,6 @@ namespace Web.Modules
             }*/
             return result;
         }
-        public static List<DictionaryEntity> GetA(string type, string term, int length){
-            if (length == 0) length = 100;
-
-            string selectSQL = string.Empty;
-            switch (ValueManager.GetString(type).ToLower())
-            {
-                case "id":
-                    selectSQL = string.Format(@"
-                            select 
-                                *
-                            from 
-                                data
-                            where
-                                id = {0}
-                        ", ValueManager.GetInt(term));
-                    break;
-                default:
-                    selectSQL = string.Format(@"
-                        select 
-                            *
-                        from 
-                            data
-                        where
-                            Name ilike '%{0}%'
-                        limit {1}
-                    ", term, length);
-                    break;
-            }
-
-            DataTable data = null;
-            List<DictionaryEntity> result = new List<DictionaryEntity>();
-            using (DataManager manager = new DataManager())
-                data = manager.GetDataTable(selectSQL);
-            if (data != null)
-            {
-                foreach (DataRow row in data.Rows)
-                    result.Add(new DictionaryEntity()
-                    {
-                        id = ValueManager.GetInt(row["id"]),
-                        value = ValueManager.GetString(row["name"]),
-                        name = ValueManager.GetString(row["name"]),
-                        description = ValueManager.GetString(row["description"])
-                    });
-            }
-            return result;
-
-        }
-
         public static async Task<List<DataEntity>> Get(DictionaryRequest2 request)
         {
             var headers = new Dictionary<string, string>()

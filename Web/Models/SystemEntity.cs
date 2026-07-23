@@ -11,7 +11,7 @@ namespace Web.Models
         public string name { get; set; }
         public string type { get; set; }
         public string description { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public long targetid { get; set; }

@@ -25,17 +25,6 @@ namespace Web.Controllers
         {
             return NetzoneManager.Get(id);
         }
-        [HttpGet("a")]
-        public ActionResult<object> GetA(int typeid, string term, int length)
-        {
-            List<DictionaryEntity> result = NetzoneManager.GetA(typeid, term, length);
-            return Ok(result);
-        }
-        [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest request)
-        {
-            return Post(request);
-        }
         // POST api/<SystemController>
         [HttpPost]
         public ActionResult<object> Post([FromBody] DictionaryRequest request)
