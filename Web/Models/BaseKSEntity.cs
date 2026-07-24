@@ -69,4 +69,14 @@ namespace Web.Models
         public string ID { get; set; } 
     }
 
+    public class dictionaryEntity
+    {
+        public string uuid { get; set; }
+        public string name { get; set; }
+    }
+    public class dictionaryEntityList
+    {
+        public dictionaryEntity[] data { get; set; } = Array.Empty<dictionaryEntity>();
+    }
+
 }

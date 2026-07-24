@@ -40,7 +40,7 @@ namespace Web.Modules
             {
                 foreach (DataRow row in data.Rows)
                     result.Add(new DictionaryEntity(){
-                        id = ValueManager.GetInt(row["id"]),
+                        id = ValueManager.GetString(row["id"]),
                         name = ValueManager.GetString(row["name"]),
                     });
             }
