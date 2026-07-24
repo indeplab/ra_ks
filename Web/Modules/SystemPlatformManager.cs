@@ -14,6 +14,9 @@ namespace Web.Modules
         public static async Task<List<SystemPlatformEntity>> GetList(DictionaryRequest2 request)
         {
             List<SystemPlatformEntity> result = new List<SystemPlatformEntity>();
+            if(string.IsNullOrEmpty(request.ID))
+                return result;
+
             var res = await GetObjectsChainData(
                 new chainRequest()
                 {

@@ -189,7 +189,7 @@ namespace Web.Modules
             {
                 ModelUUID, // Основная модель
                 SelfRelationReverseDirection = true,
-                ClassUUID = request.ClassUUID, 
+                ClassesChainUUIDs = new string[]{ request.ClassUUID }, 
                 StartObjectsUUIDs = new string[]{ request.ID },
                 withRelations = false,
                 FullChain = false,
