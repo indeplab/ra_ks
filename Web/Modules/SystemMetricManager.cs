@@ -34,24 +34,25 @@ namespace Web.Modules
                 }
             }
 
-            req = new
-            {
-                objectsUuids = new string[]{ request.ID },
-                classUuid = SystemClassUUID, // класс АС
-                indicatorsUuids = indicators.Select(kv => kv.Key).ToArray()
-            };
-
             Dictionary<string, string> values = new Dictionary<string, string>();
-            resstr = await Post("api/data/get-list", req, headers);
-            var resv = JsonSerializer.Deserialize<resultIndicatorValueList>(resstr);
-            if (resv.data!= null)
+            if(!string.IsNullOrEmpty(request.ID ))
             {
-                foreach(var d in resv.data)
+                req = new
                 {
-                    values.Add(d.i, ((d.v?.data)??"").ToString());
+                    objectsUuids = new string[]{ request.ID },
+                    classUuid = SystemClassUUID, // класс АС
+                    indicatorsUuids = indicators.Select(kv => kv.Key).ToArray()
+                };
+                resstr = await Post("api/data/get-list", req, headers);
+                var resv = JsonSerializer.Deserialize<resultIndicatorValueList>(resstr);
+                if (resv.data!= null)
+                {
+                    foreach(var d in resv.data)
+                    {
+                        values.Add(d.i, ((d.v?.data)??"").ToString());
+                    }
                 }
             }
-
             List<MetricEntity> result = new List<MetricEntity>();
             foreach(var ind in indicators)
             {

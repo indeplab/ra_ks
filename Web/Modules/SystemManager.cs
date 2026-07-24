@@ -15,7 +15,21 @@ namespace Web.Modules
     {
         public static async Task<SystemEntity> Get(string id)
         {
-            var headers = new Dictionary<string, string>()
+            SystemEntity result = new SystemEntity();
+            if(string.IsNullOrEmpty(id))
+                return result;
+
+            dataEntity res = await GetObjectsDataById(
+                new objectRequest()
+                {
+                    ClassUUID = SystemClassUUID, 
+                    ID = id
+                }
+            );
+            if (res!=null)
+                result = await GetEntity(res);
+
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
@@ -34,7 +48,7 @@ namespace Web.Modules
             if (res.data.Length > 0)
             {
                 result = await GetEntity(res.data[0]);
-            }
+            }*/
         /*
             string selectSQL = string.Format(@"
                 select system.*, parent.name as parent, target.name as target from 
@@ -60,6 +74,21 @@ namespace Web.Modules
 
         public static async Task<List<SystemEntity>> Get(DictionaryRequest request)
         {
+            List<SystemEntity> result = new List<SystemEntity>();
+            var res = await GetObjectsDataByName(
+                new objectRequest()
+                {
+                    ClassUUID = SystemClassUUID, 
+                    Name = request.Term
+                }
+            );
+            if(res!=null){
+                for (int i = 0; i < res.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(await GetEntity(res[i]));
+                }
+            }
+/*
             var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
@@ -81,7 +110,7 @@ namespace Web.Modules
             for (int i = 0; i < res.data.Length && i < (request.Length == 0?100:request.Length); i++)
             {
                 result.Add(await GetEntity(res.data[i]));
-            }
+            }*/
 
             /*
             var req = new
