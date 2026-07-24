@@ -18,6 +18,14 @@ namespace Web.Models
     {
         public dataEntity[] data { get; set; } = Array.Empty<dataEntity>();
     }
+    public class chainEntity
+    {
+        public dataEntity[] StartObjectsUUIDs { get; set; } = Array.Empty<dataEntity>();
+    }
+    public class resultChainList
+    {
+        public chainEntity data { get; set; } = new chainEntity();
+    }
     public class indicatorEntity
     {
         public string uuid { get; set; }
@@ -44,6 +52,21 @@ namespace Web.Models
     public class resultIndicatorValueList
     {
         public indicatorValueEntity[] data { get; set; } = Array.Empty<indicatorValueEntity>();
+    }
+
+
+    public class chainRequest
+    {
+        public string ClassUUID { get; set; }
+        public string StartClassUUID { get; set; }
+        public string EndClassUUID { get; set; }
+        public string ID { get; set; } 
+    }
+    public class objectRequest
+    {
+        public string ClassUUID { get; set; }
+        public string Name { get; set; }
+        public string ID { get; set; } 
     }
 
 }

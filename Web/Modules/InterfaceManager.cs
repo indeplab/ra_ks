@@ -18,7 +18,21 @@ namespace Web.Modules
 
         public static async Task<InterfaceEntity> Get(string id)
         {
-            var headers = new Dictionary<string, string>()
+            InterfaceEntity result = new InterfaceEntity();
+            if(string.IsNullOrEmpty(id))
+                return result;
+
+            dataEntity res = await GetObjectsDataById(
+                new objectRequest()
+                {
+                    ClassUUID = InterfaceClassUUID, 
+                    ID = id
+                }
+            );
+            if (res!=null)
+                result = GetEntity(res);
+
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
@@ -37,7 +51,7 @@ namespace Web.Modules
             if (res.data.Length > 0)
             {
                 result = GetEntity(res.data[0]);
-            }
+            }*/
             /*
             string selectSQL = string.Format(@"
                 select 
@@ -124,6 +138,28 @@ namespace Web.Modules
             if(string.IsNullOrEmpty(consumerId) && string.IsNullOrEmpty(supplyId))
                 return result;
 
+            var res = await GetObjectsChainData(
+                new chainRequest()
+                {
+                    ClassUUID = InterfaceClassUUID, 
+                    ID = (!string.IsNullOrEmpty(consumerId)?consumerId:supplyId),
+                    StartClassUUID = SystemClassUUID,
+                    EndClassUUID = SystemClassUUID
+                }
+            );
+
+            if (res != null)
+            {
+                for (int i = 0; i < res.Length && result.Count <= (length == 0?100:length); i++)
+                {
+                    if (!string.IsNullOrEmpty(consumerId) && (string.IsNullOrEmpty(supplyId) || supplyId == res[i].uuid)
+                            || !string.IsNullOrEmpty(supplyId) && (string.IsNullOrEmpty(consumerId) || consumerId == res[i].uuid)
+                        )
+                        result.Add(GetEntity(res[i]));
+                }
+            }
+
+            /*
             var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
@@ -153,7 +189,7 @@ namespace Web.Modules
                         )
                             result.Add(GetEntity(d));
                 }
-            }
+            }*/
             /*string selectSQL = string.Format(@"
                 select * from interface where (consumer_id = {0} or {0}=-1) and (supply_id = {1} or {1}=-1) and name ilike '%{2}%' limit {3}
             ", consumerId, supplyId, term, length);
@@ -170,7 +206,28 @@ namespace Web.Modules
             if(string.IsNullOrEmpty(consumerId) && string.IsNullOrEmpty(supplyId))
                 return result;
 
-            var headers = new Dictionary<string, string>()
+            var res = await GetObjectsChainData(
+                new chainRequest()
+                {
+                    ClassUUID = InterfaceClassUUID, 
+                    ID = (!string.IsNullOrEmpty(consumerId)?consumerId:supplyId),
+                    StartClassUUID = SystemClassUUID,
+                    EndClassUUID = SystemClassUUID
+                }
+            );
+
+            if (res != null)
+            {
+                for (int i = 0; i < res.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(consumerId) && (string.IsNullOrEmpty(supplyId) || supplyId == res[i].uuid)
+                            || !string.IsNullOrEmpty(supplyId) && (string.IsNullOrEmpty(consumerId) || consumerId == res[i].uuid)
+                        )
+                        result.Add(GetEntity(res[i]));
+                }
+            }
+
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
@@ -199,7 +256,7 @@ namespace Web.Modules
                         )
                             result.Add(GetEntity(d));
                 }
-            }
+            }*/
             /*string selectSQL = @"
                 select 
                     interface.*, 

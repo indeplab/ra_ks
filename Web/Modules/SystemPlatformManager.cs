@@ -13,6 +13,31 @@ namespace Web.Modules
     {
         public static async Task<List<SystemPlatformEntity>> GetList(DictionaryRequest2 request)
         {
+            List<SystemPlatformEntity> result = new List<SystemPlatformEntity>();
+            var res = await GetObjectsChainData(
+                new chainRequest()
+                {
+                    ClassUUID = SystemPlatformClassUUID, 
+                    ID = request.ID,
+                    StartClassUUID = SystemClassUUID,
+                    EndClassUUID = PlatformClassUUID
+                }
+            );
+            if(res!=null){
+                for (int i = 0; i < res.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(new SystemPlatformEntity()
+                        {
+                            id = res[i].uuid,
+                            systemid = request.ID,
+                            typename = res[i].name,
+                            desc = res[i].description                                    
+                        }
+                    );
+                }
+            }
+
+            /*
             var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
@@ -49,7 +74,7 @@ namespace Web.Modules
                             );
                     }
                 }
-            }
+            }*/
             /*string selectSQL = "";
             if (request.IsRecursion)
                 selectSQL = string.Format(@"

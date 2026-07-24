@@ -16,7 +16,17 @@ namespace Web.Modules
             if(string.IsNullOrEmpty(id))
                 return result;
 
-            var headers = new Dictionary<string, string>()
+            dataEntity res = await GetObjectsDataById(
+                new objectRequest()
+                {
+                    ClassUUID = EntityClassUUID, 
+                    ID = id
+                }
+            );
+            if (res!=null)
+                result = GetEntity(res);
+                
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
@@ -34,7 +44,7 @@ namespace Web.Modules
             if (res.data.Length > 0)
             {
                 result = GetEntity(res.data[0]);
-            }
+            }*/
             /*string selectSQL = string.Format(@"
                 select data.*,'' as flowtype from data where id = {0}
             ", id);
@@ -53,7 +63,49 @@ namespace Web.Modules
         }
         public static async Task<List<DataEntity>> Get(DictionaryRequest2 request)
         {
-            var headers = new Dictionary<string, string>()
+            List<DataEntity> result = new List<DataEntity>();
+            dataEntity[] res = null;
+
+            if (!string.IsNullOrEmpty(request.Name))
+                res = await GetObjectsDataByName(
+                    new objectRequest()
+                    {
+                        ClassUUID = EntityClassUUID, 
+                        Name = request.Name
+                    }
+                );
+            else if (!string.IsNullOrEmpty(request.Term))
+                res = await GetObjectsDataByName(
+                    new objectRequest()
+                    {
+                        ClassUUID = EntityClassUUID, 
+                        Name = request.Term
+                    }
+                );
+            else
+            {
+                if (!string.IsNullOrEmpty(request.ID))
+                {
+                    res = await GetObjectsChainData(
+                        new chainRequest()
+                        {
+                            ClassUUID = SystemEntityClassUUID, 
+                            ID = request.ID,
+                            StartClassUUID = SystemClassUUID,
+                            EndClassUUID = EntityClassUUID
+                        }
+                    );
+                }
+            }
+
+            if(res!=null){
+                for (int i = 0; i < res.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(GetEntity(res[i]));
+                }
+            }
+
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
@@ -116,7 +168,7 @@ namespace Web.Modules
                         result.Add(GetEntity(res.data[i]));
                     }
                 }
-            }
+            }*/
             /*string selectSQL = string.Empty;
             if (!string.IsNullOrEmpty(request.Name))
                 selectSQL = string.Format(@"

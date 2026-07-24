@@ -16,6 +16,18 @@ namespace Web.Modules
             FunctionEntity result = new FunctionEntity();
             if(string.IsNullOrEmpty(id))
                 return result;
+
+            dataEntity res = await GetObjectsDataById(
+                new objectRequest()
+                {
+                    ClassUUID = EntityClassUUID, 
+                    ID = id
+                }
+            );
+            if (res!=null)
+                result = GetEntity(res);
+
+            /*
             var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
@@ -34,7 +46,7 @@ namespace Web.Modules
             if (res.data.Length > 0)
             {
                 result = GetEntity(res.data[0]);
-            }
+            }*/
             /*string selectSQL = string.Format(@"
                 select function.*,parent.name as parent  
                 from 
@@ -55,102 +67,108 @@ namespace Web.Modules
             }*/
             return result;
         }
-        public static List<object> GetA(string type, string term, int length)
-        {
-            if (length == 0) length = 100;
-
-            string selectSQL = string.Empty;
-            switch (ValueManager.GetString(type).ToLower())
-            {
-                case "id":
-                    selectSQL = string.Format(@"
-                            select 
-                                function.*,parent.name as parent  
-                            from 
-                                function
-                                left join function parent on function.parent_id=parent.id
-                            where
-                                function.id = {0}
-                        ", ValueManager.GetInt(term));
-                    break;
-                default:
-                    selectSQL = string.Format(@"
-                        select 
-                            function.*,parent.name as parent 
-                        from 
-                            function
-                            left join function parent on function.parent_id=parent.id
-                        where
-                            function.Name ilike '%{0}%'
-                        limit {1}
-                    ", term, length);
-                    break;
-            }
-
-            DataTable data = null;
-            List<object> result = new();
-            using (DataManager manager = new DataManager())
-                data = manager.GetDataTable(selectSQL);
-            if (data != null)
-            {
-                foreach (DataRow row in data.Rows)
-                    result.Add(new
-                    {
-                        id = ValueManager.GetInt(row["id"]),
-                        value = ValueManager.GetString(row["name"]),
-                        name = ValueManager.GetString(row["name"]),
-                        parent = ValueManager.GetString(row["parent"]),
-                        parentid = ValueManager.GetString(row["parent_id"]),
-                        description = ValueManager.GetString(row["description"])
-                    });
-            }
-            return result;
-
-        }
-
         public static async Task<List<FunctionEntity>> Get(DictionaryRequest2 request)
         {
-            var headers = new Dictionary<string, string>()
+            List<FunctionEntity> result = new List<FunctionEntity>();
+            dataEntity[] res = null;
+
+            if (!string.IsNullOrEmpty(request.Name))
+                res = await GetObjectsDataByName(
+                    new objectRequest()
+                    {
+                        ClassUUID = FunctionClassUUID, 
+                        Name = request.Name
+                    }
+                );
+            else if (!string.IsNullOrEmpty(request.Term))
+                res = await GetObjectsDataByName(
+                    new objectRequest()
+                    {
+                        ClassUUID = FunctionClassUUID, 
+                        Name = request.Term
+                    }
+                );
+            else
+            {
+                if (!string.IsNullOrEmpty(request.ID))
+                {
+                    res = await GetObjectsChainData(
+                        new chainRequest()
+                        {
+                            ClassUUID = SystemFunctionClassUUID, 
+                            ID = request.ID,
+                            StartClassUUID = SystemClassUUID,
+                            EndClassUUID = FunctionClassUUID
+                        }
+                    );
+                }
+            }
+            /*var headers = new Dictionary<string, string>()
             {
                 {"X-Project-Uuid", ProjectUUID}
             };
 
-            object req=null;
-            var withRelations = false;
+            object req = null;
+            string resstr = null;
+            dataEntity[] res = null;
+            List<FunctionEntity> result = new List<FunctionEntity>();
 
-            if (!string.IsNullOrEmpty(request.Name))
-                    req = new
-                    {
-                        ModelUUID, // Основная модель
-                        ClassUUID = FunctionClassUUID, // класс АС
-                        Name = request.Name,
-                        withRelations
-                    };                
-            else if (!string.IsNullOrEmpty(request.Term))
-                    req = new
-                    {
-                        ModelUUID, // Основная модель
-                        ClassUUID = FunctionClassUUID, // класс АС
-                        Name = request.Term,
-                        withRelations
-                    };
+            if(!string.IsNullOrEmpty(request.Name) || !string.IsNullOrEmpty(request.Term))
+            {                
+                if (!string.IsNullOrEmpty(request.Name))
+                        req = new
+                        {
+                            ModelUUID, // Основная модель
+                            ClassUUID = FunctionClassUUID, // класс АС
+                            Name = request.Name,
+                            withRelations = false
+                        };                
+                else if (!string.IsNullOrEmpty(request.Term))
+                        req = new
+                        {
+                            ModelUUID, // Основная модель
+                            ClassUUID = FunctionClassUUID, // класс АС
+                            Name = request.Term,
+                            withRelations = false
+                        };
+                resstr = await Post("api/objects/get", req, headers);
+                var d = JsonSerializer.Deserialize<resultEntityList>(resstr);
+                if(d!=null)
+                    res = d.data;
+            }
             else
             {
                 if(!string.IsNullOrEmpty(request.ID)){
-                    withRelations = true;
                     req = new
                     {
                         ModelUUID, // Основная модель
-                        ClassUUID = SystemClassUUID, // класс АС
-                        UUIDs = new string[]{ request.ID },
-                        withRelations
+                        SelfRelationReverseDirection = true,
+                        ClassUUID = SystemFunctionClassUUID, 
+                        StartObjectsUUIDs = new string[]{ request.ID },
+                        withRelations = false,
+                        FullChain = false,
+                        ClassPairs = new object[]{
+                            new {
+                                StartClassUUID = SystemClassUUID, 
+                                EndClassUUID = FunctionClassUUID 
+                            }
+                        }
                     };
+                    resstr = await Post("api/objects/get-chain", req, headers);
+                    resstr = resstr.Replace(request.ID, "StartObjectsUUIDs");
+                    var chain = JsonSerializer.Deserialize<resultChainList>(resstr);
+                    res = chain.data.StartObjectsUUIDs;
+                }
+            }*/
+            if(res!=null){
+                for (int i = 0; i < res.Length && i < (request.Length == 0?100:request.Length); i++)
+                {
+                    result.Add(GetEntity(res[i]));
                 }
             }
 
-            List<FunctionEntity> result = new List<FunctionEntity>();
 
-            if(req!=null){
+            /*if(req!=null){
                 string resstr = await Post("api/objects/get", req, headers);
                 var res = JsonSerializer.Deserialize<resultEntityList>(resstr);
 
@@ -172,7 +190,7 @@ namespace Web.Modules
                         result.Add(GetEntity(res.data[i]));
                     }
                 }
-            }
+            }*/
             /*string selectSQL = string.Empty;
             if (!string.IsNullOrEmpty(request.Name))
                 selectSQL = string.Format(@"
@@ -229,23 +247,6 @@ namespace Web.Modules
             result.state = data.Columns.Contains("state") ? ValueManager.GetString(row["state"]) : string.Empty;
             return result;
         }*/
-        public static void ChangeParent(FunctionEntity[] children)
-        {
-            using (DataManager manager = new DataManager())
-            {
-                if (children != null && children.Length > 0)
-                {
-                    /*StringBuilder updateDataSQL = new StringBuilder();
-                    foreach (var d in children)
-                    {
-                        updateDataSQL.AppendFormat("update function set parent_id={1} where id={0}", id, d.id);
-                    }
-                    manager.ExecuteNonQuery(updateDataSQL.ToString());*/
-                    foreach (var d in children)
-                        manager.ExecuteNonQuery(string.Format("update function set parent_id={0} where id={1}", d.parentid, d.id));
-                }
-            }
-        }
         /*public static FunctionEntity Save(FunctionEntity entity)
         {
             string selectNameSQL = @"select id from function where name=@name";

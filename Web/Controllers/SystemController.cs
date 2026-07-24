@@ -31,16 +31,6 @@ namespace Web.Controllers
         {
             return SystemManager.GetParentListtBy(id, type, length);
         }*/
-        [HttpGet("a")]
-        public ActionResult<object> GetA(string type, string term, int length)
-        {
-            return SystemManager.GetA(type, term, length);
-        }
-        [HttpGet("list")]
-        public ActionResult<object> GetList(DictionaryRequest request)
-        {
-            return Post(request);
-        }
         // POST api/<SystemController>
         [HttpPost]
         public async Task<object> Post([FromBody] DictionaryRequest request)

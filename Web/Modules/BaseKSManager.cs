@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Modules.Config;
+using Web.Models;
 
 namespace Web.Modules
 {
@@ -95,6 +96,13 @@ namespace Web.Modules
                 return Startup.Configuration["KS:InterfaceClassUUID"];
             }
         }
+        protected static string PlatformClassUUID
+        {
+            get
+            {
+                return Startup.Configuration["KS:PlatformClassUUID"];
+            }
+        }
         class authContent
         {
             public string token { get; set; }
@@ -169,6 +177,73 @@ namespace Web.Modules
             }
             HttpResponseMessage result = await httpClient.PostAsync(url, request);
             return result;
+        }
+
+        public static async Task<dataEntity[]> GetObjectsChainData(chainRequest request)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+            var req = new
+            {
+                ModelUUID, // Основная модель
+                SelfRelationReverseDirection = true,
+                ClassUUID = request.ClassUUID, 
+                StartObjectsUUIDs = new string[]{ request.ID },
+                withRelations = false,
+                FullChain = false,
+                ClassPairs = new object[]{
+                    new {
+                        StartClassUUID = request.StartClassUUID, 
+                        EndClassUUID = request.EndClassUUID 
+                    }
+                }
+            };
+            string resstr = await Post("api/objects/get-chain", req, headers);
+            resstr = resstr.Replace(request.ID, "StartObjectsUUIDs");
+            var chain = JsonSerializer.Deserialize<resultChainList>(resstr);
+            return chain.data.StartObjectsUUIDs;
+        }
+        public static async Task<dataEntity> GetObjectsDataById(objectRequest request)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+            var req = new
+            {
+                ModelUUID, // Основная модель
+                ClassUUID = request.ClassUUID, // класс АС
+                UUIDs = new string[]{ request.ID },
+                withRelations = false
+            };
+            string resstr = await Post("api/objects/get", req, headers);
+            var d = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if(d!=null && d.data!= null && d.data.Length>0)
+                return d.data[0];
+
+            return null;
+        }
+        public static async Task<dataEntity[]> GetObjectsDataByName(objectRequest request)
+        {
+            var headers = new Dictionary<string, string>()
+            {
+                {"X-Project-Uuid", ProjectUUID}
+            };
+            var req = new
+            {
+                ModelUUID, // Основная модель
+                ClassUUID = request.ClassUUID, // класс АС
+                Name = request.Name,
+                withRelations = false
+            };
+            string resstr = await Post("api/objects/get", req, headers);
+            var d = JsonSerializer.Deserialize<resultEntityList>(resstr);
+            if(d!=null)
+                return d.data;
+
+            return null;
         }
 
     }

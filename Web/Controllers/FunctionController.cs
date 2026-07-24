@@ -37,19 +37,6 @@ namespace Web.Controllers
             //FunctionEntity entity = FunctionManager.Save(value);
             return Ok();//(entity);
         }
-        [HttpPut("changeparent")]
-        public ActionResult<object> PutParentList([FromBody] FunctionEntity[] children)
-        {
-            try
-            {
-                FunctionManager.ChangeParent(children);
-                return Ok(new{});
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
         [HttpDelete("system/{id}")]
         public ActionResult<object> DeleteFromSystem(int id)
         {
