@@ -34,6 +34,7 @@ namespace Web.Modules
                             id = res[i].uuid,
                             systemid = request.ID,
                             typename = res[i].name,
+                            value = res[i].name,
                             desc = res[i].description                                    
                         }
                     );

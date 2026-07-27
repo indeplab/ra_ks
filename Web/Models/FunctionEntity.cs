@@ -8,7 +8,7 @@
         public string refid { get; set; }
         public string name { get; set; }
         public string method { get; set; }
-        public string state { get; set; }
+        public string state { get; set; } = "exist";
         public string extid { get; set; }
         public string description {get;set;}
     }

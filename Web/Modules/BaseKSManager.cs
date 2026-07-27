@@ -19,7 +19,7 @@ namespace Web.Modules
         {
             get
             {
-                return Startup.Configuration["KS:APIKEY"] ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA2Mzc2MjQsImp0aSI6IjAxZjBmNWM4LTA4NTUtNjFkYi1hNGQ5LTAwYjE1YzBjNDAwMCIsImxvZ2luIjoicy5rcnVjaGlua2luIiwic3NuIjoiMDFmMTA1YWQtMGRmMi01MjU3LTg0MDYtMDBiMTVjMGM0MDAwIn0.dpB-KY33FYElKjjzxcvFwt2CC32YkocWac8gwIGRIxY.BXRCR4JUXTOCwdsnGd1F6pnvbI7MJNJs5rzPZFILyEI";
+                return Startup.Configuration["KS:APIKEY"] ?? "";
             }
             set
             {
@@ -143,6 +143,7 @@ namespace Web.Modules
             switch (responce.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.BadGateway:
                     if (!isSecond)
                     {
                         var loginResultCode = await Login();
